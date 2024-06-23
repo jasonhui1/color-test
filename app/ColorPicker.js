@@ -1,34 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
-import color_picker from "../public/color_picker.png";
 import color_wheel from "../public/color_wheel.png";
-import color_combined from "../public/color_combined.png";
 import Image from 'next/image';
 import HueShiftImage from './HueShiftImage';
 
-function getPositionFromSV(s,v){
-    let y = (100 - v) / 100
-    let yh = (y < 0.5) ? y : 1 - y
-    let horizontalLineLength = Math.tan(Math.PI / 3) * yh
+function getPositionFromSV(s, v) {
+    const y = (100 - v) / 100
+    const yh = (y < 0.5) ? y : 1 - y
+    const horizontalLineLength = Math.tan(Math.PI / 3) * yh
+    const x = s / 100 * horizontalLineLength
 
-    return {x: s/100 * horizontalLineLength, y: (100 - v) / 100}
+    return { x, y }
 }
 
-function getSVFromPosition(x,y){
-    let yh = (y < 0.5) ? y : 1 - y
-    let horizontalLineLength = Math.tan(Math.PI / 3) * yh
+function getSVFromPosition(x, y) {
+    const yh = (y < 0.5) ? y : 1 - y
+    const horizontalLineLength = Math.tan(Math.PI / 3) * yh
     const newSaturation = x / horizontalLineLength * 100
-    const newValue = 100 - (y)* 100;
+    const newValue = 100 - (y) * 100;
 
-    return {s: x / horizontalLineLength * 100, v: 100 - (y)* 100}
+    return { s: newSaturation, v: newValue }
 }
 
 export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) => {
 
     const [isDragging, setIsDragging] = useState(false);
-    const [saturation, setSaturation] = useState(100);
-    const [value, setValue] = useState(100);
     const divRef = useRef(null);
-
 
     //top 88 45
     //bot 88 255
@@ -40,7 +36,7 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
     //Calculate the position
     let selectedPosition = { x: 0, y: 0 };
     const normalizePosition = getPositionFromSV(selectedColor.s, selectedColor.v)
-    selectedPosition = {x: normalizePosition.x*w + bb.x1, y: normalizePosition.y*w + bb.y1}
+    selectedPosition = { x: normalizePosition.x * w + bb.x1, y: normalizePosition.y * w + bb.y1 }
 
 
     const handleMouseDown = (e) => {
@@ -50,7 +46,7 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
 
 
     const handleMouseMove = (e) => {
-        if(!isDragging) return
+        if (!isDragging) return
         updateColor(e);
     };
 
@@ -67,7 +63,7 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
                 y -= bb.y1
 
                 //trigonometry
-                const {s,v} = getSVFromPosition(x/w,y/w)
+                const { s, v } = getSVFromPosition(x / w, y / w)
 
                 setSelectedColor({
                     ...selectedColor,
@@ -101,145 +97,139 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
             />
 
             {/* Indictator, one with white outline, one with black outline */}
-            <div style={{
-                position: 'absolute',
-                left: `${selectedPosition.x}px`,
-                top: `${selectedPosition.y}px`,
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                border: '2px solid white',
-                transform: 'translate(-50%, -50%)',
-                pointerEvents: 'none'
-            }} />
-            <div style={{
-                position: 'absolute',
-                left: `${selectedPosition.x}px`,
-                top: `${selectedPosition.y}px`,
-                width: '12px',
-                height: '12px',
-                borderRadius: '50%',
-                border: '1px solid black',
-                transform: 'translate(-50%, -50%)',
-                pointerEvents: 'none'
-            }} />
+            <Indicator position={selectedPosition} width={10} height={10} color="white" border_width={2}/>
+            <Indicator position={selectedPosition} width={12} height={12} color="black" />
         </div>
 
     );
 };
 
-export const SquareColorPicker = ({ size = 300, setSelectedColor }) => {
+const Indicator = ({ position, width, height, color, border_width=1 }) => {
+    return <div style={{
+        position: 'absolute',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: width+ 'px',
+        height: height + 'px',
+        borderRadius: '50%',
+        border: border_width + 'px solid ' + color,
+        transform: 'translate(-50%, -50%)',
+        pointerEvents: 'none'
+    }} />
+}
 
-    const canvasRef = useRef(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [hue, setHue] = useState(0);
-    const [saturation, setSaturation] = useState(100);
-    const [value, setValue] = useState(100);
+// export const SquareColorPicker = ({ size = 300, setSelectedColor }) => {
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+//     const canvasRef = useRef(null);
+//     const [isDragging, setIsDragging] = useState(false);
+//     const [hue, setHue] = useState(0);
+//     const [saturation, setSaturation] = useState(100);
+//     const [value, setValue] = useState(100);
 
-
-        const gradient = ctx.createLinearGradient(size, 0, 0, 0);
-        gradient.addColorStop(0, `hsl(${hue}, 100%, 50%)`);
-        gradient.addColorStop(1, "white");
-
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, size);
-        ctx.lineTo(size, size);
-        ctx.lineTo(size, 0);
-
-        ctx.closePath();
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        const blackGradient = ctx.createLinearGradient(0, 0, 0, size);
-        blackGradient.addColorStop(0, "rgba(0,0,0,0)");
-        blackGradient.addColorStop(1, "rgba(0,0,0,1)");
-        ctx.fillStyle = blackGradient;
-        ctx.fill();
-
-        // Draw selector
-        const selectorX = (saturation / 100) * size;
-        const selectorY = (value / 100) * size;
-        ctx.beginPath();
-        ctx.arc(selectorX, selectorY, 5, 0, 2 * Math.PI);
-        ctx.strokeStyle = 'white';
-        ctx.stroke();
-        ctx.fillStyle = 'black';
-        ctx.fill();
-
-    }, [size, hue, saturation, value]);
+//     useEffect(() => {
+//         const canvas = canvasRef.current;
+//         const ctx = canvas.getContext('2d');
 
 
-    const handleColorChange = (color) => {
-        setSelectedColor(color);
-    };
+//         const gradient = ctx.createLinearGradient(size, 0, 0, 0);
+//         gradient.addColorStop(0, `hsl(${hue}, 100%, 50%)`);
+//         gradient.addColorStop(1, "white");
+
+//         ctx.beginPath();
+//         ctx.moveTo(0, 0);
+//         ctx.lineTo(0, size);
+//         ctx.lineTo(size, size);
+//         ctx.lineTo(size, 0);
+
+//         ctx.closePath();
+//         ctx.fillStyle = gradient;
+//         ctx.fill();
+
+//         const blackGradient = ctx.createLinearGradient(0, 0, 0, size);
+//         blackGradient.addColorStop(0, "rgba(0,0,0,0)");
+//         blackGradient.addColorStop(1, "rgba(0,0,0,1)");
+//         ctx.fillStyle = blackGradient;
+//         ctx.fill();
+
+//         // Draw selector
+//         const selectorX = (saturation / 100) * size;
+//         const selectorY = (value / 100) * size;
+//         ctx.beginPath();
+//         ctx.arc(selectorX, selectorY, 5, 0, 2 * Math.PI);
+//         ctx.strokeStyle = 'white';
+//         ctx.stroke();
+//         ctx.fillStyle = 'black';
+//         ctx.fill();
+
+//     }, [size, hue, saturation, value]);
 
 
-    const handleMouseDown = (e) => {
-        setIsDragging(true);
-        handleMouseMove(e);
-    };
+//     const handleColorChange = (color) => {
+//         setSelectedColor(color);
+//     };
 
-    const handleMouseMove = (e) => {
-        if (!isDragging) return;
 
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+//     const handleMouseDown = (e) => {
+//         setIsDragging(true);
+//         handleMouseMove(e);
+//     };
 
-        const centerX = size / 2;
-        const centerY = size / 2;
-        const dx = x - centerX;
-        const dy = y - centerY;
+//     const handleMouseMove = (e) => {
+//         if (!isDragging) return;
 
-        const angle = Math.atan2(dy, dx);
-        // let newHue = angle * (180 / Math.PI) + 90;
-        // if (newHue < 0) newHue += 360;
+//         const canvas = canvasRef.current;
+//         const rect = canvas.getBoundingClientRect();
+//         const x = e.clientX - rect.left;
+//         const y = e.clientY - rect.top;
 
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance <= size / 2) {
-            //   setHue(newHue);
+//         const centerX = size / 2;
+//         const centerY = size / 2;
+//         const dx = x - centerX;
+//         const dy = y - centerY;
 
-            // const triangleWidth = (size / 2) * Math.sqrt(3) / 2;
-            // const triangleHeight = centerY - triangleWidth / 2;
+//         const angle = Math.atan2(dy, dx);
+//         // let newHue = angle * (180 / Math.PI) + 90;
+//         // if (newHue < 0) newHue += 360;
 
-            // if (y >= triangleHeight && y <= triangleHeight + triangleWidth) {
-            const newSaturation = x / size * 100;
-            const newValue = y / size * 100;
+//         const distance = Math.sqrt(dx * dx + dy * dy);
+//         if (distance <= size / 2) {
+//             //   setHue(newHue);
 
-            console.log('newSaturation, newValue :>> ', newSaturation, newValue);
+//             // const triangleWidth = (size / 2) * Math.sqrt(3) / 2;
+//             // const triangleHeight = centerY - triangleWidth / 2;
 
-            setSaturation(Math.max(0, Math.min(100, newSaturation)));
-            setValue(Math.max(0, Math.min(100, newValue)));
-            // }
-        }
-    };
+//             // if (y >= triangleHeight && y <= triangleHeight + triangleWidth) {
+//             const newSaturation = x / size * 100;
+//             const newValue = y / size * 100;
 
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
+//             console.log('newSaturation, newValue :>> ', newSaturation, newValue);
 
-    useEffect(() => {
-        setSelectedColor({ h: hue, s: saturation, v: value });
-    }, [hue, saturation, value, setSelectedColor]);
+//             setSaturation(Math.max(0, Math.min(100, newSaturation)));
+//             setValue(Math.max(0, Math.min(100, newValue)));
+//             // }
+//         }
+//     };
 
-    return (
-        <canvas
-            ref={canvasRef}
-            width={size}
-            height={size}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-        />
-    );
-};
+//     const handleMouseUp = () => {
+//         setIsDragging(false);
+//     };
+
+//     useEffect(() => {
+//         setSelectedColor({ h: hue, s: saturation, v: value });
+//     }, [hue, saturation, value, setSelectedColor]);
+
+//     return (
+//         <canvas
+//             ref={canvasRef}
+//             width={size}
+//             height={size}
+//             onMouseDown={handleMouseDown}
+//             onMouseMove={handleMouseMove}
+//             onMouseUp={handleMouseUp}
+//             onMouseLeave={handleMouseUp}
+//         />
+//     );
+// };
 
 
 
