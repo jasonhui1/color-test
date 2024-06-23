@@ -21,66 +21,124 @@ function getSVFromPosition(x, y) {
     return { s: newSaturation, v: newValue }
 }
 
-export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) => {
+const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) => {
 
-    const [isDragging, setIsDragging] = useState(false);
+    const [isDraggingColor, setIsDraggingColor] = useState(false);
+    const [isDraggingHue, setIsDraggingHue] = useState(false);
     const divRef = useRef(null);
 
+    ///////////////////////////Cirlce///////////////////////
+    // r = 25
+    const defaultHueShift = 30
+
+    /////////////////////////Triangle///////////////////////
     //top 88 45
     //bot 88 255
     //mid 269 149
     const bb = { x1: 88, y1: 45, x2: 269, y2: 255 }
     const w = bb.y2 - bb.y1
 
-
     //Calculate the position
-    let selectedPosition = { x: 0, y: 0 };
+    let selectedColorPosition = { x: 0, y: 0 };
     const normalizePosition = getPositionFromSV(selectedColor.s, selectedColor.v)
-    selectedPosition = { x: normalizePosition.x * w + bb.x1, y: normalizePosition.y * w + bb.y1 }
+    selectedColorPosition = { x: normalizePosition.x * w + bb.x1, y: normalizePosition.y * w + bb.y1 }
+
+    let selectedHuePosition = { x: 0, y: 0 };
+    selectedHuePosition = {
+        x: -(150 - 25 / 2) * Math.cos((defaultHueShift + selectedColor.h) / 180 * Math.PI) + 150,
+        y: -(150 - 25 / 2) * Math.sin((defaultHueShift + selectedColor.h) / 180 * Math.PI) + 150,
+    }
+
+    function getRelativeXY(e) {
+        let x = -1
+        let y = -1
+        if (divRef.current) {
+            const rect = divRef.current.getBoundingClientRect();
+            x = e.clientX - rect.left;
+            y = e.clientY - rect.top;
+        }
+        return [x, y]
+    }
+
+    function withinTriangle(x, y) {
+        return (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2)
+    }
+
+    function withinCircle(x, y) {
+        let [x1, y1] = [150, 150]
+        const dist = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
+        //center = 150, r = 25
+        return dist >= (150 - 25)
+    }
 
 
     const handleMouseDown = (e) => {
-        setIsDragging(true);
-        updateColor(e);
-    };
+        let [x, y] = getRelativeXY(e)
+        if (x < 0 && y < 0) return
 
+        if (withinTriangle(x, y)) {
+            setIsDraggingColor(true);
+            updateColor(e);
+        } else if (withinCircle(x, y)) {
+            setIsDraggingHue(true);
+            updateHue(e);
+        }
+    };
 
     const handleMouseMove = (e) => {
-        if (!isDragging) return
-        updateColor(e);
-    };
-
-    const updateColor = (e) => {
-        if (divRef.current) {
-            const rect = divRef.current.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            let y = e.clientY - rect.top;
-            // console.log('x,y :>> ', x, y);
-
-            //within bounding box
-            if (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2) {
-                x -= bb.x1
-                y -= bb.y1
-
-                //trigonometry
-                const { s, v } = getSVFromPosition(x / w, y / w)
-
-                setSelectedColor({
-                    ...selectedColor,
-                    s: Math.max(0, Math.min(100, s)),
-                    v: Math.max(0, Math.max(0, v))
-                });
-
-            }
+        if (isDraggingColor) {
+            updateColor(e);
+        } else if (isDraggingHue) {
+            updateHue(e)
         }
     };
 
     const handleMouseUp = () => {
-        setIsDragging(false);
+        setIsDraggingColor(false);
+        setIsDraggingHue(false);
     };
 
+    const updateColor = (e) => {
+        let [x, y] = getRelativeXY(e)
+        if (x < 0 && y < 0) return
+        console.log('x,y :>> ', x, y);
+
+        //within bounding box
+        if (withinTriangle(x, y)) {
+            x -= bb.x1
+            y -= bb.y1
+
+            //trigonometry
+            const { s, v } = getSVFromPosition(x / w, y / w)
+
+            setSelectedColor({
+                ...selectedColor,
+                s: Math.max(0, Math.min(100, s)),
+                v: Math.max(0, Math.max(0, v))
+            });
+
+        }
+    };
+
+    const updateHue = (e) => {
+        const [x, y] = getRelativeXY(e)
+        if (x < 0 && y < 0) return
+
+        const angle = Math.atan2(y - 150, x - 150) * 180 / Math.PI + 180
+        let hue = angle - defaultHueShift
+
+        if (hue < 0) hue += 360
+
+
+        setSelectedColor({
+            ...selectedColor,
+            h: hue
+        });
+    };
+
+
     return (
-        <div className='w-[300px] h-[300px] relative' onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onClick={updateColor} ref={divRef}>
+        <div className='w-[300px] h-[300px] relative' onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} ref={divRef}>
             <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
                 userSelect: 'none',
                 WebkitUserDrag: 'none',
@@ -97,14 +155,15 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
             />
 
             {/* Indictator, one with white outline, one with black outline */}
-            <Indicator position={selectedPosition} width={10} height={10} color="white" border_width={2} />
-            <Indicator position={selectedPosition} width={12} height={12} color="black" />
+            <CircleIndicator position={selectedColorPosition} width={10} height={10} color="white" border_width={2} />
+            <CircleIndicator position={selectedColorPosition} width={12} height={12} color="black" />
+            <CircleIndicator position={selectedHuePosition} width={12} height={12} color="black" />
         </div>
 
     );
 };
 
-const Indicator = ({ position, width, height, color, border_width = 1 }) => {
+const CircleIndicator = ({ position, width, height, color, border_width = 1 }) => {
     return <div style={{
         position: 'absolute',
         left: `${position.x}px`,
@@ -168,7 +227,7 @@ export const ColorPicker = ({ selectedColor, setSelectedColor }) => {
 // export const SquareColorPicker = ({ size = 300, setSelectedColor }) => {
 
 //     const canvasRef = useRef(null);
-//     const [isDragging, setIsDragging] = useState(false);
+//     const [isDraggingColor, setIsDragging] = useState(false);
 //     const [hue, setHue] = useState(0);
 //     const [saturation, setSaturation] = useState(100);
 //     const [value, setValue] = useState(100);
@@ -222,7 +281,7 @@ export const ColorPicker = ({ selectedColor, setSelectedColor }) => {
 //     };
 
 //     const handleMouseMove = (e) => {
-//         if (!isDragging) return;
+//         if (!isDraggingColor) return;
 
 //         const canvas = canvasRef.current;
 //         const rect = canvas.getBoundingClientRect();
