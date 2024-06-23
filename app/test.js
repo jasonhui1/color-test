@@ -1,75 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { hexToHsl } from './utils';
-import {TriangularColorPicker} from './ColorPicker';
-import {SquareColorPicker} from './ColorPicker';
-import { hsvToHex } from 'colorsys';
-// const ColorWheel = ({hex, setHex}) => {
-//     return (
-//         <Sketch
-//             style={{ marginLeft: 20 }}
-//             color={hex}
-//             onChange={(color) => {
-//                 setHex(color.hex);
-//             }}
-//         />
-//     );
-// }
+import { TriangularColorPicker } from './ColorPicker';
 
 const ColorTrainingTool = () => {
     const [selectedColor, setSelectedColor] = useState({ h: 40, s: 100, v: 100 });
-    // const [hue, setHue] = useState(180);
-    // const [saturation, setSaturation] = useState(50);
-    // const [brightness, setBrightness] = useState(50);
     const backgroundColor = `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.v}%)`;
-    // const rgb  = selectedColor hsvToHex
-    // const backgroundColor = hsvToHex(selectedColor.h,selectedColor.s,selectedColor.v);
-
-    // useEffect(() => {
-    //     setHue(selectedColor.h)
-    //     setSaturation(selectedColor.s)
-    //     setBrightness(selectedColor.v)
-  
-    // }, [selectedColor])
-    
-
-    const cardStyle = {
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        padding: '16px',
-        marginBottom: '16px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    };
-
-    const colorDisplayStyle = {
-        width: '100%',
-        height: '160px',
-        marginBottom: '16px',
-        borderRadius: '4px',
-    };
-
-    const sliderContainerStyle = {
-        marginBottom: '16px',
-    };
-
-    const labelStyle = {
-        display: 'block',
-        marginBottom: '8px',
-    };
-
-    const sliderStyle = {
-        width: '100%',
-    };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '0 auto', padding: '16px' }}>
-            <div style={cardStyle}>
-                <h2 style={{ marginTop: 0 }}>Color Training Tool for Anime Illustration</h2>
+        <div className="max-w-lg mx-auto p-4">
+            <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
+                <h2 className="mt-0 mb-4 text-xl font-bold">Color Training Tool for Anime Illustration</h2>
                 <div
-                    style={{ ...colorDisplayStyle, backgroundColor }}
+                    className="w-full h-40 mb-4 rounded border-4 border-slate-300"
+                    style={{ backgroundColor }}
                 ></div>
+                <TriangularColorPicker size={300} selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
+
                 <div>
-                    <div style={sliderContainerStyle}>
-                        <label style={labelStyle}>Hue: {selectedColor.h}°</label>
+                    <div className="mb-4">
+                        <label className="block mb-2">Hue: {selectedColor.h}°</label>
                         <input
                             type="range"
                             min={0}
@@ -77,11 +25,11 @@ const ColorTrainingTool = () => {
                             step={1}
                             value={selectedColor.h}
                             onChange={(e) => setSelectedColor({ ...selectedColor, h: Number(e.target.value) })}
-                            style={sliderStyle}
+                            className="w-full"
                         />
                     </div>
-                    <div style={sliderContainerStyle}>
-                        <label style={labelStyle}>Saturation: {selectedColor.s}%</label>
+                    <div className="mb-4">
+                        <label className="block mb-2">Saturation: {selectedColor.s}%</label>
                         <input
                             type="range"
                             min={0}
@@ -89,28 +37,27 @@ const ColorTrainingTool = () => {
                             step={1}
                             value={selectedColor.s}
                             onChange={(e) => setSelectedColor({ ...selectedColor, s: Number(e.target.value) })}
-                            style={sliderStyle}
+                            className="w-full"
                         />
                     </div>
-                    <div style={sliderContainerStyle}>
-                        <label style={labelStyle}>Brightness: {selectedColor.v}%</label>
+                    <div className="mb-4">
+                        <label className="block mb-2">Brightness: {selectedColor.v}%</label>
                         <input
                             type="range"
                             min={0}
                             max={100}
                             step={1}
                             value={selectedColor.v}
-                            onChange={(e) =>setSelectedColor({ ...selectedColor, v: Number(e.target.value) })}
-                            style={sliderStyle}
+                            onChange={(e) => setSelectedColor({ ...selectedColor, v: Number(e.target.value) })}
+                            className="w-full"
                         />
                     </div>
                 </div>
             </div>
-        <TriangularColorPicker size={300} selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
-        {/* <SquareColorPicker size={300} setSelectedColor={setSelectedColor} /> */}
-            
-
+            {/* <SquareColorPicker size={300} setSelectedColor={setSelectedColor} /> */ }
         </div>
+
+
 
     );
 };
