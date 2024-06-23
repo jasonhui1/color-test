@@ -64,6 +64,27 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         return (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2)
     }
 
+    function withinTriangle_strict(x, y) {
+        //top 88 45
+        //bot 88 255
+        //mid 269 149
+        // Define the three vertices of the triangle
+        const [x1,y1] = [bb.x1, bb.y2]; // Bottom vertex
+        const [x2,y2] = [bb.x1, bb.y1]; // Top vertex
+        const [x3,y3] = [bb.x2, (bb.y1+bb.y2)/2]; // Middle vertex
+        
+        // Calculate the area of the full triangle
+        const fullArea = Math.abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2);
+
+        // Calculate areas of three sub-triangles formed by the point and triangle edges
+        const area1 = Math.abs((x * (y2 - y3) + x2 * (y3 - y) + x3 * (y - y2)) / 2);
+        const area2 = Math.abs((x1 * (y - y3) + x * (y3 - y1) + x3 * (y1 - y)) / 2);
+        const area3 = Math.abs((x1 * (y2 - y) + x2 * (y - y1) + x * (y1 - y2)) / 2);
+
+        // The point is inside the triangle if the sum of sub-areas equals the full area
+        return Math.abs(fullArea - (area1 + area2 + area3)) < 0.00001; // Using small epsilon for float comparison
+    }
+
     function withinCircle(x, y) {
         let [x1, y1] = [150, 150]
         const dist = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
@@ -76,7 +97,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         let [x, y] = getRelativeXY(e)
         if (x < 0 && y < 0) return
 
-        if (withinTriangle(x, y)) {
+        if (withinTriangle_strict(x, y)) {
             setIsDraggingColor(true);
             updateColor(e);
         } else if (withinCircle(x, y)) {
@@ -126,9 +147,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
 
         const angle = Math.atan2(y - 150, x - 150) * 180 / Math.PI + 180
         let hue = angle - defaultHueShift
-
         if (hue < 0) hue += 360
-
 
         setSelectedColor({
             ...selectedColor,
@@ -157,7 +176,8 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
             {/* Indictator, one with white outline, one with black outline */}
             <CircleIndicator position={selectedColorPosition} width={10} height={10} color="white" border_width={2} />
             <CircleIndicator position={selectedColorPosition} width={12} height={12} color="black" />
-            <CircleIndicator position={selectedHuePosition} width={12} height={12} color="black" />
+            <RectIndicator position={selectedHuePosition} width={10} height={22} color="white" border_width={2} rotation={selectedColor.h + 90 + defaultHueShift} />
+            <RectIndicator position={selectedHuePosition} width={12} height={24} color="black" rotation={selectedColor.h + 90 + defaultHueShift} />
         </div>
 
     );
@@ -173,6 +193,21 @@ const CircleIndicator = ({ position, width, height, color, border_width = 1 }) =
         borderRadius: '50%',
         border: border_width + 'px solid ' + color,
         transform: 'translate(-50%, -50%)',
+        pointerEvents: 'none'
+    }} />
+}
+
+
+const RectIndicator = ({ position, width, height, color, border_width = 1, rotation = 0 }) => {
+    return <div style={{
+        position: 'absolute',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: width + 'px',
+        height: height + 'px',
+        border: border_width + 'px solid ' + color,
+        transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+        transformOrigin: 'center center',
         pointerEvents: 'none'
     }} />
 }
