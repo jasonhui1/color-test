@@ -5,6 +5,23 @@ import color_combined from "../public/color_combined.png";
 import Image from 'next/image';
 import HueShiftImage from './HueShiftImage';
 
+function getPositionFromSV(s,v){
+    let y = (100 - v) / 100
+    let yh = (y < 0.5) ? y : 1 - y
+    let horizontalLineLength = Math.tan(Math.PI / 3) * yh
+
+    return {x: s/100 * horizontalLineLength, y: (100 - v) / 100}
+}
+
+function getSVFromPosition(x,y){
+    let yh = (y < 0.5) ? y : 1 - y
+    let horizontalLineLength = Math.tan(Math.PI / 3) * yh
+    const newSaturation = x / horizontalLineLength * 100
+    const newValue = 100 - (y)* 100;
+
+    return {s: x / horizontalLineLength * 100, v: 100 - (y)* 100}
+}
+
 export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) => {
 
     const [isDragging, setIsDragging] = useState(false);
@@ -21,13 +38,10 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
 
 
     //Calculate the position
-    const position = { x: 0, y: 0 };
-    let y = (100 - selectedColor.v) / 100
-    let yh = (y < 0.5) ? y : 1 - y
-    let horizontalLineLength = Math.tan(Math.PI / 3) * yh * w
-    position.x = selectedColor.s / 100 * horizontalLineLength + bb.x1
+    let selectedPosition = { x: 0, y: 0 };
+    const normalizePosition = getPositionFromSV(selectedColor.s, selectedColor.v)
+    selectedPosition = {x: normalizePosition.x*w + bb.x1, y: normalizePosition.y*w + bb.y1}
 
-    position.y = (100 - selectedColor.v) / 100 * w + bb.y1
 
     const handleMouseDown = (e) => {
         setIsDragging(true);
@@ -53,16 +67,12 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
                 y -= bb.y1
 
                 //trigonometry
-                let yh = (y < 0.5 * w) ? y : w - y
-                let horizontalLineLength = Math.tan(Math.PI / 3) * yh
-                const newSaturation = x / horizontalLineLength * 100
-
-                const newValue = 100 - (y) / (w) * 100;
+                const {s,v} = getSVFromPosition(x/w,y/w)
 
                 setSelectedColor({
                     ...selectedColor,
-                    s: Math.max(0, Math.min(100, newSaturation)),
-                    v: Math.max(0, Math.max(0, newValue))
+                    s: Math.max(0, Math.min(100, s)),
+                    v: Math.max(0, Math.max(0, v))
                 });
 
             }
@@ -93,8 +103,8 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
             {/* Indictator, one with white outline, one with black outline */}
             <div style={{
                 position: 'absolute',
-                left: `${position.x}px`,
-                top: `${position.y}px`,
+                left: `${selectedPosition.x}px`,
+                top: `${selectedPosition.y}px`,
                 width: '10px',
                 height: '10px',
                 borderRadius: '50%',
@@ -104,8 +114,8 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
             }} />
             <div style={{
                 position: 'absolute',
-                left: `${position.x}px`,
-                top: `${position.y}px`,
+                left: `${selectedPosition.x}px`,
+                top: `${selectedPosition.y}px`,
                 width: '12px',
                 height: '12px',
                 borderRadius: '50%',
