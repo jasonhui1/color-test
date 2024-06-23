@@ -97,19 +97,19 @@ export const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedCo
             />
 
             {/* Indictator, one with white outline, one with black outline */}
-            <Indicator position={selectedPosition} width={10} height={10} color="white" border_width={2}/>
+            <Indicator position={selectedPosition} width={10} height={10} color="white" border_width={2} />
             <Indicator position={selectedPosition} width={12} height={12} color="black" />
         </div>
 
     );
 };
 
-const Indicator = ({ position, width, height, color, border_width=1 }) => {
+const Indicator = ({ position, width, height, color, border_width = 1 }) => {
     return <div style={{
         position: 'absolute',
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: width+ 'px',
+        width: width + 'px',
         height: height + 'px',
         borderRadius: '50%',
         border: border_width + 'px solid ' + color,
@@ -118,6 +118,53 @@ const Indicator = ({ position, width, height, color, border_width=1 }) => {
     }} />
 }
 
+
+export const ColorPicker = ({ selectedColor, setSelectedColor }) => {
+    return (
+        <div>
+            <TriangularColorPicker size={300} selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
+
+            <div className="mt-4">
+                <div className="mb-4">
+                    <label className="block mb-2">Hue: {selectedColor.h}°</label>
+                    <input
+                        type="range"
+                        min={0}
+                        max={360}
+                        step={1}
+                        value={selectedColor.h}
+                        onChange={(e) => setSelectedColor({ ...selectedColor, h: Number(e.target.value) })}
+                        className="w-full"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block mb-2">Saturation: {selectedColor.s}%</label>
+                    <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={1}
+                        value={selectedColor.s}
+                        onChange={(e) => setSelectedColor({ ...selectedColor, s: Number(e.target.value) })}
+                        className="w-full"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block mb-2">Brightness: {selectedColor.v}%</label>
+                    <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        step={1}
+                        value={selectedColor.v}
+                        onChange={(e) => setSelectedColor({ ...selectedColor, v: Number(e.target.value) })}
+                        className="w-full"
+                    />
+                </div>
+            </div>
+        </div>
+    )
+}
 // export const SquareColorPicker = ({ size = 300, setSelectedColor }) => {
 
 //     const canvasRef = useRef(null);

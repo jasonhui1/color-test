@@ -1,6 +1,6 @@
 'use client'
  
-import ColorTrainingTool from "./test";
+import ColorTrainingTool from "./main";
 export default function Home() {
   return (
     <ColorTrainingTool/>
