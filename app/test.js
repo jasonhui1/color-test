@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { FaCheck, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { addHistory } from './Storage/test_history';
 
 const colorOptions = [
     { value: 'all', label: 'All Colors', range: [0, 360] },
@@ -33,7 +34,8 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
         }
 
         s = Math.floor(Math.random() * 101); // Saturation between 0 and 100
-        v = Math.floor(Math.random() * 101); // Value between 0 and 100
+        v = Math.floor(Math.random() * 90 + 5); // Value between 5 and 95
+        // v = Math.floor(Math.random() * 101); // Value between 0 and 100
 
         return { h, s, v };
     }, [colorRange]);
@@ -46,6 +48,7 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
 
     const checkResult = () => {
         setShowResult(true);
+        addHistory(targetColor, selectedColor);
     };
 
     const getAccuracy = () => {

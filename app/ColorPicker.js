@@ -29,7 +29,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
 
     ///////////////////////////Cirlce///////////////////////
     // r = 25
-    const defaultHueShift = 30
+    const defaultHueShift = 30 //by CSP
 
     /////////////////////////Triangle///////////////////////
     //top 88 45
@@ -60,14 +60,12 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         return [x, y]
     }
 
+    // Within bounding box (square)
     function withinTriangle(x, y) {
         return (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2)
     }
 
     function withinTriangle_strict(x, y) {
-        //top 88 45
-        //bot 88 255
-        //mid 269 149
         // Define the three vertices of the triangle
         const [x1,y1] = [bb.x1, bb.y2]; // Bottom vertex
         const [x2,y2] = [bb.x1, bb.y1]; // Top vertex

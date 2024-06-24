@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { ColorPicker, TriangularColorPicker } from './ColorPicker';
 import { FaCheck, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import ColorTest from './test';
+import ColorHistoryTable from './history';
 
 const colorOptions = [
     { value: 'all', label: 'All Colors', range: [0, 360] },
@@ -21,30 +22,34 @@ const ColorTrainingTool = () => {
 
     const backgroundColor = `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.v}%)`;
     return (
-        <div className="max-w-3xl mx-auto p-4 h-lvh flex flex-row items-center">
-            <div className='flex gap-4'>
-                <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
+        <div>
+            <div className="max-w-3xl mx-auto p-4 h-lvh flex flex-row items-center">
+                <div className='flex gap-4'>
+                    <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
 
-                    <div className="flex space-x-4 mb-4">
-                        <div className="w-1/2">
-                            <h3 className="text-lg font-semibold mb-2">Your Color</h3>
-                            <div
-                                className="w-full h-40 rounded border-4 border-slate-300"
-                                style={{ backgroundColor }}
-                            ></div>
+                        <div className="flex space-x-4 mb-4">
+                            <div className="w-1/2">
+                                <h3 className="text-lg font-semibold mb-2">Your Color</h3>
+                                <div
+                                    className="w-full h-40 rounded border-4 border-slate-300"
+                                    style={{ backgroundColor }}
+                                ></div>
+                            </div>
+                            <div className="w-1/2">
+                                <h3 className="text-lg font-semibold mb-2">Target Color</h3>
+                                <div
+                                    className="w-full h-40 rounded border-4 border-slate-300"
+                                    style={{ backgroundColor: targetColor ? `hsl(${targetColor.h}, ${targetColor.s}%, ${targetColor.v}%)` : 'white' }}
+                                ></div>
+                            </div>
                         </div>
-                        <div className="w-1/2">
-                            <h3 className="text-lg font-semibold mb-2">Target Color</h3>
-                            <div
-                                className="w-full h-40 rounded border-4 border-slate-300"
-                                style={{ backgroundColor: targetColor ? `hsl(${targetColor.h}, ${targetColor.s}%, ${targetColor.v}%)` : 'white' }}
-                            ></div>
-                        </div>
+                        <ColorTest selectedColor={selectedColor} targetColor={targetColor} setTargetColor={setTargetColor} />
                     </div>
-                    <ColorTest selectedColor={selectedColor} targetColor={targetColor} setTargetColor={setTargetColor}/>
+                    <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                 </div>
-                <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
             </div>
+
+            <ColorHistoryTable />
         </div>
 
     );
