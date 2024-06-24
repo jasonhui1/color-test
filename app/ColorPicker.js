@@ -14,11 +14,24 @@ function getPositionFromSV(s, v) {
 
 function getSVFromPosition(x, y) {
     const yh = (y < 0.5) ? y : 1 - y
+    //trigonometry
+
     const horizontalLineLength = Math.tan(Math.PI / 3) * yh
-    const newSaturation = x / horizontalLineLength * 100
-    const newValue = 100 - (y) * 100;
+    const newSaturation = Math.round(x / horizontalLineLength * 100)
+    const newValue = Math.round(100 - (y) * 100);
 
     return { s: newSaturation, v: newValue }
+}
+
+function getHueFromPosition(x, y, centerX, centerY) {
+    return Math.round(Math.atan2(y - centerY, x - centerX) * 180 / Math.PI + 180)
+}
+
+function getPositionFromHue(hue, radius, centerX, centerY) {
+    return {
+        x: -(centerX - radius / 2) * Math.cos((hue) / 180 * Math.PI) + centerX,
+        y: -(centerY - radius / 2) * Math.sin((hue) / 180 * Math.PI) + centerY,
+    }
 }
 
 const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) => {
@@ -27,9 +40,12 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
     const [isDraggingHue, setIsDraggingHue] = useState(false);
     const divRef = useRef(null);
 
+    const center = size / 2
+
     ///////////////////////////Cirlce///////////////////////
     // r = 25
     const defaultHueShift = 30 //by CSP
+    const radius = 25
 
     /////////////////////////Triangle///////////////////////
     //top 88 45
@@ -43,11 +59,8 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
     const normalizePosition = getPositionFromSV(selectedColor.s, selectedColor.v)
     selectedColorPosition = { x: normalizePosition.x * w + bb.x1, y: normalizePosition.y * w + bb.y1 }
 
-    let selectedHuePosition = { x: 0, y: 0 };
-    selectedHuePosition = {
-        x: -(150 - 25 / 2) * Math.cos((defaultHueShift + selectedColor.h) / 180 * Math.PI) + 150,
-        y: -(150 - 25 / 2) * Math.sin((defaultHueShift + selectedColor.h) / 180 * Math.PI) + 150,
-    }
+    const selectedHue = defaultHueShift + selectedColor.h
+    let selectedHuePosition = getPositionFromHue(selectedHue, radius, center, center)
 
     function getRelativeXY(e) {
         let x = -1
@@ -67,10 +80,10 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
 
     function withinTriangle_strict(x, y) {
         // Define the three vertices of the triangle
-        const [x1,y1] = [bb.x1, bb.y2]; // Bottom vertex
-        const [x2,y2] = [bb.x1, bb.y1]; // Top vertex
-        const [x3,y3] = [bb.x2, (bb.y1+bb.y2)/2]; // Middle vertex
-        
+        const [x1, y1] = [bb.x1, bb.y2]; // Bottom vertex
+        const [x2, y2] = [bb.x1, bb.y1]; // Top vertex
+        const [x3, y3] = [bb.x2, (bb.y1 + bb.y2) / 2]; // Middle vertex
+
         // Calculate the area of the full triangle
         const fullArea = Math.abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2);
 
@@ -84,10 +97,9 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
     }
 
     function withinCircle(x, y) {
-        let [x1, y1] = [150, 150]
+        let [x1, y1] = [center, center]
         const dist = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
-        //center = 150, r = 25
-        return dist >= (150 - 25)
+        return dist >= (center - radius)
     }
 
 
@@ -120,14 +132,13 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
     const updateColor = (e) => {
         let [x, y] = getRelativeXY(e)
         if (x < 0 && y < 0) return
-        console.log('x,y :>> ', x, y);
+        // console.log('x,y :>> ', x, y);
 
         //within bounding box
         if (withinTriangle(x, y)) {
             x -= bb.x1
             y -= bb.y1
 
-            //trigonometry
             const { s, v } = getSVFromPosition(x / w, y / w)
 
             setSelectedColor({
@@ -143,8 +154,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         const [x, y] = getRelativeXY(e)
         if (x < 0 && y < 0) return
 
-        const angle = Math.atan2(y - 150, x - 150) * 180 / Math.PI + 180
-        let hue = angle - defaultHueShift
+        let hue = getHueFromPosition(x, y, center, center) - defaultHueShift
         if (hue < 0) hue += 360
 
         setSelectedColor({

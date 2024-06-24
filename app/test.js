@@ -47,8 +47,10 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
     };
 
     const checkResult = () => {
+        if (!showResult) {
+            addHistory(targetColor, selectedColor);
+        }
         setShowResult(true);
-        addHistory(targetColor, selectedColor);
     };
 
     const getAccuracy = () => {
@@ -59,8 +61,8 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
         const val_diff = Math.abs(targetColor.v - selectedColor.v);
 
         const hueAccuracy = hue_diff <= 5 || hue_diff >= 355;
-        const satAccuracy = sat_diff <= 3;
-        const valAccuracy = val_diff <= 3;
+        const satAccuracy = sat_diff <= 5;
+        const valAccuracy = val_diff <= 5;
 
         return {
             hue: hueAccuracy ? 'correct' : selectedColor.h < targetColor.h ? 'low' : 'high',
@@ -134,7 +136,6 @@ const RenderResult = ({ type, result, difference }) => {
 }
 
 const RenderResultIcon = ({ result }) => {
-    console.log('result :>> ', result);
     switch (result) {
         case 'correct':
             return <FaCheck className="text-green-500" />;

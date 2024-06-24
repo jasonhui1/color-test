@@ -20,8 +20,6 @@ const ColorHistoryTable = () => {
                 <tbody>
                     {history.map(({ targetColor, selectedColor, timestamp }, index) => {
                         const difference = calculateHSVDifference(targetColor, selectedColor);
-                        console.log('targetColor :>> ', targetColor);
-                        console.log('selectedColor :>> ', selectedColor);
 
                         return (
                             <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
@@ -60,8 +58,8 @@ export default ColorHistoryTable;
 
 const calculateHSVDifference = (color1, color2) => {
     const hueDiff = Math.abs(color1.h - color2.h);
-    const satDiff = (color1.s - color2.s);
-    const valDiff = (color1.v - color2.v);
+    const satDiff = -(color1.s - color2.s);
+    const valDiff = -(color1.v - color2.v);
 
     return {
         h: hueDiff > 180 ? 360 - hueDiff : hueDiff,
