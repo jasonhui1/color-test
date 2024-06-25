@@ -21,7 +21,7 @@ const ColorHistoryTable = () => {
                 </thead>
                 <tbody>
                     {history.map(({ targetColor, selectedColor, timestamp , mode}, index) => {
-                        const difference = calculateHLSDifference(targetColor, selectedColor);
+                        const difference = calculateHLSDifference(targetColor, selectedColor , false);
 
                         return (
                             <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>

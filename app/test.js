@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { FaCheck, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { addHistory } from './Storage/test_history';
-import { calculateHLSDifference, getRandomInt } from './utils';
+import { calculateHLSDifference, getRandomInt, getRandomIntStep } from './utils';
+import { ColorPicker } from './ColorPicker';
 
 const colorOptions = [
     { value: 'all', label: 'All Colors', range: [0, 360] },
@@ -35,11 +36,23 @@ const saturationOptions = [
     { value: 'custom', label: 'Custom', range: [] },
 ];
 
-function generateRandomColor(h_range, s_range, v_range) {
+const all_difficulities = [
+    { value: 'easy', label: 'Easy', step: 20 },
+    { value: 'normal', label: 'Normal', step: 10 },
+    { value: 'hard', label: 'Hard', step: 5 },
+
+]
+
+
+function generateRandomColor(h_range, s_range, v_range, step = 1) {
+
+
     // allow wrapping
-    const h = getRandomInt(h_range[0], h_range[1]) % 361;
-    const s = getRandomInt(s_range[0], s_range[1]) % 101;
-    const v = getRandomInt(v_range[0], v_range[1]) % 101;
+    //TODO: hacking h difficulty
+    const h = getRandomIntStep(h_range[0], h_range[1], step === 20 ? 15 : step) % 361;
+    const s = getRandomIntStep(s_range[0], s_range[1], step) % 101;
+    const v = getRandomIntStep(v_range[0], v_range[1], step) % 101;
+
 
     return { h, s, v };
 }
@@ -53,26 +66,33 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
     const [sRange, setSRange] = useState([0, 100]);
     const [vRange, setVRange] = useState([0, 100]);
 
+    const [difficulties, setDifficulties] = useState('easy')
+
     const setRandomTargetColor = () => {
-        let currentTargetColor = targetColor
-        let newTargetColor;
 
         function generateTargetColor() {
-            if (mode === 'bw') {
-                newTargetColor = generateRandomColor([0, 0], [0, 0], vRange);
-            } else {
-                newTargetColor = generateRandomColor(hRange, sRange, vRange);
-            }
-        }
-        generateTargetColor();
+            let newTargetColor;
+            do {
+                const step = all_difficulities.find((option) => option.value === difficulties).step
+                if (mode === 'bw') {
+                    newTargetColor = generateRandomColor([0, 0], [0, 0], vRange, step);
+                } else {
+                    newTargetColor = generateRandomColor(hRange, sRange, vRange, step);
+                }
 
-        //Regenerate if too close
-        let diff = calculateHLSDifference(currentTargetColor, newTargetColor)
-        while (diff.h < 5 && diff.s < 5 && diff.l < 5) {
-            diff = calculateHLSDifference(currentTargetColor, newTargetColor)
-            generateTargetColor();
+                if (!targetColor) break;
+
+                let diff = calculateHLSDifference(targetColor, newTargetColor);
+                if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
+
+            } while (true);
+
+            return newTargetColor
         }
 
+
+        let newTargetColor = generateTargetColor();
+        console.log('newTargetColor :>> ', newTargetColor);
         setTargetColor(newTargetColor);
     };
 
@@ -105,33 +125,29 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
 
         };
     };
+
+    const onChangeDifficulty = (setCurrent) => {
+        return (e) => {
+            const value = e.target.value;
+            setCurrent(value);
+        };
+    };
+
     return (
         <div>
             <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">Color Test</h3>
-
-                <div className='flex flex-col gap-4 mb-4'>
-
-                    {mode !== 'bw' &&
-                        <div className='flex gap-4 items-center  justify-between'>
-                            <RangeSelection current={hSelected} setCurrent={setHSelected} setRange={setHRange} options={colorOptions} label={'H'} />
-                            <CustomRangeSelector range={hRange} setCustomRange={setHRange} min={0} max={720} onChange={() => setHSelected('custom')} />
-                        </div>
-                    }
-
-
-                    <div className='flex gap-4 items-center justify-between'>
-                        <RangeSelection current={vSelected} setCurrent={setVSelected} setRange={setVRange} options={brightnessOptions} label={'L'} />
-                        <CustomRangeSelector range={vRange} setCustomRange={setVRange} min={0} max={200} onChange={() => setVSelected('custom')} />
-                    </div>
-
-                    {mode !== 'bw' &&
-                        <div className='flex gap-4 items-center justify-between'>
-                            <RangeSelection current={sSelected} setCurrent={setSSelected} setRange={setSRange} options={saturationOptions} label={'S'} />
-                            <CustomRangeSelector range={sRange} setCustomRange={setSRange} min={0} max={200} onChange={() => setSSelected('custom')} />
-                        </div>
-                    }
+                <DisplayColorRange/>
+                <div className='flex justify-between'>
+                    <h3 className="text-lg font-semibold mb-2">Color Test</h3>
+                    <SelectBox current={difficulties} onChange={onChangeDifficulty(setDifficulties)} options={all_difficulities} label={'Difficulty'} />
                 </div>
+
+                <RangeSelect hSelected={hSelected} setHSelected={setHSelected} setHRange={setHRange} hRange={hRange}
+                    sSelected={sSelected} setSSelected={setSSelected} setSRange={setSRange} sRange={sRange}
+                    vSelected={vSelected} setVSelected={setVSelected} setVRange={setVRange} vRange={vRange}
+                    mode={mode}
+                />
+
                 <button
                     onClick={startTest}
                     className="bg-blue-500 text-white px-4 py-2 rounded mr-4 hover:bg-blue-600"
@@ -166,17 +182,57 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
     );
 }
 
-const RangeSelection = ({ current, setCurrent, setRange, options, label }) => {
+
+const RangeSelect = ({
+    hSelected, setHSelected, hRange, setHRange,
+    sSelected, setSSelected, sRange, setSRange,
+    vSelected, setVSelected, vRange, setVRange,
+    mode }) => {
+
+    function onChange(setCurrent, setRange, options) {
+        return function (e) {
+            const value = e.target.value
+            setCurrent(value);
+            if (value === 'custom') return
+            setRange(options.find((option) => option.value === value).range)
+        }
+
+    }
+
+    return (
+
+        <div className='flex flex-col gap-4 my-4'>
+            {
+                mode !== 'bw' &&
+                <div className='flex gap-4 items-center  justify-between'>
+                    <SelectBox current={hSelected} onChange={onChange(setHSelected, setHRange, colorOptions)} options={colorOptions} label={'H'} />
+                    <CustomRangeSelector range={hRange} setCustomRange={setHRange} min={0} max={720} onChange={() => setHSelected('custom')} />
+                </div>
+            }
+
+
+            <div className='flex gap-4 items-center justify-between'>
+                <SelectBox current={vSelected} onChange={onChange(setVSelected, setVRange, brightnessOptions)} options={brightnessOptions} label={'L'} />
+                <CustomRangeSelector range={vRange} setCustomRange={setVRange} min={0} max={200} onChange={() => setVSelected('custom')} />
+            </div>
+
+            {
+                mode !== 'bw' &&
+                <div className='flex gap-4 items-center justify-between'>
+                    <SelectBox current={sSelected} onChange={onChange(setSSelected, setSRange, saturationOptions)} options={saturationOptions} label={'S'} />
+                    <CustomRangeSelector range={sRange} setCustomRange={setSRange} min={0} max={200} onChange={() => setSSelected('custom')} />
+                </div>
+            }
+        </div>)
+}
+
+const SelectBox = ({ current, onChange, options, label }) => {
     return (
         <div className="flex items-center space-x-4">
             <label className="font-medium">{label}:</label>
             <select
                 value={current}
-                onChange={(e) => {
-                    setCurrent(e.target.value);
-                    if (e.target.value === 'custom') return
-                    setRange(options.find((option) => option.value === e.target.value).range)
-                }}
+                onChange={(e) => onChange(e)}
                 className="border rounded px-2 py-1"
             >
                 {options.map((option) => (

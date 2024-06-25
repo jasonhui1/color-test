@@ -48,11 +48,20 @@ export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+export function getRandomIntStep(min, max, step) {
+    const steps = Math.floor((max - min) / step);
+    const randomStep = Math.floor(Math.random() * (steps + 1));
+    return min + (randomStep * step);
+}
 
-export const calculateHLSDifference = (color1, color2) => {
+
+export const calculateHLSDifference = (color1, color2, abs = true) => {
     const HDiff = Math.abs(color1.h - color2.h);
-    const LDiff = -(color1.v - color2.v);
-    const SDiff = -(color1.s - color2.s);
+    let LDiff = -(color1.v - color2.v);
+    let SDiff = -(color1.s - color2.s);
+
+    LDiff = abs ? LDiff : Math.abs(LDiff);
+    SDiff = abs ? SDiff : Math.abs(SDiff);
 
     return {
         h: HDiff > 180 ? 360 - HDiff : HDiff,
