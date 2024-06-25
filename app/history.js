@@ -1,4 +1,5 @@
 import { getHistory } from "./Storage/test_history"
+import { calculateHLSDifference } from "./utils";
 
 
 const ColorHistoryTable = () => {
@@ -12,14 +13,15 @@ const ColorHistoryTable = () => {
                         <th className="px-4 py-2 text-left">Timestamp</th>
                         <th className="px-4 py-2 text-left">Target Color</th>
                         <th className="px-4 py-2 text-left">Selected Color</th>
-                        <th className="px-4 py-2 text-left">Hue Diff</th>
-                        <th className="px-4 py-2 text-left">Saturation Diff</th>
-                        <th className="px-4 py-2 text-left">Value Diff</th>
+                        <th className="px-4 py-2 text-left">H Diff</th>
+                        <th className="px-4 py-2 text-left">L Diff</th>
+                        <th className="px-4 py-2 text-left">S Diff</th>
+                        <th className="px-4 py-2 text-left">Mode</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {history.map(({ targetColor, selectedColor, timestamp }, index) => {
-                        const difference = calculateHSVDifference(targetColor, selectedColor);
+                    {history.map(({ targetColor, selectedColor, timestamp , mode}, index) => {
+                        const difference = calculateHLSDifference(targetColor, selectedColor);
 
                         return (
                             <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
@@ -43,8 +45,9 @@ const ColorHistoryTable = () => {
                                 </td>
 
                                 <td className="px-4 py-2 border-t">{difference.h}</td>
+                                <td className="px-4 py-2 border-t">{difference.l}</td>
                                 <td className="px-4 py-2 border-t">{difference.s}</td>
-                                <td className="px-4 py-2 border-t">{difference.v}</td>
+                                <td className="px-4 py-2 border-t">{mode}</td>
                             </tr>
                         );
                     })}
@@ -55,15 +58,3 @@ const ColorHistoryTable = () => {
 };
 
 export default ColorHistoryTable;
-
-const calculateHSVDifference = (color1, color2) => {
-    const hueDiff = Math.abs(color1.h - color2.h);
-    const satDiff = -(color1.s - color2.s);
-    const valDiff = -(color1.v - color2.v);
-
-    return {
-        h: hueDiff > 180 ? 360 - hueDiff : hueDiff,
-        s: satDiff,
-        v: valDiff
-    };
-};

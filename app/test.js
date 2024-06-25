@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { FaCheck, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { addHistory } from './Storage/test_history';
-import { getRandomInt } from './utils';
+import { calculateHLSDifference, getRandomInt } from './utils';
 
 const colorOptions = [
     { value: 'all', label: 'All Colors', range: [0, 360] },
@@ -44,44 +44,63 @@ function generateRandomColor(h_range, s_range, v_range) {
     return { h, s, v };
 }
 
-const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
+const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedResult, setCheckedResult }) => {
     const [hSelected, setHSelected] = useState('all');
     const [sSelected, setSSelected] = useState('all');
     const [vSelected, setVSelected] = useState('all');
-    const [showResult, setShowResult] = useState(false);
 
     const [hRange, setHRange] = useState([0, 360]);
     const [sRange, setSRange] = useState([0, 100]);
     const [vRange, setVRange] = useState([0, 100]);
 
-    const startTest = () => {
-        const newTargetColor = generateRandomColor(hRange, sRange, vRange);
+    const setRandomTargetColor = () => {
+        let currentTargetColor = targetColor
+        let newTargetColor;
+
+        function generateTargetColor() {
+            if (mode === 'bw') {
+                newTargetColor = generateRandomColor([0, 0], [0, 0], vRange);
+            } else {
+                newTargetColor = generateRandomColor(hRange, sRange, vRange);
+            }
+        }
+        generateTargetColor();
+
+        //Regenerate if too close
+        let diff = calculateHLSDifference(currentTargetColor, newTargetColor)
+        while (diff.h < 5 && diff.s < 5 && diff.l < 5) {
+            diff = calculateHLSDifference(currentTargetColor, newTargetColor)
+            generateTargetColor();
+        }
+
         setTargetColor(newTargetColor);
-        setShowResult(false);
+    };
+
+    const startTest = () => {
+        setRandomTargetColor()
+        setCheckedResult(false);
     };
 
     const checkResult = () => {
-        if (!showResult) {
-            addHistory(targetColor, selectedColor);
+        if (!checkedResult) {
+            addHistory(targetColor, selectedColor, mode);
         }
-        setShowResult(true);
+        setCheckedResult(true)
     };
 
     const getAccuracy = () => {
         if (!targetColor) return { hue: 'N/A', saturation: 'N/A', value: 'N/A' };
 
-        const hue_diff = Math.abs(targetColor.h - selectedColor.h);
-        const sat_diff = Math.abs(targetColor.s - selectedColor.s);
-        const val_diff = Math.abs(targetColor.v - selectedColor.v);
+        const { h: hue_diff, s: sat_diff, l: val_diff } = calculateHLSDifference(targetColor, selectedColor);
 
-        const hueAccuracy = hue_diff <= 5 || hue_diff >= 355;
-        const satAccuracy = sat_diff <= 5;
-        const valAccuracy = val_diff <= 5;
+        const HAccuracy = hue_diff <= 5;
+        const SAccuracy = sat_diff <= 5;
+        const LAccuracy = val_diff <= 5;
 
         return {
-            hue: hueAccuracy ? 'correct' : selectedColor.h < targetColor.h ? 'low' : 'high',
-            saturation: satAccuracy ? 'correct' : selectedColor.s < targetColor.s ? 'low' : 'high',
-            value: valAccuracy ? 'correct' : selectedColor.v < targetColor.v ? 'low' : 'high',
+            hue: HAccuracy ? 'correct' : selectedColor.h < targetColor.h ? 'low' : 'high',
+            saturation: SAccuracy ? 'correct' : selectedColor.s < targetColor.s ? 'low' : 'high',
+            value: LAccuracy ? 'correct' : selectedColor.v < targetColor.v ? 'low' : 'high',
             hue_diff, sat_diff, val_diff
 
         };
@@ -93,10 +112,12 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
 
                 <div className='flex flex-col gap-4 mb-4'>
 
-                    <div className='flex gap-4 items-center  justify-between'>
-                        <RangeSelection current={hSelected} setCurrent={setHSelected} setRange={setHRange} options={colorOptions} label={'H'} />
-                        <CustomRangeSelector range={hRange} setCustomRange={setHRange} min={0} max={720} onChange={() => setHSelected('custom')} />
-                    </div>
+                    {mode !== 'bw' &&
+                        <div className='flex gap-4 items-center  justify-between'>
+                            <RangeSelection current={hSelected} setCurrent={setHSelected} setRange={setHRange} options={colorOptions} label={'H'} />
+                            <CustomRangeSelector range={hRange} setCustomRange={setHRange} min={0} max={720} onChange={() => setHSelected('custom')} />
+                        </div>
+                    }
 
 
                     <div className='flex gap-4 items-center justify-between'>
@@ -104,10 +125,12 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
                         <CustomRangeSelector range={vRange} setCustomRange={setVRange} min={0} max={200} onChange={() => setVSelected('custom')} />
                     </div>
 
-                    <div className='flex gap-4 items-center justify-between'>
-                        <RangeSelection current={sSelected} setCurrent={setSSelected} setRange={setSRange} options={saturationOptions} label={'S'} />
-                        <CustomRangeSelector range={sRange} setCustomRange={setSRange} min={0} max={200} onChange={() => setSSelected('custom')} />
-                    </div>
+                    {mode !== 'bw' &&
+                        <div className='flex gap-4 items-center justify-between'>
+                            <RangeSelection current={sSelected} setCurrent={setSSelected} setRange={setSRange} options={saturationOptions} label={'S'} />
+                            <CustomRangeSelector range={sRange} setCustomRange={setSRange} min={0} max={200} onChange={() => setSSelected('custom')} />
+                        </div>
+                    }
                 </div>
                 <button
                     onClick={startTest}
@@ -124,16 +147,16 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor }) => {
                 </button>
             </div>
 
-            {showResult && (
+            {checkedResult && (
                 <div className="mt-4 p-4 bg-gray-100 rounded-lg">
                     <h3 className="text-lg font-semibold mb-2">Result</h3>
                     {(() => {
                         const accuracy = getAccuracy();
                         return (
                             <div>
-                                <RenderResult type='Hue' result={accuracy.hue} difference={accuracy.hue_diff} />
-                                <RenderResult type='Saturation' result={accuracy.saturation} difference={accuracy.sat_diff} />
-                                <RenderResult type='Value' result={accuracy.value} difference={accuracy.val_diff} />
+                                {mode !== 'bw' && <RenderResult type='Hue' result={accuracy.hue} difference={accuracy.hue_diff} />}
+                                <RenderResult type='Lightness' result={accuracy.value} difference={accuracy.val_diff} />
+                                {mode !== 'bw' && <RenderResult type='Saturation' result={accuracy.saturation} difference={accuracy.sat_diff} />}
                             </div>
                         );
                     })()}

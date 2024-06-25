@@ -74,9 +74,9 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
     }
 
     // Within bounding box (square)
-    function withinTriangle(x, y) {
-        return (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2)
-    }
+    // function withinTriangle(x, y) {
+    //     return (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2)
+    // }
 
     function withinTriangle_strict(x, y) {
         // Define the three vertices of the triangle
@@ -135,7 +135,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         // console.log('x,y :>> ', x, y);
 
         //within bounding box
-        if (withinTriangle(x, y)) {
+        // if (withinTriangle(x, y)) {
             x -= bb.x1
             y -= bb.y1
 
@@ -144,10 +144,10 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
             setSelectedColor({
                 ...selectedColor,
                 s: Math.max(0, Math.min(100, s)),
-                v: Math.max(0, Math.max(0, v))
+                v: Math.max(0, Math.min(100, v))
             });
 
-        }
+        // }
     };
 
     const updateHue = (e) => {

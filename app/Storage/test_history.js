@@ -10,12 +10,13 @@ const loadResultsFromStorage = () => {
     return cachedResults;
 };
 
-export const addHistory = (targetColor, selectedColor) => {
+export const addHistory = (targetColor, selectedColor, mode = 'normal') => {
     const cards = getHistory();
     cards.push({
         timestamp: new Date().toISOString(),
         targetColor,
         selectedColor,
+        mode
     });
     localStorage.setItem(storageKey, JSON.stringify(cards));
 };

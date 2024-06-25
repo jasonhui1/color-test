@@ -46,4 +46,17 @@ export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+}
+
+
+export const calculateHLSDifference = (color1, color2) => {
+    const HDiff = Math.abs(color1.h - color2.h);
+    const LDiff = -(color1.v - color2.v);
+    const SDiff = -(color1.s - color2.s);
+
+    return {
+        h: HDiff > 180 ? 360 - HDiff : HDiff,
+        l: LDiff,
+        s: SDiff,
+    };
+};
