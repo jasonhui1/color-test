@@ -3,6 +3,7 @@ import color_wheel from "../public/color_wheel.png";
 import Image from 'next/image';
 import HueShiftImage from './HueShiftImage';
 
+const defaultHueShift = 30 //by CSP
 function getPositionFromSV(s, v) {
     const y = (100 - v) / 100
     const yh = (y < 0.5) ? y : 1 - y
@@ -44,7 +45,6 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
 
     ///////////////////////////Cirlce///////////////////////
     // r = 25
-    const defaultHueShift = 30 //by CSP
     const radius = 25
 
     /////////////////////////Triangle///////////////////////
@@ -136,16 +136,16 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
 
         //within bounding box
         // if (withinTriangle(x, y)) {
-            x -= bb.x1
-            y -= bb.y1
+        x -= bb.x1
+        y -= bb.y1
 
-            const { s, v } = getSVFromPosition(x / w, y / w)
+        const { s, v } = getSVFromPosition(x / w, y / w)
 
-            setSelectedColor({
-                ...selectedColor,
-                s: Math.max(0, Math.min(100, s)),
-                v: Math.max(0, Math.min(100, v))
-            });
+        setSelectedColor({
+            ...selectedColor,
+            s: Math.max(0, Math.min(100, s)),
+            v: Math.max(0, Math.min(100, v))
+        });
 
         // }
     };
@@ -162,7 +162,6 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
             h: hue
         });
     };
-
 
     return (
         <div className='w-[300px] h-[300px] relative' onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} ref={divRef}>
@@ -206,11 +205,11 @@ const CircleIndicator = ({ position, width, height, color, border_width = 1 }) =
 }
 
 
-const RectIndicator = ({ position, width, height, color, border_width = 1, rotation = 0 }) => {
+const RectIndicator = ({ position, width, height, color, border_width = 1, unit = 'px', rotation = 0, }) => {
     return <div style={{
         position: 'absolute',
-        left: `${position.x}px`,
-        top: `${position.y}px`,
+        left: `${position.x}${unit}`,
+        top: `${position.y}${unit}`,
         width: width + 'px',
         height: height + 'px',
         border: border_width + 'px solid ' + color,
@@ -221,49 +220,80 @@ const RectIndicator = ({ position, width, height, color, border_width = 1, rotat
 }
 
 
+
+
 export const ColorPicker = ({ selectedColor, setSelectedColor }) => {
+
+    const updateColor = (type, value) => {
+        setSelectedColor(prev => ({ ...prev, [type]: value }));
+    };
+
     return (
         <div>
             <TriangularColorPicker size={300} selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
 
             <div className="mt-4">
-                <div className="mb-4">
-                    <label className="block mb-2">Hue: {selectedColor.h}°</label>
-                    <input
-                        type="range"
-                        min={0}
-                        max={360}
-                        step={1}
-                        value={selectedColor.h}
-                        onChange={(e) => setSelectedColor({ ...selectedColor, h: Number(e.target.value) })}
-                        className="w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2">Saturation: {selectedColor.s}%</label>
-                    <input
-                        type="range"
-                        min={0}
-                        max={100}
-                        step={1}
-                        value={selectedColor.s}
-                        onChange={(e) => setSelectedColor({ ...selectedColor, s: Number(e.target.value) })}
-                        className="w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block mb-2">Brightness: {selectedColor.v}%</label>
-                    <input
-                        type="range"
-                        min={0}
-                        max={100}
-                        step={1}
-                        value={selectedColor.v}
-                        onChange={(e) => setSelectedColor({ ...selectedColor, v: Number(e.target.value) })}
-                        className="w-full"
-                    />
-                </div>
+                <HSLControl selectedColor={selectedColor} label="H" value={selectedColor.h} min={0} max={360} onChange={(value) => updateColor('h', value)} />
+                <HSLControl selectedColor={selectedColor} label="L" value={selectedColor.v} min={0} max={100} onChange={(value) => updateColor('v', value)} />
+                <HSLControl selectedColor={selectedColor} label="S" value={selectedColor.s} min={0} max={100} onChange={(value) => updateColor('s', value)} />
             </div>
+        </div>
+    );
+};
+
+const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
+
+    const sliderRef = useRef(null);
+    const background =
+        label === 'H' ? `linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%) ` :
+            label === 'S' ? `linear-gradient(to right, hsl(${selectedColor.h}, 0%, ${selectedColor.v}%) 0%,  hsl(${selectedColor.h}, 100%, ${selectedColor.v}%) 100% ` :
+                `linear-gradient(to right, hsl(${selectedColor.h}, ${selectedColor.s}%, 0%) 0%,  hsl(${selectedColor.h}, ${selectedColor.s}%, 50%) 50% ,  hsl(${selectedColor.h}, ${selectedColor.s}%, 100%) 100% `
+
+
+    const handleSliderChange = (e) => {
+        const rect = sliderRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const newValue = Math.round((x / rect.width) * (max - min) + min);
+        onChange(Math.max(min, Math.min(max, newValue)));
+    };
+
+    const handleMouseDown = (e) => {
+        handleSliderChange(e);
+        document.addEventListener('mousemove', handleSliderChange);
+        document.addEventListener('mouseup', handleMouseUp);
+    };
+
+    const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleSliderChange);
+        document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    return (
+        <div className="flex flex-row gap-4 mb-4 justify-between items-center  ">
+            <label className="">{label} </label>
+            <div
+                ref={sliderRef}
+                className={`flex-grow h-4 relative cursor-pointer border border-gray-500`}
+                onMouseDown={handleMouseDown}
+                style={{ background: `${background}` }}
+            >
+
+                <div
+                    className="absolute -bottom-2 w-0 h-0 
+                     border-l-[6px] border-l-transparent 
+                     border-r-[6px] border-r-transparent 
+                     border-b-[8px] border-b-gray-600"
+                    style={{ left: `calc(${(value - min) / (max - min) * 100}% - 8px)` }}
+                />
+            </div>
+            <input
+                type="number"
+                className="w-16 ml-4 p-1 border rounded"
+                value={value}
+                onChange={(e) => onChange(Math.max(min, Math.min(max, Number(e.target.value))))}
+                min={min}
+                max={max}
+            />
         </div>
     )
 }

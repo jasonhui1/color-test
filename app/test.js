@@ -111,11 +111,11 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
     const getAccuracy = () => {
         if (!targetColor) return { hue: 'N/A', saturation: 'N/A', value: 'N/A' };
 
-        const { h: hue_diff, s: sat_diff, l: val_diff } = calculateHLSDifference(targetColor, selectedColor);
+        const { h: hue_diff, s: sat_diff, l: val_diff } = calculateHLSDifference(targetColor, selectedColor, false);
 
-        const HAccuracy = hue_diff <= 5;
-        const SAccuracy = sat_diff <= 5;
-        const LAccuracy = val_diff <= 5;
+        const HAccuracy = Math.abs(hue_diff) <= 5;
+        const SAccuracy = Math.abs(sat_diff) <= 5;
+        const LAccuracy = Math.abs(val_diff) <= 5;
 
         return {
             hue: HAccuracy ? 'correct' : selectedColor.h < targetColor.h ? 'low' : 'high',
@@ -136,7 +136,6 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
     return (
         <div>
             <div className="mt-6">
-                <DisplayColorRange/>
                 <div className='flex justify-between'>
                     <h3 className="text-lg font-semibold mb-2">Color Test</h3>
                     <SelectBox current={difficulties} onChange={onChangeDifficulty(setDifficulties)} options={all_difficulities} label={'Difficulty'} />

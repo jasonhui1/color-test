@@ -56,8 +56,10 @@ const ColorTrainingTool = () => {
                                 </div>
                             </div>
 
-                            {targetColor &&
+                            <DisplayColorRange />
 
+
+                            {targetColor &&
                                 <div className="flex space-x-4 mb-4 justify-center">
 
 
@@ -79,9 +81,9 @@ const ColorTrainingTool = () => {
                                             ></div>
                                         </div>
                                     )}
-
                                 </div>
                             }
+
 
                             <ColorTest selectedColor={selectedColor} targetColor={targetColor} setTargetColor={setTargetColor}
                                 mode={mode} checkedResult={checkedResult} setCheckedResult={setCheckedResult}

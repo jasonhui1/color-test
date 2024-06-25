@@ -60,8 +60,8 @@ export const calculateHLSDifference = (color1, color2, abs = true) => {
     let LDiff = -(color1.v - color2.v);
     let SDiff = -(color1.s - color2.s);
 
-    LDiff = abs ? LDiff : Math.abs(LDiff);
-    SDiff = abs ? SDiff : Math.abs(SDiff);
+    LDiff = abs ?  Math.abs(LDiff) : LDiff;
+    SDiff = abs ?  Math.abs(SDiff) : SDiff;
 
     return {
         h: HDiff > 180 ? 360 - HDiff : HDiff,
