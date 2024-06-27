@@ -4,6 +4,7 @@ import { calculateHLSDifference, getRandomInt, getRandomIntStep } from './utils'
 import { ColorPicker } from './ColorPicker';
 import TestControls from './Test/TestParamterControl';
 import { RenderResult, ResultDisplay } from './Test/ResultDisplay';
+
 const all_difficulities = [
     { value: 'easy', label: 'Easy', step: 20 },
     { value: 'normal', label: 'Normal', step: 10 },
@@ -24,9 +25,6 @@ function generateRandomColor(h_range, s_range, l_range, step = 1) {
 }
 
 const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedResult, setCheckedResult }) => {
-    const [hSelected, setHSelected] = useState('all');
-    const [sSelected, setSSelected] = useState('all');
-    const [lSelected, setLSelected] = useState('all');
 
     const [hRange, setHRange] = useState([0, 360]);
     const [sRange, setSRange] = useState([0, 100]);
@@ -58,9 +56,7 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
             return newTargetColor
         }
 
-
         let newTargetColor = generateTargetColor();
-        console.log('newTargetColor :>> ', newTargetColor);
         setTargetColor(newTargetColor);
     };
 
@@ -95,20 +91,12 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
         }
     };
 
-
-    const onChangeDifficulty = (setCurrent) => {
-        return (e) => {
-            const value = e.target.value;
-            setCurrent(value);
-        };
-    };
-
     return (
         <div>
             <div className="mt-6">
                 <TestControls difficulties={difficulties} setDifficulties={setDifficulties} mode={mode}
-                    hSelected={hSelected} sSelected={sSelected} lSelected={lSelected} setHSelected={setHSelected} setLSelected={setLSelected} setSSelected={setSSelected}
-                    hRange={hRange} sRange={sRange} lRange={lRange} setHRange={setHRange} setSRange={setSRange} setLRange={setLRange} />
+                    hRange={hRange} sRange={sRange} lRange={lRange}
+                    setHRange={setHRange} setSRange={setSRange} setLRange={setLRange} />
 
                 <button
                     onClick={startTest}
