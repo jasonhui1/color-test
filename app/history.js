@@ -20,8 +20,8 @@ const ColorHistoryTable = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {history.map(({ targetColor, selectedColor, timestamp , mode}, index) => {
-                        const difference = calculateHLSDifference(targetColor, selectedColor , false);
+                    {history.map(({ targetColor, selectedColor, timestamp, mode }, index) => {
+                        const difference = calculateHLSDifference(targetColor, selectedColor, false);
 
                         return (
                             <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
@@ -31,7 +31,7 @@ const ColorHistoryTable = () => {
                                     <div className="flex items-center">
                                         <div
                                             className="w-12 h-12 mr-2 border border-gray-300"
-                                            style={{ backgroundColor: `hsl(${targetColor.h}, ${targetColor.s}%, ${targetColor.v}%)` }}
+                                            style={{ backgroundColor: `hsl(${targetColor.h}, ${targetColor.s}%, ${targetColor.l}%)` }}
                                         ></div>
                                     </div>
                                 </td>
@@ -39,7 +39,7 @@ const ColorHistoryTable = () => {
                                     <div className="flex items-center">
                                         <div
                                             className="w-12 h-12 mr-2 border border-gray-300"
-                                            style={{ backgroundColor: `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.v}%)` }}
+                                            style={{ backgroundColor: `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.l}%)` }}
                                         ></div>
                                     </div>
                                 </td>

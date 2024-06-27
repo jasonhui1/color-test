@@ -57,7 +57,7 @@ export function getRandomIntStep(min, max, step) {
 
 export const calculateHLSDifference = (color1, color2, abs = true) => {
     const HDiff = Math.abs(color1.h - color2.h);
-    let LDiff = -(color1.v - color2.v);
+    let LDiff = -(color1.l - color2.l);
     let SDiff = -(color1.s - color2.s);
 
     LDiff = abs ?  Math.abs(LDiff) : LDiff;

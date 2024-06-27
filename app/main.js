@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { ColorPicker } from './ColorPicker';
 import ColorTest from './test';
 import ColorHistoryTable from './history';
+import OrderTest from './Test/reorder';
 
 const all_modes = [
     { value: 'normal', label: 'normal' },
@@ -28,16 +29,16 @@ const ModeSelection = ({ mode, setMode }) => {
 }
 
 const ColorTrainingTool = () => {
-    const [selectedColor, setSelectedColor] = useState({ h: 40, s: 100, v: 100 });
+    const [selectedColor, setSelectedColor] = useState({ h: 40, s: 100, l: 50 });
     const [targetColor, setTargetColor] = useState(null);
     const [mode, setMode] = useState('normal')
     const [checkedResult, setCheckedResult] = useState(false);
     const [hideChoose, setHideChoose] = useState(true);
 
-    const backgroundColor = `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.v}%)`;
+    const backgroundColor = `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.l}%)`;
     return (
         <div>
-            <div className='flex h-lvh flex-col justify-center items-center'>
+            <div className='flex flex-col justify-center items-center'>
                 <div className="mx-auto p-4  flex flex-row items-center">
                     <div className='flex gap-4'>
                         <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
@@ -56,7 +57,6 @@ const ColorTrainingTool = () => {
                                 </div>
                             </div>
 
-                            <DisplayColorRange />
 
 
                             {targetColor &&
@@ -67,7 +67,7 @@ const ColorTrainingTool = () => {
                                         <h3 className="text-lg font-semibold mb-2">Target Color</h3>
                                         <div
                                             className="w-full h-40 rounded border-4 border-slate-300"
-                                            style={{ backgroundColor: targetColor ? `hsl(${targetColor.h}, ${targetColor.s}%, ${targetColor.v}%)` : 'white' }}
+                                            style={{ backgroundColor: targetColor ? `hsl(${targetColor.h}, ${targetColor.s}%, ${targetColor.l}%)` : 'white' }}
                                         ></div>
                                     </div>
 
@@ -92,8 +92,11 @@ const ColorTrainingTool = () => {
                         <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                     </div>
                 </div>
+                <DisplayColorRange step={20} />
+                <OrderTest />
             </div>
-            <ColorHistoryTable />
+            {/* <ColorHistoryTable /> */}
+
         </div>
 
     );
@@ -106,14 +109,20 @@ const DisplayColorRange = ({ step = 20 }) => {
     }
 
     return (
-        <div className='flex my-2'>
-            {rangeArray.map((val) => {
-
+        <div className='flex flex-col gap-2'>
+            {rangeArray.toReversed().map((l) => {
                 return (
-                    <div
-                        className="w-12 h-12 mr-2 border border-gray-300"
-                        style={{ backgroundColor: `hsl(0, 0%, ${val}%)` }}
-                    ></div>
+                    <div className='flex flex-row gap-2'>
+                        {rangeArray.map((s) => {
+
+                            return (
+                                <div
+                                    className="w-12 h-12 border border-gray-300"
+                                    style={{ backgroundColor: `hsl(0, ${s}%, ${l}%)` }}
+                                ></div>
+                            )
+                        })}
+                    </div>
                 )
             })}
         </div>

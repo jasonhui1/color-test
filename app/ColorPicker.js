@@ -56,7 +56,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
 
     //Calculate the position
     let selectedColorPosition = { x: 0, y: 0 };
-    const normalizePosition = getPositionFromSV(selectedColor.s, selectedColor.v)
+    const normalizePosition = getPositionFromSV(selectedColor.s, selectedColor.l)
     selectedColorPosition = { x: normalizePosition.x * w + bb.x1, y: normalizePosition.y * w + bb.y1 }
 
     const selectedHue = defaultHueShift + selectedColor.h
@@ -144,7 +144,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         setSelectedColor({
             ...selectedColor,
             s: Math.max(0, Math.min(100, s)),
-            v: Math.max(0, Math.min(100, v))
+            l: Math.max(0, Math.min(100, v))
         });
 
         // }
@@ -234,7 +234,7 @@ export const ColorPicker = ({ selectedColor, setSelectedColor }) => {
 
             <div className="mt-4">
                 <HSLControl selectedColor={selectedColor} label="H" value={selectedColor.h} min={0} max={360} onChange={(value) => updateColor('h', value)} />
-                <HSLControl selectedColor={selectedColor} label="L" value={selectedColor.v} min={0} max={100} onChange={(value) => updateColor('v', value)} />
+                <HSLControl selectedColor={selectedColor} label="L" value={selectedColor.l} min={0} max={100} onChange={(value) => updateColor('v', value)} />
                 <HSLControl selectedColor={selectedColor} label="S" value={selectedColor.s} min={0} max={100} onChange={(value) => updateColor('s', value)} />
             </div>
         </div>
@@ -246,7 +246,7 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
     const sliderRef = useRef(null);
     const background =
         label === 'H' ? `linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%) ` :
-            label === 'S' ? `linear-gradient(to right, hsl(${selectedColor.h}, 0%, ${selectedColor.v}%) 0%,  hsl(${selectedColor.h}, 100%, ${selectedColor.v}%) 100% ` :
+            label === 'S' ? `linear-gradient(to right, hsl(${selectedColor.h}, 0%, ${selectedColor.l}%) 0%,  hsl(${selectedColor.h}, 100%, ${selectedColor.l}%) 100% ` :
                 `linear-gradient(to right, hsl(${selectedColor.h}, ${selectedColor.s}%, 0%) 0%,  hsl(${selectedColor.h}, ${selectedColor.s}%, 50%) 50% ,  hsl(${selectedColor.h}, ${selectedColor.s}%, 100%) 100% `
 
 
@@ -269,7 +269,7 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
     };
 
     return (
-        <div className="flex flex-row gap-4 mb-4 justify-between items-center  ">
+        <div className="flex flex-row gap-4 mb-1 justify-between items-center  ">
             <label className="">{label} </label>
             <div
                 ref={sliderRef}
@@ -288,7 +288,7 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
             </div>
             <input
                 type="number"
-                className="w-16 ml-4 p-1 border rounded"
+                className="w-16 p-1"
                 value={value}
                 onChange={(e) => onChange(Math.max(min, Math.min(max, Number(e.target.value))))}
                 min={min}
