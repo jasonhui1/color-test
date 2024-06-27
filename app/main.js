@@ -3,6 +3,7 @@ import { ColorPicker } from './ColorPicker';
 import ColorTest from './test';
 import ColorHistoryTable from './history';
 import OrderTest from './Test/reorder';
+import { getHistory } from './Storage/test_history';
 
 const all_modes = [
     { value: 'normal', label: 'normal' },
@@ -33,7 +34,7 @@ const ColorTrainingTool = () => {
     const [targetColor, setTargetColor] = useState(null);
     const [mode, setMode] = useState('normal')
     const [checkedResult, setCheckedResult] = useState(false);
-    const [hideChoose, setHideChoose] = useState(true);
+    const [practiceMode, setPracticeMode] = useState(true);
 
     const backgroundColor = `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.l}%)`;
     return (
@@ -47,12 +48,12 @@ const ColorTrainingTool = () => {
                                 <div className="flex items-center justify-center mb-4">
                                     <input
                                         type="checkbox"
-                                        checked={hideChoose}
+                                        checked={practiceMode}
                                         id="hideChooseCheckbox"
-                                        onChange={(e) => setHideChoose(e.target.checked)}
+                                        onChange={(e) => setPracticeMode(!practiceMode)}
                                     />
                                     <label htmlFor="hideChooseCheckbox" className="text-sm">
-                                        Test
+                                        Practice
                                     </label>
                                 </div>
                             </div>
@@ -71,7 +72,7 @@ const ColorTrainingTool = () => {
                                         ></div>
                                     </div>
 
-                                    {(checkedResult || !hideChoose) && (
+                                    {(checkedResult || practiceMode) && (
 
                                         <div className="w-1/2">
                                             <h3 className="text-lg font-semibold mb-2">Your Color</h3>
@@ -86,23 +87,23 @@ const ColorTrainingTool = () => {
 
 
                             <ColorTest selectedColor={selectedColor} targetColor={targetColor} setTargetColor={setTargetColor}
-                                mode={mode} checkedResult={checkedResult} setCheckedResult={setCheckedResult}
+                                mode={mode} checkedResult={checkedResult} setCheckedResult={setCheckedResult} saveToHistory={!practiceMode}
                             />
                         </div>
                         <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                     </div>
                 </div>
-                <DisplayColorRange step={20} />
+                <DisplayColorRange hue={targetColor&&targetColor.h} step={20} />
                 <OrderTest />
             </div>
-            {/* <ColorHistoryTable /> */}
+            {/* <ColorHistoryTable history={getHistory()} mode='bw' difficulty='easy'/> */}
 
         </div>
 
     );
 }
 
-const DisplayColorRange = ({ step = 20 }) => {
+const DisplayColorRange = ({ hue, step = 20 }) => {
     const rangeArray = [];
     for (let i = 0; i <= 100; i += step) {
         rangeArray.push(i);
@@ -118,7 +119,7 @@ const DisplayColorRange = ({ step = 20 }) => {
                             return (
                                 <div
                                     className="w-12 h-12 border border-gray-300"
-                                    style={{ backgroundColor: `hsl(0, ${s}%, ${l}%)` }}
+                                    style={{ backgroundColor: `hsl(${hue}, ${s}%, ${l}%)` }}
                                 ></div>
                             )
                         })}

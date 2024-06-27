@@ -4,7 +4,7 @@ import Image from 'next/image';
 import HueShiftImage from './HueShiftImage';
 
 const defaultHueShift = 30 //by CSP
-function getPositionFromSV(s, v) {
+export function getPositionFromSV(s, v) {
     const y = (100 - v) / 100
     const yh = (y < 0.5) ? y : 1 - y
     const horizontalLineLength = Math.tan(Math.PI / 3) * yh
@@ -234,7 +234,7 @@ export const ColorPicker = ({ selectedColor, setSelectedColor }) => {
 
             <div className="mt-4">
                 <HSLControl selectedColor={selectedColor} label="H" value={selectedColor.h} min={0} max={360} onChange={(value) => updateColor('h', value)} />
-                <HSLControl selectedColor={selectedColor} label="L" value={selectedColor.l} min={0} max={100} onChange={(value) => updateColor('v', value)} />
+                <HSLControl selectedColor={selectedColor} label="L" value={selectedColor.l} min={0} max={100} onChange={(value) => updateColor('l', value)} />
                 <HSLControl selectedColor={selectedColor} label="S" value={selectedColor.s} min={0} max={100} onChange={(value) => updateColor('s', value)} />
             </div>
         </div>

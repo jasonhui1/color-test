@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SelectBox } from '../General/SelectBox';
 import { allDifficulties, brightnessOptions, colorOptions, saturationOptions } from './parameters';
+import { getTests } from '../Storage/test_parameters';
 
 const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRange, sRange, setLRange, lRange, mode, }) => {
-    const [hSelected, setHSelected] = useState('all');
-    const [sSelected, setSSelected] = useState('all');
-    const [lSelected, setLSelected] = useState('all');
+
+
+    //Create New Test
+    //Select from existing tests
+    const [creatingTest, setCreatingTest] = useState(false);
+    const [createdTests, setCreatedTests] = useState([]);
+    const [testId, setTestId] = useState(0);
+
+    useEffect(() => {
+        setCreatedTests(getTests())
+
+    }, [])
+
+    const onSelectTest = (e) => {
+        // setTestId();
+        const index = createdTests.findIndex(test => test.id === testId);
+        setHRange(createdTests[index].hRange);
+        setSRange(createdTests[index].sRange);
+        setLRange(createdTests[index].lRange);
+    }
+
 
 
     const onChangeDifficulty = (e) => {
         setDifficulties(e.target.value);
     };
+
 
     return (
         <div className="mt-6">
@@ -19,23 +39,50 @@ const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRa
                 <SelectBox current={difficulties} onChange={onChangeDifficulty} options={allDifficulties} label={'Difficulty'} />
             </div>
 
-            <RangeSelect hSelected={hSelected} setHSelected={setHSelected} setHRange={setHRange} hRange={hRange}
-                sSelected={sSelected} setSSelected={setSSelected} setSRange={setSRange} sRange={sRange}
-                lSelected={lSelected} setLSelected={setLSelected} setLRange={setLRange} lRange={lRange}
+            {creatingTest && <RangeSelect setHRange={setHRange} hRange={hRange}
+                setSRange={setSRange} sRange={sRange}
+                setLRange={setLRange} lRange={lRange}
                 mode={mode}
-            />
+            />}
+
+            {!creatingTest && <RangeDisplay hRange={hRange} sRange={sRange} lRange={lRange} mode={mode} />}
 
         </div>
     );
 };
 
+const CreateNewTestButton = ({ onClick, }) => {
+    return (
+        <></>
+    )
+}
+
+const RangeDisplay = ({ hRange, sRange, lRange, mode }) => {
+
+    return (
+        <div className='flex flex-col gap-4 my-4'>
+            {mode !== 'bw' &&
+                <label className="font-medium">H: {`${hRange[0]} - ${hRange[1]}`}</label>
+            }
+            <label className="font-medium">L: {`${lRange[0]} - ${lRange[1]}`}</label>
+
+            {mode !== 'bw' &&
+                <label className="font-medium">S: {`${lRange[0]} - ${sRange[1]}`}</label>
+            }
+        </div>)
+}
+
 
 const RangeSelect = ({
-    hSelected, setHSelected, hRange, setHRange,
-    sSelected, setSSelected, sRange, setSRange,
-    lSelected, setLSelected, lRange, setLRange,
+    hRange, setHRange,
+    sRange, setSRange,
+    lRange, setLRange,
     mode }) => {
 
+
+    const [hSelected, setHSelected] = useState('all');
+    const [sSelected, setSSelected] = useState('all');
+    const [lSelected, setLSelected] = useState('all');
     function onChange(setCurrent, setRange, options) {
         return function (e) {
             const value = e.target.value

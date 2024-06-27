@@ -1,3 +1,5 @@
+import { allDifficulties } from "./Test/parameters";
+
 // First, let's include our previous RGB to HSL conversion function
 export function rgbToHsl(r, g, b) {
     r /= 255;
@@ -60,8 +62,8 @@ export const calculateHLSDifference = (color1, color2, abs = true) => {
     let LDiff = -(color1.l - color2.l);
     let SDiff = -(color1.s - color2.s);
 
-    LDiff = abs ?  Math.abs(LDiff) : LDiff;
-    SDiff = abs ?  Math.abs(SDiff) : SDiff;
+    LDiff = abs ? Math.abs(LDiff) : LDiff;
+    SDiff = abs ? Math.abs(SDiff) : SDiff;
 
     return {
         h: HDiff > 180 ? 360 - HDiff : HDiff,
@@ -69,3 +71,11 @@ export const calculateHLSDifference = (color1, color2, abs = true) => {
         s: SDiff,
     };
 };
+
+export const stepInDifficulty = (difficulty) => {
+    return allDifficulties.find((option) => option.value === difficulty).step
+}
+
+export const calculateDistance = (x, y, x1, y1) => {
+    return Math.sqrt((x - x1) ** 2 + (y - y1) ** 2)
+}

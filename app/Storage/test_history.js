@@ -10,19 +10,24 @@ const loadResultsFromStorage = () => {
     return cachedResults;
 };
 
-export const addHistory = (targetColor, selectedColor, mode = 'normal') => {
+export const addHistory = (targetColor, selectedColor, mode = 'normal', testId) => {
     const cards = getHistory();
     cards.push({
         timestamp: new Date().toISOString(),
+        testId,
         targetColor,
         selectedColor,
-        mode
+        mode,
     });
     localStorage.setItem(storageKey, JSON.stringify(cards));
 };
 
-export const getHistory = () => {
-    return loadResultsFromStorage();
+export const getHistory = (last = Infinity) => {
+    const history = loadResultsFromStorage();
+    if (last != Infinity) {
+        return history.slice(-last);
+    }
+    return history;
 };
 
 // export const clearResults = () => {
