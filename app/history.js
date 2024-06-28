@@ -1,6 +1,6 @@
 import { getHistory } from "./Storage/test_history"
 import { RenderResultIcon, getAccuracy } from "./Test/ResultDisplay";
-import { calculateHLSDifference } from "./utils";
+import { calculateHLSDifference } from "./General/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 
 

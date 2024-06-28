@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import color_wheel from "../public/color_wheel.png";
 import Image from 'next/image';
-import HueShiftImage from './HueShiftImage';
+import HueShiftImage from '../HueShiftImage';
 
 const defaultHueShift = 30 //by CSP
 export function getPositionFromSV(s, v) {

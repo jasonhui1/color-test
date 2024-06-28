@@ -1,4 +1,4 @@
-import { allDifficulties } from "./Test/parameters";
+import { allDifficulties } from "../Test/parameters";
 
 // First, let's include our previous RGB to HSL conversion function
 export function rgbToHsl(r, g, b) {

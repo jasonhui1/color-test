@@ -1,5 +1,5 @@
 import ColorHistoryTable from "../history"
-import { calculateHLSDifference, stepInDifficulty } from "../utils";
+import { calculateHLSDifference, stepInDifficulty } from "../General/utils";
 import { getAccuracy } from "./ResultDisplay";
 
 function calculatePercentage(history, mode, difficulty) {

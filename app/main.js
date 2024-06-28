@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { ColorPicker } from './ColorPicker';
+import { ColorPicker } from './Color Picker/ColorPicker';
 import ColorTest from './test';
 import ColorHistoryTable from './history';
 import OrderTest from './Test/reorder';

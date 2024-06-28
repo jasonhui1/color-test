@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { addHistory } from './Storage/test_history';
-import { calculateHLSDifference, getRandomInt, getRandomIntStep, stepInDifficulty } from './utils';
-import { ColorPicker } from './ColorPicker';
+import { calculateHLSDifference, getRandomInt, getRandomIntStep, stepInDifficulty } from './General/utils';
+import { ColorPicker } from './Color Picker/ColorPicker';
 import TestControls from './Test/TestParamterControl';
 import { RenderResult, ResultDisplay } from './Test/ResultDisplay';
 import ColorHistoryTable from './history';
@@ -34,6 +34,8 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
 
     // do later
     // const [creatingTest, setCreatingTest] = useState(false);
+    const [testId, setTestId] = useState('0');
+
 
     const setRandomTargetColor = () => {
         function generateTargetColor() {
@@ -88,7 +90,7 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
             console.log('AllHistory :>> ', newHistory);
         }
 
-        if (saveToHistory) addHistory(targetColor, selectedColor, mode);
+        if (saveToHistory) addHistory(targetColor, selectedColor, mode , testId);
         setCheckedResult(true)
     };
 
@@ -103,7 +105,9 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
                 {!testStarted &&
                     <TestControls difficulties={difficulties} setDifficulties={setDifficulties} mode={mode}
                         hRange={hRange} sRange={sRange} lRange={lRange}
-                        setHRange={setHRange} setSRange={setSRange} setLRange={setLRange} />
+                        setHRange={setHRange} setSRange={setSRange} setLRange={setLRange} 
+                        testId={testId} setTestId={setTestId}
+                        />
                 }
 
                 {(!testStarted || checkedResult) && <NextButton testStarted={testStarted} testEnded={testEnded} onClick={startTest} />}

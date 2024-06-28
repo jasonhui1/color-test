@@ -5,14 +5,13 @@ import { addNewTest, getTests } from '../Storage/test_parameters';
 import { v4 as uuidv4 } from 'uuid';
 import TestCreate from './Create/TestCreate';
 
-const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRange, sRange, setLRange, lRange, mode, }) => {
+const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRange, sRange, setLRange, lRange, mode, testId, setTestId }) => {
 
 
     //Create New Test
     //Select from existing tests
     const [creatingTest, setCreatingTest] = useState(false);
     const [createdTests, setCreatedTests] = useState([]);
-    const [testId, setTestId] = useState('0');
 
     useEffect(() => {
         //Newest show first
