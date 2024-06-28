@@ -32,6 +32,9 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [test_history, setTestHistory] = useState([])
 
+    // do later
+    // const [creatingTest, setCreatingTest] = useState(false);
+
     const setRandomTargetColor = () => {
         function generateTargetColor() {
             let newTargetColor;

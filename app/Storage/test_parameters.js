@@ -10,11 +10,11 @@ const loadResultsFromStorage = () => {
     return cachedResults;
 };
 
-export const addNewTest = (id, hRange, lRange, sRange, mode = 'normal') => {
+export const addNewTest = (id, hRange, lRange, sRange, name = 'Unnamed') => {
     const tests = getTests();
     tests.push({
         id, hRange, sRange, lRange,
-        mode
+        name
     });
     localStorage.setItem(storageKey, JSON.stringify(tests));
 };

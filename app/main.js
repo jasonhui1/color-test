@@ -111,13 +111,13 @@ const DisplayColorRange = ({ hue, step = 20 }) => {
 
     return (
         <div className='flex flex-col gap-2'>
-            {rangeArray.toReversed().map((l) => {
+            {rangeArray.toReversed().map((l, index) => {
                 return (
-                    <div className='flex flex-row gap-2'>
-                        {rangeArray.map((s) => {
+                    <div className='flex flex-row gap-2' key={index}>
+                        {rangeArray.map((s, j) => {
 
                             return (
-                                <div
+                                <div key={j}
                                     className="w-12 h-12 border border-gray-300"
                                     style={{ backgroundColor: `hsl(${hue}, ${s}%, ${l}%)` }}
                                 ></div>
