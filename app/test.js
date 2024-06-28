@@ -7,6 +7,7 @@ import { RenderResult, ResultDisplay } from './Test/ResultDisplay';
 import ColorHistoryTable from './history';
 import { allDifficulties } from './Test/parameters';
 import Evaluation from './Test/Evaluation';
+import OrderTest from './Test/reorder';
 
 
 
@@ -124,6 +125,8 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
 
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
             {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}
+            <OrderTest hRange={hRange} sRange={sRange} lRange={lRange} length={4} step={20} />
+
         </div>
     );
 }

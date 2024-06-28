@@ -93,8 +93,7 @@ const ColorTrainingTool = () => {
                         <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                     </div>
                 </div>
-                <DisplayColorRange hue={targetColor&&targetColor.h} step={20} />
-                <OrderTest />
+                <DisplayColorRange hue={targetColor && targetColor.h} step={20} />
             </div>
             {/* <ColorHistoryTable history={getHistory()} mode='bw' difficulty='easy'/> */}
 

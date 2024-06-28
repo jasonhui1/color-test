@@ -3,24 +3,54 @@ import { Reorder } from "framer-motion"
 import { useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import { CheckResultButton, NextButton } from "../test";
+import { getRandomIntStep } from "../General/utils";
 
-function generateList(step = 20, length = 4, extremeFirst = false, useSmallest = false) {
-    const rangeList = [];
-    for (let i = 0; i <= 100; i += step) {
-        rangeList.push({ id: uuidv4(), h: 0, s: 0, l: i })
+function generateList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], direction = ['L'], extremeFirst = false, useSmallest = false) {
+    const [hStart, hEnd] = hRange;
+    const [sStart, sEnd] = sRange;
+    const [lStart, lEnd] = lRange;
+
+    const HConstant = !direction.includes('H')
+    const LConstant = !direction.includes('L')
+    const SConstant = !direction.includes('S')
+
+    function getStartNumber(start, end, constant) {
+        if (constant) return getRandomIntStep(start, end, step)
+        else return getRandomIntStep(start, end - step * (length - 1), step)
     }
 
+    const hStartNumber = getStartNumber(hStart, hEnd, HConstant);
+    const lStartNumber = getStartNumber(lStart, lEnd, LConstant);
+    const sStartNumber = getStartNumber(sStart, sEnd, SConstant);
+
     // Pick a random consecutive range
-    const j = Math.floor((rangeList.length - length - 1) * Math.random())
-    const targetList = rangeList.slice(j, j + length)
+
+    let targetList = []
+    for (let i = 0; i < length; i++) {
+        const h = HConstant ? hStartNumber : hStartNumber + i * step
+        const l = LConstant ? lStartNumber : lStartNumber + i * step
+        const s = SConstant ? sStartNumber : sStartNumber + i * step
+        targetList.push({ id: uuidv4(), h, s, l })
+    }
+
 
     let guessList = [...targetList];
     if (extremeFirst) {
-        guessList.sort((a, b) => useSmallest ? a.l - b.l : b.l - a.l);
-        for (let i = guessList.length - 1; i > 0; i--) {
-            const j = 1 + Math.floor(Math.random() * i);
-            [guessList[i], guessList[j]] = [guessList[j], guessList[i]];
-        }
+        guessList.sort((a, b) => {
+            if (useSmallest) {
+                // Sort by smallest s, then smallest l
+                if (a.s !== b.s) return a.s - b.s;
+                return a.l - b.l;
+            } else {
+                // Sort by largest s, then largest l
+                if (a.s !== b.s) return b.s - a.s;
+                return b.l - a.l;
+            }
+        });
+        // Keep the extreme (first) color in place, shuffle the rest
+        const [extreme, ...rest] = guessList;
+        rest.sort(() => Math.random() - 0.5);
+        guessList = [extreme, ...rest];
     } else {
         guessList.sort(() => Math.random() - 0.5);
     }
@@ -48,7 +78,7 @@ function ReorderList({ guessList, setGuessList }) {
 
 
 
-const OrderTest = ({ length = 5 }) => {
+const OrderTest = ({ hRange, sRange, lRange, length = 5, step = 20 }) => {
 
     const [targetList, setTargetList] = useState([])
     const [guessList, setGuessList] = useState([])
@@ -57,7 +87,8 @@ const OrderTest = ({ length = 5 }) => {
     const setList = () => {
 
         setCheckedResult(false)
-        const { target, guess } = generateList(10, length, true)
+        const { target, guess } = generateList(step, length, hRange, sRange, lRange, ['L'], true,)
+        console.log('target :>> ', target);
 
         setTargetList(target)
         setGuessList(guess)
@@ -77,7 +108,7 @@ const OrderTest = ({ length = 5 }) => {
         <div>
             {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
-            <ProgressiveTest guessList={guessList} startTest={setList} length={5} />
+            <ProgressiveTest guessList={guessList} startTest={setList} length={length} />
             {/* <button
                 onClick={setList}
                 className="bg-blue-500 text-white px-4 py-2 rounded mr-4 hover:bg-blue-600"

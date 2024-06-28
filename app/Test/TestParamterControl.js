@@ -4,7 +4,7 @@ import { allDifficulties } from './parameters';
 import { addNewTest, getTests } from '../Storage/test_parameters';
 import { v4 as uuidv4 } from 'uuid';
 import TestCreate from './Create/TestCreate';
-
+import { FaEdit } from "react-icons/fa";
 const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRange, sRange, setLRange, lRange, mode, testId, setTestId }) => {
 
 
@@ -38,14 +38,21 @@ const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRa
         addNewTest(id, hRange, lRange, sRange, name);
         updatePara({ id, hRange, sRange, lRange })
         setCreatingTest(false);
+        // setCreatedTests([{ id, hRange, sRange, lRange, name }, ...createdTests])
     }
 
     const onChangeDifficulty = (e) => {
         setDifficulties(e.target.value);
     };
 
+    // const editName = (newName) => {
+    //     const 
+
+    // }
+
     const testSelected = testId !== '0'
     const inInitial = !creatingTest && !testSelected
+    // const name = testSelected ? createdTests.find(test => test.id === testId).name : 'N/A'
 
     return (
         <div className="mt-6">
@@ -61,7 +68,7 @@ const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRa
                 </div>
             }
 
-            {testSelected && <TestParameterDisplay hRange={hRange} sRange={sRange} lRange={lRange} mode={mode} />}
+            {testSelected && <TestParameterDisplay hRange={hRange} sRange={sRange} lRange={lRange} mode={mode} name={name} />}
             {creatingTest && <TestCreate createTest={createTest} />}
         </div>
     );
@@ -90,10 +97,16 @@ const TestDisplay = ({ test, onSelect }) => {
 }
 
 
-const TestParameterDisplay = ({ hRange, sRange, lRange, mode }) => {
+const TestParameterDisplay = ({ hRange, sRange, lRange, mode, name }) => {
 
     return (
         <div className='flex flex-col gap-4 my-4'>
+
+            {/* <div className='flex gap-2 flex-row items-center'>
+
+                <label className="font-medium">{name} </label>
+                <span><FaEdit className="w-5 h-5" /></span>
+            </div> */}
             {mode !== 'bw' &&
                 <label className="font-medium">H: {`${hRange[0]} - ${hRange[1]}`}</label>
             }

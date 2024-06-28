@@ -24,7 +24,6 @@ export const addHistory = (targetColor, selectedColor, mode = 'normal', testId) 
 
 export const getHistory = (last = Infinity) => {
     const history = loadResultsFromStorage();
-    console.log('history :>> ', history);
     if (last != Infinity) {
         return history.slice(-last);
     }
