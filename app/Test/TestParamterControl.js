@@ -51,13 +51,13 @@ const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRa
         <div className="mt-6">
             <div className='flex justify-between'>
                 <h3 className="text-lg font-semibold mb-2">Color Test</h3>
-                <SelectBox current={difficulties} onChange={onChangeDifficulty} options={allDifficulties} label={'Difficulty'} />
+                {testSelected && <SelectBox current={difficulties} onChange={onChangeDifficulty} options={allDifficulties} label={'Difficulty'} />}
             </div>
 
             {inInitial &&
                 <div>
                     <TestsSelect tests={createdTests} onSelect={onSelectTest} />
-                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => setCreatingTest(true)}>Create New Test </button>
+                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => setCreatingTest(true)}>Create New Test </button>
                 </div>
             }
 

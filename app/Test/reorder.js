@@ -121,7 +121,6 @@ const ProgressiveTest = ({ guessList, startTest, length = 5 }) => {
 
     const checkProgressiveResult = () => {
         const answer = guessList.map(item => item.l - guessList[0].l)
-        console.log('answer, guess :>> ', answer, guesses);
         for (let i = 0; i < answer.length; i++) {
             if (Math.abs(answer[i]) !== Math.abs(guesses[i])) {
                 console.log('object :>> ', Math.abs(answer[i]), Math.abs(guesses[i]));

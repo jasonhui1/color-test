@@ -90,28 +90,35 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
             console.log('AllHistory :>> ', newHistory);
         }
 
-        if (saveToHistory) addHistory(targetColor, selectedColor, mode , testId);
+        if (saveToHistory) addHistory(targetColor, selectedColor, mode, testId);
         setCheckedResult(true)
     };
 
 
-
+    const testSelected = testId !== '0';
     const testStarted = currentTestNum > 0
     const testEnded = currentTestNum >= testNum && checkedResult
 
+    const showBackButton = testSelected && (!testStarted)
+    const showNextButton = testSelected && (!testStarted || checkedResult)
+    const showCheckButton = testStarted && !checkedResult
+
     return (
         <div>
-            <div className="mt-6 min-w-[300px]">
+            <div className="mt-6 min-w-[300px] h-full">
                 {!testStarted &&
                     <TestControls difficulties={difficulties} setDifficulties={setDifficulties} mode={mode}
                         hRange={hRange} sRange={sRange} lRange={lRange}
-                        setHRange={setHRange} setSRange={setSRange} setLRange={setLRange} 
+                        setHRange={setHRange} setSRange={setSRange} setLRange={setLRange}
                         testId={testId} setTestId={setTestId}
-                        />
+                    />
                 }
 
-                {(!testStarted || checkedResult) && <NextButton testStarted={testStarted} testEnded={testEnded} onClick={startTest} />}
-                {testStarted && !checkedResult && <CheckResultButton onClick={checkResult} />}
+                <div className="flex flex-row justify-between">
+                    {showBackButton && <BackButton onClick={() => setTestId('0')} />}
+                    {showNextButton && <NextButton testStarted={testStarted} testEnded={testEnded} onClick={startTest} />}
+                    {showCheckButton && <CheckResultButton onClick={checkResult} />}
+                </div>
 
             </div>
 
@@ -119,6 +126,20 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
             {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}
         </div>
     );
+}
+
+export const BackButton = ({ onClick }) => {
+
+    return (
+        <div className="flex justify-end">
+            <button
+                onClick={onClick}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+                Back
+            </button>
+        </div>
+    )
 }
 
 export const NextButton = ({ testStarted, testEnded, onClick }) => {
