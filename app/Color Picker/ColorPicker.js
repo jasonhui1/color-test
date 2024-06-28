@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import color_wheel from "../public/color_wheel.png";
+import color_wheel from "../../public/color_wheel.png";
 import Image from 'next/image';
 import HueShiftImage from '../HueShiftImage';
 

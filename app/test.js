@@ -121,7 +121,7 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
     );
 }
 
-const NextButton = ({ testStarted, testEnded, onClick }) => {
+export const NextButton = ({ testStarted, testEnded, onClick }) => {
     let label = 'Start Test'
     if (testStarted) {
         if (!testEnded) {
@@ -143,7 +143,7 @@ const NextButton = ({ testStarted, testEnded, onClick }) => {
     )
 }
 
-const CheckResultButton = ({ onClick, }) => {
+export const CheckResultButton = ({ onClick, }) => {
 
     return (
         <div className="flex justify-end">
