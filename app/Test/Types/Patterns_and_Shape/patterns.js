@@ -1,4 +1,4 @@
-import { hlsToString } from "../../General/color_util"
+import { hlsToString } from "../../../General/color_util"
 
 const PatternContainer = ({ children, id, width, height, rotation = 0 }) => {
     return (

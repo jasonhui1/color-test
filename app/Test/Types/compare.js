@@ -4,9 +4,10 @@ import { CheckResultButton, NextButton } from "../test";
 import { generateId, getRandomIntStep } from "../../General/utils";
 import { defaultHLS, generateRandomColorAdvanced, hlsToString } from "../../General/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
-import { CheckerboardPattern, CircuitBoardPattern, PlusPattern, PolkaDotsPattern, SpeedLinesPattern, StripePattern, TartanPlaidPattern } from "./patterns";
-import { FakeLaptop, FakeSphere, ShapeBorder } from "./shape";
+import { CheckerboardPattern, CircuitBoardPattern, PlusPattern, PolkaDotsPattern, SpeedLinesPattern, StripePattern, TartanPlaidPattern } from "./Patterns_and_Shape/patterns";
+import { FakeLaptop, FakeSphere, ShapeBorder } from "./Patterns_and_Shape/advance_shape";
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
+import { Cross, Star, Triangle } from "./Patterns_and_Shape/basic_shape";
 
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
@@ -73,25 +74,26 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
     //     return true
     // }
 
-    let corrects = [];
-    const counter = {}
+    // let corrects = [];
+    // const counter = {}
 
 
-    for (let i = 0; i < 200; i++) {
-        const { h, s, l } = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step)
-        corrects.push({ h, s, l })
+    // for (let i = 0; i < 200; i++) {
+    //     const { h, s, l } = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step)
+    //     corrects.push({ h, s, l })
 
-        counter[l] = counter[l] || {}
-        counter[l][s] = (counter[l][s] || 0) + 1
-    }
+    //     counter[l] = counter[l] || {}
+    //     counter[l][s] = (counter[l][s] || 0) + 1
+    // }
 
-    console.log('counter :>> ', counter);
+    // console.log('counter :>> ', counter);
 
 
     return (
         <div>
             {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
+            <Cross fill='red' />
             <TestDisplay refColor={refColor} targetColor={targetColor} guessColor={guessColor} />
             <button
                 onClick={reset}
@@ -106,7 +108,7 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
             >
                 Check Result
             </button>
-            <TriangularColorPickerDisplayHistory hue={refColor.h} correct={corrects} incorrect={[targetColor]} />
+            {/* <TriangularColorPickerDisplayHistory hue={refColor.h} correct={corrects} incorrect={[targetColor]} /> */}
 
         </div>
     )

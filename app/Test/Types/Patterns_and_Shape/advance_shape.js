@@ -1,4 +1,5 @@
-import { hlsToString } from "../../General/color_util"
+import { hlsToString } from "../../../General/color_util"
+
 
 export const YingYangLike = ({ color1, color2, radius }) => {
     const hsl1 = hlsToString(color1)
@@ -104,3 +105,60 @@ export const ShapeBorder = ({ color1, color2, width = 100, radius = 40 }) => {
         </svg>
     );
 }
+
+
+// Crescent component
+const Crescent = ({ size = 100, fill = "gold", stroke = "orange", strokeWidth = 2 }) => {
+    const radius = size / 2;
+    return (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+            <path
+                d={`M ${size},${radius} A ${radius},${radius} 0 0 1 ${size},${radius} A ${radius * 0.8},${radius * 0.8} 0 0 0 ${size},${radius}`}
+                fill={fill}
+                stroke={stroke}
+                strokeWidth={strokeWidth}
+            />
+        </svg>
+    );
+};
+
+// Heart component
+const Heart = ({ size = 100, fill = "red", stroke = "darkred", strokeWidth = 2 }) => {
+    const width = size;
+    const height = size * 0.9;
+    return (
+        <svg width={width} height={height} viewBox="0 0 100 90">
+            <path
+                d="M50,30 A20,20 0 0,1 90,30 A20,20 0 0,1 50,70 A20,20 0 0,1 10,30 A20,20 0 0,1 50,30 Z"
+                fill={fill}
+                stroke={stroke}
+                strokeWidth={strokeWidth}
+            />
+        </svg>
+    );
+};
+
+// Diamond component
+const Diamond = ({ size = 100, fill = "aqua", stroke = "blue", strokeWidth = 2 }) => {
+    const points = `${size / 2},0 ${size},${size / 2} ${size / 2},${size} 0,${size / 2}`;
+    return (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+            <polygon points={points} fill={fill} stroke={stroke} strokeWidth={strokeWidth} />
+        </svg>
+    );
+};
+
+// Cross component
+const Cross = ({ size = 100, fill = "green", stroke = "darkgreen", strokeWidth = 2 }) => {
+    const third = size / 3;
+    return (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+            <path
+                d={`M${third},0 H${2 * third} V${third} H${size} V${2 * third} H${2 * third} V${size} H${third} V${2 * third} H0 V${third} H${third} Z`}
+                fill={fill}
+                stroke={stroke}
+                strokeWidth={strokeWidth}
+            />
+        </svg>
+    );
+};
