@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { SelectBox } from '../General/SelectBox';
+import { SelectBox } from '../../General/SelectBox';
 import { allDifficulties } from './parameters';
-import { addNewTest, getTests } from '../Storage/test_parameters';
-import TestCreate from './Create/TestCreate';
+import { addNewTest, getTests } from '../../Storage/test_parameters';
+import TestCreate from '../Create/TestCreate';
 import { FaEdit } from "react-icons/fa";
-import { generateId } from '../General/utils';
+import { generateId } from '../../General/utils';
 const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRange, sRange, setLRange, lRange, mode, testId, setTestId }) => {
 
 

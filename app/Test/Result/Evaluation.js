@@ -1,8 +1,8 @@
-import ColorHistoryTable from "../history"
-import { calculateHLSDifference, stepInDifficulty } from "../General/utils";
+import ColorHistoryTable from "../../history"
+import { calculateHLSDifference, stepInDifficulty } from "../../General/utils";
 import { getAccuracy } from "./ResultDisplay";
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { TriangularColorPickerDisplayHistory } from "../Color Picker/ColorPicker";
+import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 
 
 function calculatestat(history, mode, difficulty) {

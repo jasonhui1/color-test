@@ -1,4 +1,4 @@
-import { allDifficulties } from "../Test/parameters";
+import { allDifficulties } from "../Test/Paramaters/parameters";
 import { v4 as uuidv4 } from 'uuid';
 
 // First, let's include our previous RGB to HSL conversion function

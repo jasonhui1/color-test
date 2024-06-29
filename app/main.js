@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { ColorPicker } from './Color Picker/ColorPicker';
-import ColorTest from './test';
+import ColorTest from './Test/test';
 import ColorHistoryTable from './history';
-import OrderTest from './Test/reorder';
+import OrderTest from './Test/Types/reorder';
 import { getHistory } from './Storage/test_history';
-import Evaluation from './Test/Evaluation';
+import Evaluation from './Test/Result/Evaluation';
 import ColorSwatch from './Color Picker/ColorSwatch';
 import CheckBox from './General/CheckBox';
 import { SelectBox } from './General/SelectBox';
@@ -39,7 +39,6 @@ const ColorTrainingTool = () => {
     const [mode, setMode] = useState('normal')
     const [checkedResult, setCheckedResult] = useState(false);
     const [practiceMode, setPracticeMode] = useState(true);
-
     return (
         <div>
             <div className='flex flex-col justify-center items-center'>

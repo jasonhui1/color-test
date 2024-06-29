@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { addHistory } from './Storage/test_history';
-import TestControls from './Test/TestParamterControl';
-import { RenderResult, ResultDisplay } from './Test/ResultDisplay';
-import Evaluation from './Test/Evaluation';
-import OrderTest from './Test/reorder';
-import { generateRandomColorAdvanced } from './General/color_util';
+import { addHistory } from '../Storage/test_history';
+import TestControls from './Paramaters/TestParamterControl';
+import { RenderResult, ResultDisplay } from './Result/ResultDisplay';
+import Evaluation from './Result/Evaluation';
+import OrderTest from './Types/reorder';
+import { generateRandomColorAdvanced } from '../General/color_util';
 
 const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedResult, setCheckedResult, saveToHistory }) => {
 

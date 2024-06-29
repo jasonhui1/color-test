@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { SelectBox } from "../../General/SelectBox";
-import { brightnessOptions, colorOptions, saturationOptions } from "../parameters";
+import { brightnessOptions, colorOptions, saturationOptions } from "../Paramaters/parameters";
 
 const TestCreate = ({ createTest }) => {
     const [hRange, setHRange] = useState([0, 360]);

@@ -2,7 +2,7 @@
 import { Reorder } from "framer-motion"
 import { useState } from "react"
 import { CheckResultButton, NextButton } from "../test";
-import { generateId, getRandomIntStep } from "../General/utils";
+import { generateId, getRandomIntStep } from "../../General/utils";
 
 function generateList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], direction = ['L'], extremeFirst = false, useSmallest = false) {
     const [hStart, hEnd] = hRange;
