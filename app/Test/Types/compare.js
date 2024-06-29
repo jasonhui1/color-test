@@ -1,27 +1,28 @@
 
-import { Reorder } from "framer-motion"
 import { useState } from "react"
 import { CheckResultButton, NextButton } from "../test";
 import { generateId, getRandomIntStep } from "../../General/utils";
 import { defaultHLS, generateRandomColorAdvanced, hlsToString } from "../../General/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
-import { CheckerboardPattern, CircuitBoardPattern, CrosshatchPattern, PlusPattern, PolkaDotsPattern, SpeedLinesPattern, StripePattern, TartanPlaidPattern } from "./patterns";
+import { CheckerboardPattern, CircuitBoardPattern, PlusPattern, PolkaDotsPattern, SpeedLinesPattern, StripePattern, TartanPlaidPattern } from "./patterns";
+import { FakeLaptop, FakeSphere, ShapeBorder } from "./shape";
+import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
 
 
-    // Not the maximum
-    let newLRange = [lRange[0], lRange[1] - step]
-    let newSRange = [sRange[0], sRange[1] - step]
+    // // Not the maximum
+    // let newLRange = [lRange[0], lRange[1] - step]
+    // let newSRange = [sRange[0], sRange[1] - step]
 
-    const color1 = generateRandomColorAdvanced(hRange, newLRange, newSRange, mode, step);
+    const color1 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
 
-    // Not less than ref
-    newLRange = [color1.l + step, lRange[1]]
-    newSRange = [color1.s + step, sRange[1]]
+    // // Not less than ref
+    // newLRange = [color1.l + step, lRange[1]]
+    // newSRange = [color1.s + step, sRange[1]]
 
-    const color2 = generateRandomColorAdvanced(hRange, newLRange, newSRange, mode, step);
+    const color2 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
 
     return { color1, color2 }
 }
@@ -72,6 +73,20 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
     //     return true
     // }
 
+    let corrects = [];
+    const counter = {}
+
+
+    for (let i = 0; i < 200; i++) {
+        const { h, s, l } = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step)
+        corrects.push({ h, s, l })
+
+        counter[l] = counter[l] || {}
+        counter[l][s] = (counter[l][s] || 0) + 1
+    }
+
+    console.log('counter :>> ', counter);
+
 
     return (
         <div>
@@ -91,6 +106,8 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
             >
                 Check Result
             </button>
+            <TriangularColorPickerDisplayHistory hue={refColor.h} correct={corrects} incorrect={[targetColor]} />
+
         </div>
     )
 }
@@ -110,7 +127,8 @@ const TestDisplay = ({ refColor, targetColor, guessColor, patternDensity = 30 })
 
             </div>
             <PlusPattern width={25} color1={refColor} color2={targetColor} rotation={45} />
-        
+
+            <FakeSphere color1={refColor} color2={targetColor} />
             {/* <svg width="100" height="100" viewBox="0 0 24 24">
                 <polygon fill="gold" points="12,17.27 18.18,21 15.64,13.97 21.82,9.24 14.47,8.63 12,2 9.53,8.63 2.18,9.24 8.36,13.97 5.82,21" />
             </svg>
@@ -119,6 +137,8 @@ const TestDisplay = ({ refColor, targetColor, guessColor, patternDensity = 30 })
             <CircleOverSquare color1={refColor} color2={targetColor} width={100} radius={40} /> */}
 
             {/* <MoveOver color1={refColor} color2={targetColor} /> */}
+            <FakeLaptop color1={refColor} color2={targetColor} />
+            <ShapeBorder color1={refColor} color2={targetColor} />
         </div>
     )
 }

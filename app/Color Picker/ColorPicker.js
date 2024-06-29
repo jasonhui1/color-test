@@ -3,45 +3,11 @@ import color_wheel from "../../public/color_wheel.png";
 import Image from 'next/image';
 import HueShiftImage from './HueShiftImage';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import { getHueFromPosition, getPositionFromHue, getPositionFromSV, getSVFromPosition } from '../General/color_util';
+import { withinCircle, withinTriangle_strict } from '../General/calculation_util';
 
 
 const defaultHueShift = 30 //by CSP
-export function getPositionFromSV(s, v, w = 1, bb = { x1: 0, y1: 0 }) {
-    function getPositionFromSVNormalised() {
-        let y = (100 - v) / 100
-        const yh = (y < 0.5) ? y : 1 - y
-        const horizontalLineLength = Math.tan(Math.PI / 3) * yh
-        let x = s / 100 * horizontalLineLength
-        return { x, y }
-    }
-
-    const { x, y } = getPositionFromSVNormalised()
-
-    return { x: x * w + bb.x1, y: y * w + bb.y1 }
-}
-
-function getSVFromPosition(x, y) {
-    const yh = (y < 0.5) ? y : 1 - y
-    //trigonometry
-
-    const horizontalLineLength = Math.tan(Math.PI / 3) * yh
-    const newSaturation = Math.round(x / horizontalLineLength * 100)
-    const newValue = Math.round(100 - (y) * 100);
-
-    return { s: newSaturation, v: newValue }
-}
-
-function getHueFromPosition(x, y, centerX, centerY) {
-    return Math.round(Math.atan2(y - centerY, x - centerX) * 180 / Math.PI + 180)
-}
-
-function getPositionFromHue(hue, radius, centerX, centerY) {
-    return {
-        x: -(centerX - radius / 2) * Math.cos((hue) / 180 * Math.PI) + centerX,
-        y: -(centerY - radius / 2) * Math.sin((hue) / 180 * Math.PI) + centerY,
-    }
-}
-
 const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) => {
 
     const [isDraggingColor, setIsDraggingColor] = useState(false);
@@ -49,22 +15,19 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
     const divRef = useRef(null);
 
     const center = size / 2
-
+    const ratio = 1 / 300 * size
     ///////////////////////////Cirlce///////////////////////
-    // r = 25
-    const radius = 25
+    const radius = 25 / ratio
 
     /////////////////////////Triangle///////////////////////
-    //top 88 45
-    //bot 88 255
-    //mid 269 149
-    const bb = { x1: 88, y1: 45, x2: 269, y2: 255 }
+    const bb = {
+        x1: 88 / ratio, y1: 45 / ratio,
+        x2: 269 / ratio, y2: 255 / ratio
+    }
     const w = bb.y2 - bb.y1
 
     //Calculate the position
-    let selectedColorPosition = { x: 0, y: 0 };
-    const normalizePosition = getPositionFromSV(selectedColor.s, selectedColor.l)
-    selectedColorPosition = { x: normalizePosition.x * w + bb.x1, y: normalizePosition.y * w + bb.y1 }
+    let selectedColorPosition = getPositionFromSV(selectedColor.s, selectedColor.l, w, bb)
 
     const selectedHue = defaultHueShift + selectedColor.h
     let selectedHuePosition = getPositionFromHue(selectedHue, radius, center, center)
@@ -80,44 +43,14 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         return [x, y]
     }
 
-    // Within bounding box (square)
-    // function withinTriangle(x, y) {
-    //     return (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2)
-    // }
-
-    function withinTriangle_strict(x, y) {
-        // Define the three vertices of the triangle
-        const [x1, y1] = [bb.x1, bb.y2]; // Bottom vertex
-        const [x2, y2] = [bb.x1, bb.y1]; // Top vertex
-        const [x3, y3] = [bb.x2, (bb.y1 + bb.y2) / 2]; // Middle vertex
-
-        // Calculate the area of the full triangle
-        const fullArea = Math.abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2);
-
-        // Calculate areas of three sub-triangles formed by the point and triangle edges
-        const area1 = Math.abs((x * (y2 - y3) + x2 * (y3 - y) + x3 * (y - y2)) / 2);
-        const area2 = Math.abs((x1 * (y - y3) + x * (y3 - y1) + x3 * (y1 - y)) / 2);
-        const area3 = Math.abs((x1 * (y2 - y) + x2 * (y - y1) + x * (y1 - y2)) / 2);
-
-        // The point is inside the triangle if the sum of sub-areas equals the full area
-        return Math.abs(fullArea - (area1 + area2 + area3)) < 0.00001; // Using small epsilon for float comparison
-    }
-
-    function withinCircle(x, y) {
-        let [x1, y1] = [center, center]
-        const dist = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
-        return dist >= (center - radius)
-    }
-
-
     const handleMouseDown = (e) => {
         let [x, y] = getRelativeXY(e)
         if (x < 0 && y < 0) return
 
-        if (withinTriangle_strict(x, y)) {
+        if (withinTriangle_strict(x, y, bb)) {
             setIsDraggingColor(true);
             updateColor(e);
-        } else if (withinCircle(x, y)) {
+        } else if (withinCircle(x, y, center, radius)) {
             setIsDraggingHue(true);
             updateHue(e);
         }
@@ -146,7 +79,7 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
         x -= bb.x1
         y -= bb.y1
 
-        const { s, v } = getSVFromPosition(x / w, y / w)
+        const { s, v } = getSVFromPosition(x, y, w)
 
         setSelectedColor({
             ...selectedColor,
@@ -154,7 +87,6 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
             l: Math.max(0, Math.min(100, v))
         });
 
-        // }
     };
 
     const updateHue = (e) => {
@@ -171,8 +103,8 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
     };
 
     return (
-        <div className='w-[300px] h-[300px] relative' onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} ref={divRef}>
-            <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
+        <div className={`w-[${size}px] h-[${size}px] relative`} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} ref={divRef}>
+            <Image className='absolute' src={color_wheel} alt="color_wheel" width={size} height={size} draggable={false} style={{
                 userSelect: 'none',
                 WebkitUserDrag: 'none',
                 KhtmlUserDrag: 'none',
@@ -181,8 +113,8 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
             }} />
             <HueShiftImage
                 src={"https://i.imgur.com/BRVZgWi.png"}
-                width={300}
-                height={300}
+                width={size}
+                height={size}
                 alt="color_combined"
                 hueShift={selectedColor.h}
             />
@@ -305,42 +237,27 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
     )
 }
 
-
 export const TriangularColorPickerDisplayHistory = ({ hue, size = 300, correct = [], incorrect = [] }) => {
     const center = size / 2
+    const ratio = 1 / 300 * size
     ///////////////////////////Cirlce///////////////////////
-    const radius = 25 / 300 * size
+    const radius = 25 / ratio
 
     /////////////////////////Triangle///////////////////////
     const bb = {
-        x1: 88 / 300 * size, y1: 45 / 300 * size,
-        x2: 269 / 300 * size, y2: 255 / 300 * size
+        x1: 88 / ratio, y1: 45 / ratio,
+        x2: 269 / ratio, y2: 255 / ratio
     }
     const w = bb.y2 - bb.y1
 
-    const correctSVPosition = correct.map(({ h, s, l }) => {
-        return getPositionFromSV(s, l, w, bb)
-    })
-
-    const correctHuePosition = correct.map(({ h, s, l }) => {
-        const selectedHue = defaultHueShift + h
-        return getPositionFromHue(selectedHue, radius, center, center)
-    })
-
-
-    const inCorrectSVPosition = incorrect.map(({ h, s, l }) => {
-        return getPositionFromSV(s, l, w, bb)
-    })
-
-    const inCorrectHuePosition = incorrect.map(({ h, s, l }) => {
-        const selectedHue = defaultHueShift + h
-        return getPositionFromHue(selectedHue, radius, center, center)
-    })
-
+    const correctSVPosition = correct.map(({ h, s, l }) => getPositionFromSV(s, l, w, bb))
+    const correctHuePosition = correct.map(({ h, s, l }) => getPositionFromHue(h + defaultHueShift, radius, center, center))
+    const inCorrectSVPosition = incorrect.map(({ h, s, l }) => getPositionFromSV(s, l, w, bb))
+    const inCorrectHuePosition = incorrect.map(({ h, s, l }) => getPositionFromHue(h + defaultHueShift, radius, center, center))
 
     return (
-        <div className='w-[300px] h-[300px] relative'>
-            <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
+        <div className={`w-[${size}px] h-[${size}px] relative`}>
+            <Image className='absolute' src={color_wheel} alt="color_wheel" width={size} height={size} draggable={false} style={{
                 userSelect: 'none',
                 WebkitUserDrag: 'none',
                 KhtmlUserDrag: 'none',
@@ -349,8 +266,8 @@ export const TriangularColorPickerDisplayHistory = ({ hue, size = 300, correct =
             }} />
             <HueShiftImage
                 src={"https://i.imgur.com/BRVZgWi.png"}
-                width={300}
-                height={300}
+                width={size}
+                height={size}
                 alt="color_combined"
                 hueShift={hue}
             />

@@ -1,0 +1,28 @@
+export function withinTriangle_strict(x, y, bb = { x1: 0, y1: 0, x2: 2 / Math.sqrt(3), y2: 1 }) {
+    // Define the three vertices of the triangle
+    const [x1, y1] = [bb.x1, bb.y2]; // Bottom vertex
+    const [x2, y2] = [bb.x1, bb.y1]; // Top vertex
+    const [x3, y3] = [bb.x2, (bb.y1 + bb.y2) / 2]; // Middle vertex
+
+    // Calculate the area of the full triangle
+    const fullArea = Math.abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2);
+
+    // Calculate areas of three sub-triangles formed by the point and triangle edges
+    const area1 = Math.abs((x * (y2 - y3) + x2 * (y3 - y) + x3 * (y - y2)) / 2);
+    const area2 = Math.abs((x1 * (y - y3) + x * (y3 - y1) + x3 * (y1 - y)) / 2);
+    const area3 = Math.abs((x1 * (y2 - y) + x2 * (y - y1) + x * (y1 - y2)) / 2);
+
+    // The point is inside the triangle if the sum of sub-areas equals the full area
+    return Math.abs(fullArea - (area1 + area2 + area3)) < 0.00001; // Using small epsilon for float comparison
+}
+
+// Within bounding box (square)
+// function withinTriangle(x, y) {
+//     return (x > bb.x1 && y > bb.y1 && x < bb.x2 && y < bb.y2)
+// }
+
+export function withinCircle(x, y, center, radius) {
+    let [x1, y1] = [center, center]
+    const dist = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
+    return dist >= (center - radius)
+}

@@ -44,11 +44,18 @@ export function hexToHsl(hex) {
     // Use our rgbToHsl function
     return rgbToHsl(r, g, b);
 }
+export function roundToStep(value, step) {
+    return Math.round(value / step) * step;
+}
 
 export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function getRandomFloat(min, max) {
+    return Math.random() * (max - min) + min;
 }
 
 export function getRandomIntStep(min, max, step) {
@@ -83,4 +90,8 @@ export const calculateDistance = (x, y, x1, y1) => {
 
 export const generateId = (length = 8) => {
     return uuidv4().substring(0, length)
+}
+
+export const map = (x, in_min, in_max, out_min, out_max) => {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 }
