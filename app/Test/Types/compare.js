@@ -5,6 +5,7 @@ import { CheckResultButton, NextButton } from "../test";
 import { generateId, getRandomIntStep } from "../../General/utils";
 import { defaultHLS, generateRandomColorAdvanced, hlsToString } from "../../General/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
+import { CheckerboardPattern, CircuitBoardPattern, CrosshatchPattern, PlusPattern, PolkaDotsPattern, SpeedLinesPattern, StripePattern, TartanPlaidPattern } from "./patterns";
 
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
@@ -71,6 +72,7 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
     //     return true
     // }
 
+
     return (
         <div>
             {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
@@ -107,30 +109,19 @@ const TestDisplay = ({ refColor, targetColor, guessColor, patternDensity = 30 })
                 {/* <ColorSwatch color={guessColor} /> */}
 
             </div>
-            <StripePattern density={patternDensity} color1={refColor} color2={targetColor} />
+            <PlusPattern width={25} color1={refColor} color2={targetColor} rotation={45} />
+        
+            {/* <svg width="100" height="100" viewBox="0 0 24 24">
+                <polygon fill="gold" points="12,17.27 18.18,21 15.64,13.97 21.82,9.24 14.47,8.63 12,2 9.53,8.63 2.18,9.24 8.36,13.97 5.82,21" />
+            </svg>
+            <Gradient color1={refColor} color2={targetColor} />
+            <YingYangLike color1={refColor} color2={targetColor} radius={60} />
+            <CircleOverSquare color1={refColor} color2={targetColor} width={100} radius={40} /> */}
 
+            {/* <MoveOver color1={refColor} color2={targetColor} /> */}
         </div>
     )
 }
-
-const StripePattern = ({ density, color1, color2 }) => {
-    const halfDensity = density / 2
-
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
-            <defs>
-                {/* Stripe pattern */}
-                <pattern id="stripes" patternUnits="userSpaceOnUse" width={density} height={density} patternTransform=' rotate(45)'>
-                    <rect width={halfDensity} height={density} fill={hlsToString(color1)} />
-                    <rect x={halfDensity} width={halfDensity} height={density} fill={hlsToString(color2)} />
-                </pattern>
-            </defs>
-            {/* Example usage of the stripe pattern */}
-            <rect x="50" y="50" width="200" height="200" fill="url(#stripes)" />
-        </svg>
-    )
-}
-
-
 export default CompareTest;
 // patternUnits='userSpaceOnUse'  patternTransform='scale(4) rotate(70)'> stroke-width='1' stroke='none' fill='hsla(15,94.3%,6.9%,1)' /></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(#a)' /></svg>
+
