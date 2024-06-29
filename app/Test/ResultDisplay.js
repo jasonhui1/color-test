@@ -2,7 +2,7 @@ import { FaCheck, FaTimes, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { calculateDistance, calculateHLSDifference, stepInDifficulty } from '../General/utils';
 import { getPositionFromSV } from '../Color Picker/ColorPicker';
 
-export const getAccuracy = (targetColor, selectedColor, difficulties) => {
+export const getAccuracy = (targetColor, selectedColor, difficulties, allowance = 10) => {
     if (!targetColor) return { hue: 'N/A', saturation: 'N/A', value: 'N/A' };
 
     const { h: hue_diff, s: sat_diff, l: lig_diff } = calculateHLSDifference(targetColor, selectedColor, false);
@@ -14,7 +14,6 @@ export const getAccuracy = (targetColor, selectedColor, difficulties) => {
     // const distance_diff = calculateDistance(x, y, tx, ty) * 100
 
     const step = stepInDifficulty(difficulties);
-    const allowance = step / 2;
 
     const HAccuracy = Math.abs(hue_diff) <= allowance || tx * 100 <= allowance || targetColor.l < allowance || targetColor.l > 100 - allowance / 2
     const SAccuracy = Math.abs(sat_diff) <= allowance;

@@ -1,4 +1,5 @@
 import { allDifficulties } from "../Test/parameters";
+import { v4 as uuidv4 } from 'uuid';
 
 // First, let's include our previous RGB to HSL conversion function
 export function rgbToHsl(r, g, b) {
@@ -78,4 +79,8 @@ export const stepInDifficulty = (difficulty) => {
 
 export const calculateDistance = (x, y, x1, y1) => {
     return Math.sqrt((x - x1) ** 2 + (y - y1) ** 2)
+}
+
+export const generateId = (length = 8) => {
+    return uuidv4().substring(0, length)
 }

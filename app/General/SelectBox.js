@@ -4,7 +4,7 @@ export const SelectBox = ({ current, onChange, options, label }) => {
             <label className="font-medium">{label}:</label>
             <select
                 value={current}
-                onChange={(e) => onChange(e)}
+                onChange={(e) => onChange(e.target.value)}
                 className="border rounded px-2 py-1"
             >
                 {options.map((option) => (

@@ -1,9 +1,8 @@
 
 import { Reorder } from "framer-motion"
 import { useState } from "react"
-import { v4 as uuidv4 } from 'uuid';
 import { CheckResultButton, NextButton } from "../test";
-import { getRandomIntStep } from "../General/utils";
+import { generateId, getRandomIntStep } from "../General/utils";
 
 function generateList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], direction = ['L'], extremeFirst = false, useSmallest = false) {
     const [hStart, hEnd] = hRange;
@@ -30,7 +29,7 @@ function generateList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100
         const h = HConstant ? hStartNumber : hStartNumber + i * step
         const l = LConstant ? lStartNumber : lStartNumber + i * step
         const s = SConstant ? sStartNumber : sStartNumber + i * step
-        targetList.push({ id: uuidv4(), h, s, l })
+        targetList.push({ id: generateId(), h, s, l })
     }
 
 
@@ -39,11 +38,11 @@ function generateList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100
         guessList.sort((a, b) => {
             if (useSmallest) {
                 // Sort by smallest s, then smallest l
-                if (a.s !== b.s) return a.s - b.s;
+                if (a.s !== b.s) return b.s - a.s;
                 return a.l - b.l;
             } else {
                 // Sort by largest s, then largest l
-                if (a.s !== b.s) return b.s - a.s;
+                if (a.s !== b.s) return a.s - b.s;
                 return b.l - a.l;
             }
         });
@@ -83,13 +82,18 @@ const OrderTest = ({ hRange, sRange, lRange, length = 5, step = 20 }) => {
     const [targetList, setTargetList] = useState([])
     const [guessList, setGuessList] = useState([])
     const [checkedResult, setCheckedResult] = useState(false)
+    const [chosenDirection, setChosenDirection] = useState('L')
 
+    const direction = ['S', 'L']
     const setList = () => {
 
         setCheckedResult(false)
-        const { target, guess } = generateList(step, length, hRange, sRange, lRange, ['L'], true,)
-        console.log('target :>> ', target);
 
+        const dir = direction[Math.floor(Math.random() * direction.length)]
+        const { target, guess } = generateList(step, length, hRange, sRange, lRange, [dir], true,)
+        setChosenDirection(dir)
+
+        console.log('target :>> ', target);
         setTargetList(target)
         setGuessList(guess)
     }
@@ -108,7 +112,7 @@ const OrderTest = ({ hRange, sRange, lRange, length = 5, step = 20 }) => {
         <div>
             {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
-            <ProgressiveTest guessList={guessList} startTest={setList} length={length} />
+            <ProgressiveTest guessList={guessList} startTest={setList} length={length} direction={[chosenDirection]} />
             {/* <button
                 onClick={setList}
                 className="bg-blue-500 text-white px-4 py-2 rounded mr-4 hover:bg-blue-600"
@@ -126,7 +130,7 @@ const OrderTest = ({ hRange, sRange, lRange, length = 5, step = 20 }) => {
     )
 }
 
-const ProgressiveTest = ({ guessList, startTest, length = 5 }) => {
+const ProgressiveTest = ({ guessList, startTest, length = 5, direction = ['L'] }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [guesses, setGuesses] = useState([])
     const [checkedResult, setCheckedResult] = useState(false)
@@ -151,7 +155,10 @@ const ProgressiveTest = ({ guessList, startTest, length = 5 }) => {
 
 
     const checkProgressiveResult = () => {
-        const answer = guessList.map(item => item.l - guessList[0].l)
+        const answer = guessList.map(item => direction.includes('L') ? item.l - guessList[0].l : item.s - guessList[0].s)
+        console.log('direction :>> ', direction);
+
+        console.log('answer :>> ', answer);
         for (let i = 0; i < answer.length; i++) {
             if (Math.abs(answer[i]) !== Math.abs(guesses[i])) {
                 console.log('object :>> ', Math.abs(answer[i]), Math.abs(guesses[i]));

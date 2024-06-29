@@ -4,6 +4,10 @@ import ColorTest from './test';
 import ColorHistoryTable from './history';
 import OrderTest from './Test/reorder';
 import { getHistory } from './Storage/test_history';
+import Evaluation from './Test/Evaluation';
+import ColorSwatch from './Color Picker/ColorSwatch';
+import CheckBox from './General/CheckBox';
+import { SelectBox } from './General/SelectBox';
 
 const all_modes = [
     { value: 'normal', label: 'normal' },
@@ -36,55 +40,34 @@ const ColorTrainingTool = () => {
     const [checkedResult, setCheckedResult] = useState(false);
     const [practiceMode, setPracticeMode] = useState(true);
 
-    const backgroundColor = `hsl(${selectedColor.h}, ${selectedColor.s}%, ${selectedColor.l}%)`;
     return (
         <div>
             <div className='flex flex-col justify-center items-center'>
                 <div className="mx-auto p-4  flex flex-row items-center">
                     <div className='flex gap-4'>
                         <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
-                            <div className='flex justify-between'>
-                                <ModeSelection mode={mode} setMode={setMode} />
-                                <div className="flex items-center justify-center mb-4">
-                                    <input
-                                        type="checkbox"
-                                        checked={practiceMode}
-                                        id="hideChooseCheckbox"
-                                        onChange={(e) => setPracticeMode(!practiceMode)}
-                                    />
-                                    <label htmlFor="hideChooseCheckbox" className="text-sm">
-                                        Practice
-                                    </label>
-                                </div>
+                            <div className='flex items-center justify-between gap-4'>
+                                <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />
+                                <CheckBox checked={practiceMode} onChange={(e) => setPracticeMode(!practiceMode)} label={'Practice'} />
                             </div>
-
 
 
                             {targetColor &&
                                 <div className="flex space-x-4 mb-4 justify-center">
-
-
                                     <div className="w-1/2">
                                         <h3 className="text-lg font-semibold mb-2">Target Color</h3>
-                                        <div
-                                            className="w-full h-40 rounded border-4 border-slate-300"
-                                            style={{ backgroundColor: targetColor ? `hsl(${targetColor.h}, ${targetColor.s}%, ${targetColor.l}%)` : 'white' }}
-                                        ></div>
+                                        <ColorSwatch color={targetColor} size={3} border={true} />
+
                                     </div>
 
                                     {(checkedResult || practiceMode) && (
-
                                         <div className="w-1/2">
                                             <h3 className="text-lg font-semibold mb-2">Your Color</h3>
-                                            <div
-                                                className="w-full h-40 rounded border-4 border-slate-300"
-                                                style={{ backgroundColor }}
-                                            ></div>
+                                            <ColorSwatch color={selectedColor} size={3} border={true} />
                                         </div>
                                     )}
                                 </div>
                             }
-
 
                             <ColorTest selectedColor={selectedColor} targetColor={targetColor} setTargetColor={setTargetColor}
                                 mode={mode} checkedResult={checkedResult} setCheckedResult={setCheckedResult} saveToHistory={!practiceMode}
@@ -96,6 +79,7 @@ const ColorTrainingTool = () => {
                 <DisplayColorRange hue={targetColor && targetColor.h} step={20} />
             </div>
             {/* <ColorHistoryTable history={getHistory()} mode='bw' difficulty='easy'/> */}
+            {/* <Evaluation history={getHistory()} mode={'normal'} difficulty={'easy'} /> */}
 
         </div>
 
@@ -116,10 +100,7 @@ const DisplayColorRange = ({ hue, step = 20 }) => {
                         {rangeArray.map((s, j) => {
 
                             return (
-                                <div key={j}
-                                    className="w-12 h-12 border border-gray-300"
-                                    style={{ backgroundColor: `hsl(${hue}, ${s}%, ${l}%)` }}
-                                ></div>
+                                <ColorSwatch key={j} color={{ h: hue, s, l }} size={1} />
                             )
                         })}
                     </div>

@@ -1,26 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { addHistory } from './Storage/test_history';
-import { calculateHLSDifference, getRandomInt, getRandomIntStep, stepInDifficulty } from './General/utils';
-import { ColorPicker } from './Color Picker/ColorPicker';
 import TestControls from './Test/TestParamterControl';
 import { RenderResult, ResultDisplay } from './Test/ResultDisplay';
-import ColorHistoryTable from './history';
-import { allDifficulties } from './Test/parameters';
 import Evaluation from './Test/Evaluation';
 import OrderTest from './Test/reorder';
-
-
-
-function generateRandomColor(h_range, s_range, l_range, step = 1) {
-
-    // allow wrapping
-    //TODO: hacking h difficulty
-    const h = getRandomIntStep(h_range[0], h_range[1] + (h_range[1] < h_range[0] ? 360 : 0), step === 20 ? 15 : step) % 361;
-    const s = getRandomIntStep(s_range[0], s_range[1] + (s_range[1] < s_range[0] ? 100 : 0), step) % 101;
-    const l = getRandomIntStep(l_range[0], l_range[1] + (l_range[1] < l_range[0] ? 100 : 0), step) % 101;
-
-    return { h, s, l };
-}
+import { generateRandomColorAdvanced } from './General/color_util';
 
 const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedResult, setCheckedResult, saveToHistory }) => {
 
@@ -29,7 +13,7 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
     const [lRange, setLRange] = useState([0, 100]);
 
     const [difficulties, setDifficulties] = useState('easy')
-    const [testNum, setTestNum] = useState(10)
+    const [testNum, setTestNum] = useState(25)
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [test_history, setTestHistory] = useState([])
 
@@ -39,40 +23,22 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
 
 
     const setRandomTargetColor = () => {
-        function generateTargetColor() {
-            let newTargetColor;
-            do {
-                const step = stepInDifficulty(difficulties);
-                if (mode === 'bw') {
-                    newTargetColor = generateRandomColor([0, 0], [0, 0], lRange, step);
-                } else {
-                    newTargetColor = generateRandomColor(hRange, sRange, lRange, step);
-                }
-
-                if (!targetColor) break;
-
-                let diff = calculateHLSDifference(targetColor, newTargetColor);
-                if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
-
-            } while (true);
-
-            return newTargetColor
-        }
-
-        let newTargetColor = generateTargetColor();
+        const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, difficulties, targetColor);
         setTargetColor(newTargetColor);
     };
 
-    const startTest = () => {
-
+    const handleNext = () => {
         const nextTest = () => {
             setRandomTargetColor();
             setCurrentTestNum(num => num + 1)
         };
+        const restartTest = () => {
+            setRandomTargetColor();
+            setCurrentTestNum(0)
+        };
 
         if (currentTestNum >= testNum) {
-            setCurrentTestNum(0);
-            setTestHistory([]);
+            restartTest()
         } else {
             nextTest()
         }
@@ -115,9 +81,9 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
                     />
                 }
 
-                <div className="flex flex-row justify-between">
+                <div className={"flex flex-row " + (showBackButton ? ' justify-between' : 'justify-end')}>
                     {showBackButton && <BackButton onClick={() => setTestId('0')} />}
-                    {showNextButton && <NextButton testStarted={testStarted} testEnded={testEnded} onClick={startTest} />}
+                    {showNextButton && <NextButton testStarted={testStarted} testEnded={testEnded} onClick={handleNext} />}
                     {showCheckButton && <CheckResultButton onClick={checkResult} />}
                 </div>
 

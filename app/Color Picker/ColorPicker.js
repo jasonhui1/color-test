@@ -2,15 +2,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import color_wheel from "../../public/color_wheel.png";
 import Image from 'next/image';
 import HueShiftImage from '../HueShiftImage';
+import { FaCheck, FaTimes } from 'react-icons/fa';
+
 
 const defaultHueShift = 30 //by CSP
-export function getPositionFromSV(s, v) {
-    const y = (100 - v) / 100
-    const yh = (y < 0.5) ? y : 1 - y
-    const horizontalLineLength = Math.tan(Math.PI / 3) * yh
-    const x = s / 100 * horizontalLineLength
+export function getPositionFromSV(s, v, w = 1, bb = { x1: 0, y1: 0 }) {
+    function getPositionFromSVNormalised() {
+        let y = (100 - v) / 100
+        const yh = (y < 0.5) ? y : 1 - y
+        const horizontalLineLength = Math.tan(Math.PI / 3) * yh
+        let x = s / 100 * horizontalLineLength
+        return { x, y }
+    }
 
-    return { x, y }
+    const { x, y } = getPositionFromSVNormalised()
+
+    return { x: x * w + bb.x1, y: y * w + bb.y1 }
 }
 
 function getSVFromPosition(x, y) {
@@ -297,6 +304,78 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
         </div>
     )
 }
+
+
+export const TriangularColorPickerDisplayHistory = ({ hue, size = 300, correct = [], incorrect = [] }) => {
+    const center = size / 2
+    ///////////////////////////Cirlce///////////////////////
+    const radius = 25 / 300 * size
+
+    /////////////////////////Triangle///////////////////////
+    const bb = {
+        x1: 88 / 300 * size, y1: 45 / 300 * size,
+        x2: 269 / 300 * size, y2: 255 / 300 * size
+    }
+    const w = bb.y2 - bb.y1
+
+    const correctSVPosition = correct.map(({ h, s, l }) => {
+        return getPositionFromSV(s, l, w, bb)
+    })
+
+    const correctHuePosition = correct.map(({ h, s, l }) => {
+        const selectedHue = defaultHueShift + h
+        return getPositionFromHue(selectedHue, radius, center, center)
+    })
+
+
+    const inCorrectSVPosition = incorrect.map(({ h, s, l }) => {
+        return getPositionFromSV(s, l, w, bb)
+    })
+
+    const inCorrectHuePosition = incorrect.map(({ h, s, l }) => {
+        const selectedHue = defaultHueShift + h
+        return getPositionFromHue(selectedHue, radius, center, center)
+    })
+
+
+    return (
+        <div className='w-[300px] h-[300px] relative'>
+            <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
+                userSelect: 'none',
+                WebkitUserDrag: 'none',
+                KhtmlUserDrag: 'none',
+                MozUserDrag: 'none',
+                OUserDrag: 'none',
+            }} />
+            <HueShiftImage
+                src={"https://i.imgur.com/BRVZgWi.png"}
+                width={300}
+                height={300}
+                alt="color_combined"
+                hueShift={hue}
+            />
+            {correctSVPosition.map(({ x, y }, index) => (
+                <FaCheck className='text-green-500 absolute' key={index} style={{
+                    left: `${x}px`,
+                    top: `${y}px`,
+                    transform: `translate(-50%, -50%)`,
+                }} />
+            ))}
+
+            {inCorrectSVPosition.map(({ x, y }, index) => (
+                <FaTimes className='text-red-500 absolute' key={index} style={{
+                    left: `${x}px`,
+                    top: `${y}px`,
+                    transform: `translate(-50%, -50%)`,
+                }} />
+            ))}
+
+
+        </div>
+
+    );
+};
+
 // export const SquareColorPicker = ({ size = 300, setSelectedColor }) => {
 
 //     const canvasRef = useRef(null);
