@@ -5,6 +5,8 @@ import { RenderResult, ResultDisplay } from './Result/ResultDisplay';
 import Evaluation from './Result/Evaluation';
 import OrderTest from './Types/reorder';
 import { generateRandomColorAdvanced } from '../General/color_util';
+import { stepInDifficulty } from '../General/utils';
+import CompareTest from './Types/compare';
 
 const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedResult, setCheckedResult, saveToHistory }) => {
 
@@ -23,7 +25,7 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
 
 
     const setRandomTargetColor = () => {
-        const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, difficulties, targetColor);
+        const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, stepInDifficulty(difficulties), targetColor);
         setTargetColor(newTargetColor);
     };
 
@@ -91,7 +93,8 @@ const ColorTest = ({ selectedColor, targetColor, setTargetColor, mode, checkedRe
 
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
             {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}
-            <OrderTest hRange={hRange} sRange={sRange} lRange={lRange} length={4} step={20} />
+            {/* <OrderTest hRange={hRange} sRange={sRange} lRange={lRange} length={4} step={20} checkedResult={checkedResult} setCheckedResult={setCheckedResult}/> */}
+            <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} step={stepInDifficulty(difficulties)} checkedResult={checkedResult} setCheckedResult={setCheckedResult} />
 
         </div>
     );

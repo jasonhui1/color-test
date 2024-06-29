@@ -11,10 +11,9 @@ function generateRandomColor(h_range, s_range, l_range, step = 1) {
     return { h, s, l };
 }
 
-export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, difficulties, prevColor) => {
+export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, prevColor) => {
     let newColor;
     do {
-        const step = stepInDifficulty(difficulties);
         if (mode === 'bw') {
             newColor = generateRandomColor([0, 0], [0, 0], lRange, step);
         } else {
@@ -30,3 +29,6 @@ export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, diffic
 
     return newColor
 };
+
+export const defaultHLS = { h: 0, l: 0, s: 0, }
+export const hlsToString = (hsl) => `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;

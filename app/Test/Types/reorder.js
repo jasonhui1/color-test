@@ -4,7 +4,7 @@ import { useState } from "react"
 import { CheckResultButton, NextButton } from "../test";
 import { generateId, getRandomIntStep } from "../../General/utils";
 
-function generateList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], direction = ['L'], extremeFirst = false, useSmallest = false) {
+function generateProgressiveList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], direction = ['L'], extremeFirst = false, useSmallest = false) {
     const [hStart, hEnd] = hRange;
     const [sStart, sEnd] = sRange;
     const [lStart, lEnd] = lRange;
@@ -90,7 +90,7 @@ const OrderTest = ({ hRange, sRange, lRange, length = 5, step = 20 }) => {
         setCheckedResult(false)
 
         const dir = direction[Math.floor(Math.random() * direction.length)]
-        const { target, guess } = generateList(step, length, hRange, sRange, lRange, [dir], true,)
+        const { target, guess } = generateProgressiveList(step, length, hRange, sRange, lRange, [dir], true,)
         setChosenDirection(dir)
 
         console.log('target :>> ', target);
