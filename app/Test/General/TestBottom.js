@@ -1,13 +1,13 @@
-const TestBottom = ({ testEnded, checkedResult, onNext, onCheck }) => {
+const TestBottom = ({showBackButton, testEnded, checkedResult, onNext, onCheck, onBack }) => {
 
     // const showBackButton = currentTestNum > 0
+
     const showNextButton = checkedResult || testEnded
     const showCheckButton = !showNextButton
-
+    // const showBackButton = true
     return (
-        <div className={"flex flex-row justify-end "}>
-            {/* <div className={"flex flex-row " + (showBackButton ? ' justify-between' : 'justify-end')}> */}
-            {/* {showBackButton && <BackButton onClick={onBack} />} */}
+        <div className={"flex flex-row " + (showBackButton ? ' justify-between' : 'justify-end')}>
+            {showBackButton && <BackButton onClick={onBack} />}
             {showNextButton && <NextButton testEnded={testEnded} onClick={onNext} />}
             {showCheckButton && <CheckResultButton onClick={onCheck} />}
         </div>)

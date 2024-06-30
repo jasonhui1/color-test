@@ -45,6 +45,17 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         setCheckedResult(false);
     };
 
+    const handleBack = () => {
+
+        if (currentTestNum === 0) {
+            setTestStarted(false)
+        }
+        // else {
+        //     const { prevRef, prevTarget, prevSelected } = testHistory[currentTestNum - 1]
+        // }
+    }
+
+
     const checkResult = () => {
         if (checkedResult) return
         const newHistory = [...test_history, { targetColor, selectedColor }];
@@ -82,7 +93,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
             }
 
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
-            <TestBottom testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} />
+            <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+
+
             {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}
 
         </div>

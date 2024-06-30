@@ -35,7 +35,7 @@ function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
     if (color1.l < color2.l || (color1.l === color2.l && color1.s > color2.s)) {
         [color1, color2] = [color2, color1];
     }
-    return { color1, color2 }
+    return [color1, color2]
 }
 
 const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step = 20, testId, setTestStarted }) => {
@@ -44,40 +44,60 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step =
     const [targetColor, setTargetColor] = useState(defaultHLS)
 
     const [currentTestNum, setCurrentTestNum] = useState(0)
-    const [test_history, setTestHistory] = useState([])
+    const [testHistory, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
     const { mode, difficulties, testNum, saveToHistory, practicing } = useSettings()
 
     const [chosenDirection, setChosenDirection] = useState('L')
 
     useEffect(() => {
-        resetColors();
+        setColors();
     }, [])
 
 
     const direction = ['S', 'L']
-    const resetColors = () => {
-        const { color1, color2 } = generatePair(hRange, lRange, sRange, mode, step);
+    const setColors = () => {
+        let color1, color2;
+        // if (testHistory.length > currentTestNum) {
+        //     const { refColor , targetColor } = testHistory[currentTestNum]
+        //     [color1, color2] = [refColor, targetColor]
+        // } else {
+        [color1, color2] = generatePair(hRange, lRange, sRange, mode, step);
+        // const newHistory = [...testHistory, { color1, color2 }];
+        // setTestHistory(newHistory)
+        // }
+        // 
         setRefColor(color1)
         setTargetColor(color2)
+
     }
 
     const handleNext = () => {
         if (testEnded) {
             setTestStarted(false)
         } else {
-            resetColors()
-            setCheckedResult(false)
+            setColors()
+            setCurrentTestNum(num => num + 1)
         }
 
         setCheckedResult(false);
     }
 
+    const handleBack = () => {
+
+        if (currentTestNum === 0) {
+            setTestStarted(false)
+        }
+        // else {
+        //     const { prevRef, prevTarget, prevSelected } = testHistory[currentTestNum - 1]
+        // }
+    }
+
     const checkResult = () => {
         if (checkedResult) return
-        const newHistory = [...test_history, { targetColor, selectedColor }];
-
+        const newHistory = [...testHistory, { refColor, targetColor, selectedColor }];
         setTestHistory(newHistory)
+
         if (currentTestNum >= testNum) {
             //Print Evaluation Result
             console.log('test ended, print result :>> ',);
@@ -96,7 +116,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step =
             <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} />
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
 
-            <TestBottom testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} />
+            <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
             <ExampleDisplay refColor={refColor} targetColor={targetColor} />
 
 
@@ -139,8 +159,6 @@ const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false }
 }
 
 const ExampleDisplay = memo(({ refColor, targetColor, patternDensity = 30, }) => {
-    console.log('rerendering :>> ', refColor, targetColor);
-
     return (
         <>
             <PlusPattern width={25} color1={refColor} color2={targetColor} rotation={45} />
