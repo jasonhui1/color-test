@@ -5,29 +5,22 @@ import Evaluation from "../Test/Result/Evaluation";
 import { getHistory } from "../Storage/test_history";
 import { SelectBox } from "../General/SelectBox";
 import { all_modes } from "../Test/Paramaters/parameters";
+import { addHistorySB, getHistorySB } from "../Storage/test_history_supabase";
+import { addTestSB, getTestSB } from "../Storage/test_parameters_sb";
+import { useFetchHistory, useFetchTests } from "../Storage/Hooks/useFetch";
 
 export default function Page() {
-  const [createdTests, setCreatedTests] = useState([]);
+  const createdTests = useFetchTests();
   const [testId, setTestId] = useState('0');
-  const [history, setHistory] = useState([]);
   const [mode, setMode] = useState('normal');
-
-  useEffect(() => {
-    //Newest show first
-    setCreatedTests(getTests().toReversed())
-
-  }, [])
-
-  useEffect(() => {
-    //Newest show first
-    setHistory(getHistory({ testId, mode }))
-  }, [mode, testId])
+  const history = useFetchHistory(testId, mode);
 
   const onSelectTest = (testId) => {
     // setTestId();
     const index = createdTests.findIndex(test => test.id === testId);
     const test = createdTests[index]
     setTestId(test.id)
+    // addHistorySB({ testId: 4, targetColor: { h: 0, s: 50, l: 50 }, selectedColor: { h: 0, s: 50, l: 45 }, mode: 'normal', difficulty: 'easy' })
   }
 
   const testSelected = testId !== '0'

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
+    "@supabase/supabase-js": "^2.44.2",
     "@uiw/react-color": "^2.3.0",
     "colorsys": "^1.0.22",
     "framer-motion": "^11.2.12",

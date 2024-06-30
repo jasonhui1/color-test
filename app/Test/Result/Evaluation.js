@@ -3,6 +3,7 @@ import { calculateHLSDifference, stepInDifficulty } from "../../General/utils";
 import { getAccuracy } from "./ResultDisplay";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
+import { getHistorySupabase } from "../../Storage/test_history_supabase";
 
 
 function calculatestat(history, mode, difficulty) {
@@ -146,7 +147,6 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
         </div>
     )
 }
-
 
 
 export default Evaluation;
