@@ -11,7 +11,7 @@ const loadResultsFromStorage = () => {
 };
 
 export const addNewTest = (id, hRange, lRange, sRange, name = 'Unnamed') => {
-    const tests = getTests();
+    const tests = getTests()||[];
     tests.push({
         id, hRange, sRange, lRange,
         name

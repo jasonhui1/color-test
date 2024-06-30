@@ -67,7 +67,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
             console.log('AllHistory :>> ', newHistory);
         }
 
-        if (saveToHistory) addHistory(targetColor, selectedColor, mode, testId);
+        if (saveToHistory) addHistory(targetColor, selectedColor, mode, testId); console.log('saved To huistory :>> ');
         setCheckedResult(true)
     };
 

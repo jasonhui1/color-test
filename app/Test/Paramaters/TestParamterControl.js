@@ -17,7 +17,7 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
 
     useEffect(() => {
         //Newest show first
-        setCreatedTests(getTests().toReversed())
+        setCreatedTests(getTests()?.toReversed())
 
     }, [])
 
@@ -67,6 +67,7 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
                 <div>
                     <TestsSelect tests={createdTests} onSelect={onSelectTest} />
                     <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => setCreatingTest(true)}>Create New Test </button>
+               
                 </div>
             }
 
@@ -78,7 +79,7 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
 const TestsSelect = ({ tests, onSelect }) => {
     return (
         <ul>
-            {tests.map((test, index) =>
+            {tests?.map((test, index) =>
                 <TestDisplay key={index} test={test} onSelect={() => onSelect(test.id)} />)
             }
         </ul>

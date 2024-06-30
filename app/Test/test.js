@@ -9,6 +9,7 @@ import { stepInDifficulty } from '../General/utils';
 import CompareTest from './Types/compare';
 import { useSettings } from '../Context/setting';
 import SingleTest from './Types/single';
+import { BackButton } from './General/TestBottom';
 
 const ColorTest = ({ selectedColor, }) => {
 
@@ -38,7 +39,8 @@ const ColorTest = ({ selectedColor, }) => {
                     {confirming &&
                         <>
                             <TestParameterDisplay hRange={hRange} sRange={sRange} lRange={lRange} name={name} />
-                            <div className='flex flex-row justify-end'>
+                            <div className='flex flex-row justify-between'>
+                                <BackButton onClick={() => setTestId('0')} />
                                 <StartButton onClick={() => setTestStarted(true)} />
                             </div>
                         </>
@@ -64,7 +66,7 @@ const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId, setTestStar
         <>
 
             {
-                (mode === 'normal') ?
+                (mode === 'normal' || mode === 'bw') ?
                     <SingleTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} /> :
                     <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} />
             }

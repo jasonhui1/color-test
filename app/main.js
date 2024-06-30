@@ -11,7 +11,7 @@ import { SelectBox } from './General/SelectBox';
 import { SettingProvider, useSettings } from './Context/setting';
 
 const ColorTrainingTool = () => {
-    const [selectedColor, setSelectedColor] = useState({ h: 40, s: 100, l: 50 });
+    const [selectedColor, setSelectedColor] = useState({ h: 30, s: 100, l: 50 });
 
     return (
         <div>

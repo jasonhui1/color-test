@@ -1,6 +1,5 @@
 let cachedResults = null;
 const storageKey = 'color-test-history';
-
 //Load from local storage only if not yet loaded
 const loadResultsFromStorage = () => {
     if (cachedResults === null) {
@@ -11,7 +10,7 @@ const loadResultsFromStorage = () => {
 };
 
 export const addHistory = (targetColor, selectedColor, mode = 'normal', testId) => {
-    const cards = getHistory();
+    const cards = getFullHistory()||[];
     cards.push({
         timestamp: new Date().toISOString(),
         testId,
@@ -22,11 +21,19 @@ export const addHistory = (targetColor, selectedColor, mode = 'normal', testId) 
     localStorage.setItem(storageKey, JSON.stringify(cards));
 };
 
-export const getHistory = (last = Infinity) => {
-    const history = loadResultsFromStorage();
+const getFullHistory = () => {
+    return loadResultsFromStorage();
+};
+
+export const getHistory = ({ testId, mode = 'normal', last = Infinity }) => {
+    let history = loadResultsFromStorage();
     if (last != Infinity) {
         return history.slice(-last);
     }
+
+    if (testId) history = history.filter(history => history.testId === testId);
+    if (mode) history = history.filter(history => history.mode === mode);
+
     return history;
 };
 

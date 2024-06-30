@@ -11,6 +11,7 @@ import { Cross, Star, Triangle } from "./Patterns_and_Shape/basic_shape";
 import { useSettings } from "../../Context/setting";
 import TestBottom from "../General/TestBottom";
 import { ResultDisplay } from "../Result/ResultDisplay";
+import Evaluation from "../Result/Evaluation";
 
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
@@ -118,6 +119,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step =
 
             <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
             <ExampleDisplay refColor={refColor} targetColor={targetColor} />
+            {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulties} />}
 
 
         </div>
@@ -134,7 +136,7 @@ const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false }
 
             <div className="flex flex-row justify-center items-center gap-4">
                 {/* <ColorSwatch color={guessColor} /> */}
-                <TriangularColorPickerDisplayHistory hue={targetColor.h} correct={[refColor]} size={150} />
+                <TriangularColorPickerDisplayHistory hue={refColor.h} correct={[refColor]} size={150} />
                 <div className="">
                     <h3 className="text-lg font-semibold mb-2">Ref Color</h3>
                     <ColorSwatch color={refColor} size={3} border={true} />
