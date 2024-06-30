@@ -9,14 +9,14 @@ const loadResultsFromStorage = () => {
     return cachedResults;
 };
 
-export const addHistory = (targetColor, selectedColor, mode = 'normal', testId) => {
-    const cards = getFullHistory()||[];
+export const addHistory = (testId, targetColor, selectedColor, mode = 'normal', difficulty, refColor) => {
+    const cards = getFullHistory() || [];
     cards.push({
         timestamp: new Date().toISOString(),
         testId,
         targetColor,
         selectedColor,
-        mode,
+        mode, difficulty, refColor
     });
     localStorage.setItem(storageKey, JSON.stringify(cards));
 };

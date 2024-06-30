@@ -40,7 +40,7 @@ function calculatestat(history, mode, difficulty) {
             if (l < 0) selfIncrement(current, 'over');
             else selfIncrement(current, 'under');
 
-        } else if (mode === 'normal') {
+        } else {
             const hKey = `${targetColor.h}`;
             const lKey = `${targetColor.l}`;
             const sKey = `${targetColor.s}`;
@@ -52,7 +52,7 @@ function calculatestat(history, mode, difficulty) {
             const current = Data[hKey][lKey][sKey]
 
             // if (absH < allowance && absS < allowance && absL < allowance) correct += 1
-            if (distance_diff < allowance) {
+            if (distance_diff < allowance && absH < allowance) {
                 correct.push(targetColor);
                 selfIncrement(current, 'correct')
                 return
@@ -142,7 +142,7 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
         <div>
             <label> Evaluation: {percentage}%</label>
             <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
-            <TriangularColorPickerDisplayHistory hue={mode === 'bw' ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
+            <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
         </div>
     )
 }

@@ -3,26 +3,31 @@ import { useEffect, useState } from "react"
 import { getTests } from "../Storage/test_parameters"
 import Evaluation from "../Test/Result/Evaluation";
 import { getHistory } from "../Storage/test_history";
+import { SelectBox } from "../General/SelectBox";
+import { all_modes } from "../Test/Paramaters/parameters";
 
 export default function Page() {
   const [createdTests, setCreatedTests] = useState([]);
   const [testId, setTestId] = useState('0');
   const [history, setHistory] = useState([]);
+  const [mode, setMode] = useState('normal');
 
-  const mode = 'normal'
-  console.log('history :>> ', history);
   useEffect(() => {
     //Newest show first
     setCreatedTests(getTests().toReversed())
 
   }, [])
 
+  useEffect(() => {
+    //Newest show first
+    setHistory(getHistory({ testId, mode }))
+  }, [mode, testId])
+
   const onSelectTest = (testId) => {
     // setTestId();
     const index = createdTests.findIndex(test => test.id === testId);
     const test = createdTests[index]
     setTestId(test.id)
-    setHistory(getHistory({ testId, mode }))
   }
 
   const testSelected = testId !== '0'
@@ -31,6 +36,7 @@ export default function Page() {
     <div>
 
       <TestsSelect tests={createdTests} onSelect={onSelectTest} />
+      <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />
       <label>Length: {history.length}</label>
       {testSelected && <Evaluation history={history} mode={mode} />}
     </div>

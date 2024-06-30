@@ -237,7 +237,7 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
     )
 }
 
-export const TriangularColorPickerDisplayHistory = ({ hue, size = 300, correct = [], incorrect = [] }) => {
+export const TriangularColorPickerDisplayHistory = ({ hue = 30, size = 300, correct = [], incorrect = [] }) => {
     const center = size / 2
     const ratio = size / 300 
     ///////////////////////////Cirlce///////////////////////
@@ -249,6 +249,8 @@ export const TriangularColorPickerDisplayHistory = ({ hue, size = 300, correct =
         x2: 269 * ratio, y2: 255 * ratio
     }
     const w = bb.y2 - bb.y1
+
+    console.log('hue :>> ', hue);
 
     const correctSVPosition = correct.map(({ h, s, l }) => getPositionFromSV(s, l, w, bb))
     const correctHuePosition = correct.map(({ h, s, l }) => getPositionFromHue(h + defaultHueShift, radius, center, center))

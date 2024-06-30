@@ -67,7 +67,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
             console.log('AllHistory :>> ', newHistory);
         }
 
-        if (saveToHistory) addHistory(targetColor, selectedColor, mode, testId); console.log('saved To huistory :>> ');
+        if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties ); 
         setCheckedResult(true)
     };
 
@@ -92,8 +92,8 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                 </div>
             }
 
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
             <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
 
 
             {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}

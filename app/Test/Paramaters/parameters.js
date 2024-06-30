@@ -1,7 +1,11 @@
 export const allDifficulties = [
-    { value: 'easy', label: 'Easy', step: 20 },
-    { value: 'normal', label: 'Normal', step: 10 },
-    { value: 'hard', label: 'Hard', step: 5 },
+    { value: 'easy', label: 'Level 1', step: { h: 15, l: 20, s: 20 } },
+    { value: 'normal-', label: 'Level 2', step: { h: 15, l: 10, s: 20 } },
+    { value: 'normal', label: 'Level 3', step: { h: 15, l: 10, s: 10 } },
+    { value: 'normal+', label: 'Level 4', step: { h: 10, l: 10, s: 10 } },
+    { value: 'hard-', label: 'Level 5', step: { h: 10, l: 5, s: 10 } },
+    { value: 'hard', label: 'Level 6', step: { h: 10, l: 5, s: 5 } },
+    { value: 'hard+', label: 'Level 7', step: { h: 5, l: 5, s: 5 } },
 ];
 
 export const colorOptions = [

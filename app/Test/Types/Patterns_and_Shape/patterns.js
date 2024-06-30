@@ -1,4 +1,4 @@
-import { hlsToString } from "../../../General/color_util"
+import { hlsToId, hlsToString } from "../../../General/color_util"
 import { StarShape } from "./basic_shape"
 
 const PatternContainer = ({ children, id, width, height, rotation = 0, scale = 1, viewBox = '0 0 100% 100%' }) => {
@@ -18,7 +18,7 @@ export const CheckerboardPattern = ({ width = 80, color1, color2, rotation = 0 }
     const center = width / 2
     const hsl1 = hlsToString(color1)
     const hsl2 = hlsToString(color2)
-    const id = 'checkboard'
+    const id = 'checkboard' + hlsToId(color1) + hlsToId(color2)
 
     return (
         <PatternContainer id={id} width={width} height={width} rotation={rotation}>
@@ -33,7 +33,7 @@ export const StripePattern = ({ width = 40, color1, color2, rotation = 0 }) => {
     const center = width / 2
     const hsl1 = hlsToString(color1)
     const hsl2 = hlsToString(color2)
-    const id = 'stripes'
+    const id = 'stripes' + hlsToId(color1) + hlsToId(color2)
 
     return (
         <PatternContainer id={id} width={width} height={width} rotation={rotation}>
@@ -48,7 +48,7 @@ export const PolkaDotsPattern = ({ width = 40, color1, color2, dotRadiusRatio = 
     const hsl2 = hlsToString(color2)
     const radius = width / 2
     const dotRadius = radius / dotRadiusRatio
-    const id = 'polkaDots'
+    const id = 'polkaDots' + hlsToId(color1) + hlsToId(color2)
 
     return (
         <PatternContainer id={id} width={width} height={width} rotation={rotation}>
@@ -61,7 +61,7 @@ export const PolkaDotsPattern = ({ width = 40, color1, color2, dotRadiusRatio = 
 export const PlusPattern = ({ color1, color2, width = 40, rotation = 0 }) => {
     const hsl1 = hlsToString(color1)
     const hsl2 = hlsToString(color2)
-    const id = 'plusPattern'
+    const id = 'plusPattern' + hlsToId(color1) + hlsToId(color2)
 
     return (
         <PatternContainer id={id} width={width} height={width} rotation={rotation} scale={2}>
@@ -75,7 +75,7 @@ export const CircuitBoardPattern = ({ color1, color2, lineWidth = 1, dotRadius =
     const hslLine = hlsToString(color2)
     const hslDot = hlsToString(color2)
     const hsl1 = hlsToString(color1)
-    const id = 'circuitBoard'
+    const id = 'circuitBoard' + hlsToId(color1) + hlsToId(color2)
 
     return (
         <PatternContainer id={id} width={width} height={width} rotation={rotation}>
@@ -107,7 +107,7 @@ export const CircuitBoardPattern = ({ color1, color2, lineWidth = 1, dotRadius =
 export const TartanPlaidPattern = ({ color1, color2, width = 40, centerWidth = 8, rotation = 0 }) => {
     const hsl1 = hlsToString(color1)
     const hsl2 = hlsToString(color2)
-    const id = 'tartanPlaid'
+    const id = 'tartanPlaid' + hlsToId(color1) + hlsToId(color2)
 
     return (
         <PatternContainer id={id} width={width} height={width} rotation={rotation}>
@@ -125,7 +125,7 @@ export const SpeedLinesPattern = ({ color1, color2, lineWidths = [0.5, 1, 2], wi
     const hsl2 = hlsToString(color2)
     const [width1, width2, width3] = lineWidths
     const totalWidth = width * 3
-    const id = 'speedLines'
+    const id = 'speedLines' + hlsToId(color1) + hlsToId(color2)
 
     return (
         <PatternContainer id={id} width={totalWidth} height={totalWidth} rotation={rotation}>

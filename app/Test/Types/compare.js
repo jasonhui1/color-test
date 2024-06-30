@@ -1,7 +1,7 @@
 
 import { memo, useEffect, useState } from "react"
 import { CheckResultButton, NextButton } from "../test";
-import { calculateHLSDifference, generateId, getRandomIntStep } from "../../General/utils";
+import { calculateHLSDifference, generateId, getRandomIntStep, stepInDifficulty } from "../../General/utils";
 import { defaultHLS, generateRandomColorAdvanced, hlsToString } from "../../General/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
 import { CheckerboardPattern, CircuitBoardPattern, PlusPattern, PolkaDotsPattern, SpeedLinesPattern, StripePattern, TartanPlaidPattern } from "./Patterns_and_Shape/patterns";
@@ -12,6 +12,7 @@ import { useSettings } from "../../Context/setting";
 import TestBottom from "../General/TestBottom";
 import { ResultDisplay } from "../Result/ResultDisplay";
 import Evaluation from "../Result/Evaluation";
+import { addHistory } from "../../Storage/test_history";
 
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
@@ -30,6 +31,7 @@ function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
     do {
         color2 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
         let diff = calculateHLSDifference(color1, color2);
+        console.log('color1, color2, diff :>> ', color1, color2, diff);
         if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
     } while (true)
 
@@ -39,7 +41,7 @@ function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
     return [color1, color2]
 }
 
-const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step = 20, testId, setTestStarted }) => {
+const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted }) => {
 
     const [refColor, setRefColor] = useState(defaultHLS)
     const [targetColor, setTargetColor] = useState(defaultHLS)
@@ -63,7 +65,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step =
         //     const { refColor , targetColor } = testHistory[currentTestNum]
         //     [color1, color2] = [refColor, targetColor]
         // } else {
-        [color1, color2] = generatePair(hRange, lRange, sRange, mode, step);
+        [color1, color2] = generatePair(hRange, lRange, sRange, mode, stepInDifficulty(difficulties));
         // const newHistory = [...testHistory, { color1, color2 }];
         // setTestHistory(newHistory)
         // }
@@ -105,7 +107,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step =
             console.log('AllHistory :>> ', newHistory);
         }
 
-        // if (saveToHistory) addHistory(targetColor, selectedColor, mode, testId);
+        if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties, refColor);
         setCheckedResult(true)
     };
     const testEnded = currentTestNum >= (testNum - 1) && checkedResult
@@ -114,11 +116,14 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step =
         <div>
             {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
-            <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} />
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
+            <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
 
             <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            <ExampleDisplay refColor={refColor} targetColor={targetColor} />
+            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
+            <div className="flex h-[200px]">
+                <ExampleDisplay refColor={refColor} targetColor={targetColor} />
+                {checkedResult && <ExampleDisplay refColor={refColor} targetColor={selectedColor} />}
+            </div>
             {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulties} />}
 
 
@@ -126,7 +131,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, step =
     )
 }
 
-const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false }) => {
+const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false, showTarget = false }) => {
     // const [currentIndex, setCurrentIndex] = useState(0)
     // const [guesses, setGuesses] = useState([])
     // const [checkedResult, setCheckedResult] = useState(false)
@@ -142,11 +147,11 @@ const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false }
                     <ColorSwatch color={refColor} size={3} border={true} />
 
                 </div>
-                <div className="">
+                {showTarget && <div className="">
                     <h3 className="text-lg font-semibold mb-2">Target Color</h3>
                     <ColorSwatch color={targetColor} size={3} border={true} />
 
-                </div>
+                </div>}
 
                 {showGuess && <div className="">
                     <h3 className="text-lg font-semibold mb-2">Selected Color</h3>
@@ -181,6 +186,7 @@ const ExampleDisplay = memo(({ refColor, targetColor, patternDensity = 30, }) =>
 
     )
 })
+
 
 export default CompareTest;
 // patternUnits='userSpaceOnUse'  patternTransform='scale(4) rotate(70)'> stroke-width='1' stroke='none' fill='hsla(15,94.3%,6.9%,1)' /></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(#a)' /></svg>
