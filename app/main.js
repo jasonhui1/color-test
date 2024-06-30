@@ -40,7 +40,7 @@ const Test = ({ selectedColor }) => {
     return (
         <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
 
-            <div className='flex items-center justify-between gap-4'>
+            <div className='flex items-center justify-end gap-4'>
                 <CheckBox checked={practicing} onChange={(e) => { setPracticing(!practicing); setSaveToHistory(practicing) }} label={'Practice'} />
             </div>
             <ColorTest selectedColor={selectedColor} />

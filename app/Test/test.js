@@ -57,7 +57,7 @@ const ColorTest = ({ selectedColor, }) => {
     );
 }
 
-const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId , setTestStarted}) => {
+const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId, setTestStarted }) => {
     const { mode } = useSettings()
 
     return (
@@ -66,7 +66,7 @@ const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId , setTestSta
             {
                 (mode === 'normal') ?
                     <SingleTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} /> :
-                    <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} length={4} step={20} testId={testId} setTestStarted={setTestStarted}  />
+                    <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} />
             }
         </>
     )

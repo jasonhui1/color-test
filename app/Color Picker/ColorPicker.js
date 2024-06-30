@@ -239,14 +239,14 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
 
 export const TriangularColorPickerDisplayHistory = ({ hue, size = 300, correct = [], incorrect = [] }) => {
     const center = size / 2
-    const ratio = 1 / 300 * size
+    const ratio = size / 300 
     ///////////////////////////Cirlce///////////////////////
-    const radius = 25 / ratio
+    const radius = 25 * ratio
 
     /////////////////////////Triangle///////////////////////
     const bb = {
-        x1: 88 / ratio, y1: 45 / ratio,
-        x2: 269 / ratio, y2: 255 / ratio
+        x1: 88 * ratio, y1: 45 * ratio,
+        x2: 269 * ratio, y2: 255 * ratio
     }
     const w = bb.y2 - bb.y1
 
