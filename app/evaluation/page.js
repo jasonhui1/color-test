@@ -5,8 +5,6 @@ import Evaluation from "../Test/Result/Evaluation";
 import { getHistory } from "../Storage/test_history";
 import { SelectBox } from "../General/SelectBox";
 import { all_modes } from "../Test/Paramaters/parameters";
-import { addHistorySB, getHistorySB } from "../Storage/test_history_supabase";
-import { addTestSB, getTestSB } from "../Storage/test_parameters_sb";
 import { useFetchHistory, useFetchTests } from "../Storage/Hooks/useFetch";
 
 export default function Page() {

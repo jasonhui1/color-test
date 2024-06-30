@@ -6,20 +6,17 @@ import TestCreate from '../Create/TestCreate';
 import { FaEdit } from "react-icons/fa";
 import { generateId } from '../../General/utils';
 import { useSettings } from '../../Context/setting';
+import { addTestSB } from '../../Storage/test_parameters_sb';
+import { useFetchTests } from '../../Storage/Hooks/useFetch';
 const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) => {
 
     //Create New Test
     //Select from existing tests
     const [creatingTest, setCreatingTest] = useState(false);
-    const [createdTests, setCreatedTests] = useState([]);
+    const createdTests = useFetchTests()
 
     const { difficulties, setDifficulties, mode, setMode, testNum, setTestNum } = useSettings();
-
-    useEffect(() => {
-        //Newest show first
-        setCreatedTests(getTests()?.toReversed())
-
-    }, [])
+    const [loading, setLoading] = useState(false);
 
     const updatePara = (test) => {
         setTestId(test.id)
@@ -35,12 +32,18 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
         updatePara(test)
     }
 
-    const createTest = (hRange, lRange, sRange, name) => {
-        const id = generateId()
-        addNewTest(id, hRange, lRange, sRange, name);
-        updatePara({ id, hRange, sRange, lRange })
-        setCreatingTest(false);
-        // setCreatedTests([{ id, hRange, sRange, lRange, name }, ...createdTests])
+    const createTest = async (hRange, lRange, sRange, name) => {
+        try {
+            setLoading(true);
+
+            const id = await addTestSB(hRange, sRange, lRange, name);
+            updatePara({ id, hRange, sRange, lRange });
+            setCreatingTest(false);
+        } catch (error) {
+            console.error("Failed to create test", error);
+        } finally {
+            setLoading(false);
+        }
     }
 
     // const editName = (newName) => {
@@ -67,7 +70,7 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
                 <div>
                     <TestsSelect tests={createdTests} onSelect={onSelectTest} />
                     <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => setCreatingTest(true)}>Create New Test </button>
-               
+
                 </div>
             }
 

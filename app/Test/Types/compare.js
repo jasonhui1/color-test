@@ -13,6 +13,7 @@ import TestBottom from "../General/TestBottom";
 import { ResultDisplay } from "../Result/ResultDisplay";
 import Evaluation from "../Result/Evaluation";
 import { addHistory } from "../../Storage/test_history";
+import { addHistorySB } from "../../Storage/test_history_supabase";
 
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
@@ -107,7 +108,9 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
             console.log('AllHistory :>> ', newHistory);
         }
 
-        if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties, refColor);
+        // if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties, refColor);
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulties, refColor });
+
         setCheckedResult(true)
     };
     const testEnded = currentTestNum >= (testNum - 1) && checkedResult

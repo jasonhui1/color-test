@@ -15,7 +15,7 @@ export async function getTestSB( last = Infinity ) {
         .select('*')
         .order('timestamp', { ascending: false });
 
-    // if (Number.isFinite(last)) query = query.limit(last);
+    if (Number.isFinite(last)) query = query.limit(last);
     const data = await querySupabase(query);
 
     console.log('tests :>> ', data);
@@ -25,10 +25,12 @@ export async function getTestSB( last = Infinity ) {
 export async function addTestSB(hRange, lRange, sRange, name = 'Unnamed') {
     const newEntry = {
         hRange,
-        lRange,  // Store directly as {h,s,l} object
-        sRange,  // Store directly as {h,s,l} object
+        lRange,  
+        sRange,  
         name,
     };
+
+    console.log('newEntry :>> ', newEntry);
 
     const { data, error } = await supabase
         .from(tableName)

@@ -7,6 +7,7 @@ import { addHistory } from "../../Storage/test_history";
 import { ResultDisplay } from "../Result/ResultDisplay";
 import TestBottom from "../General/TestBottom";
 import Evaluation from "../Result/Evaluation";
+import { addHistorySB } from "../../Storage/test_history_supabase";
 
 function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted }) {
     const [targetColor, setTargetColor] = useState(defaultHLS)
@@ -67,7 +68,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
             console.log('AllHistory :>> ', newHistory);
         }
 
-        if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties ); 
+        // if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties ); 
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulties });
+
         setCheckedResult(true)
     };
 
