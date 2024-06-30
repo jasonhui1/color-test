@@ -34,3 +34,18 @@ export const saturationOptions = [
     { value: 'desaturated', label: 'Desaturated', range: [0, 25] },
     { value: 'custom', label: 'Custom', range: [] },
 ];
+
+export const all_testNum = [
+    { value: 5, label: '5' },
+    { value: 10, label: '10' },
+    { value: 25, label: '25' },
+    { value: 50, label: '50' },
+    { value: 100, label: '100' },
+]
+
+export const all_modes = [
+    { value: 'normal', label: 'normal' },
+    { value: 'bw', label: 'black and white' },
+    { value: 'compare', label: 'compare' },
+];
+

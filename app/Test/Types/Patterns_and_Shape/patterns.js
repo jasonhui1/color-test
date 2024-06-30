@@ -1,18 +1,19 @@
 import { hlsToString } from "../../../General/color_util"
+import { StarShape } from "./basic_shape"
 
-const PatternContainer = ({ children, id, width, height, rotation = 0 }) => {
+const PatternContainer = ({ children, id, width, height, rotation = 0, scale = 1, viewBox = '0 0 100% 100%' }) => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width='100%' height='100%'>
+        <svg xmlns="http://www.w3.org/2000/svg" width='100%' height='100%' viewBox={viewBox}>
             <defs>
-                <pattern id={id} patternUnits="userSpaceOnUse" width={width} height={height} patternTransform={`rotate(${rotation})`}>
+                <pattern id={id} patternUnits="userSpaceOnUse" width={width} height={height} patternTransform={`rotate(${rotation}) scale(${scale})`}>
                     {children}
                 </pattern>
             </defs>
-            <rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} />
+            {/* <rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} /> */}
+            <StarShape size='200' fill={`url(#${id})`} />
         </svg>
     )
 }
-
 export const CheckerboardPattern = ({ width = 80, color1, color2, rotation = 0 }) => {
     const center = width / 2
     const hsl1 = hlsToString(color1)
@@ -63,9 +64,9 @@ export const PlusPattern = ({ color1, color2, width = 40, rotation = 0 }) => {
     const id = 'plusPattern'
 
     return (
-        <PatternContainer id={id} width={width} height={width} rotation={rotation}>
+        <PatternContainer id={id} width={width} height={width} rotation={rotation} scale={2}>
             <rect x='0' y='0' width='100%' height='100%' fill={hsl1} />
-            <path d='M3.25 10h13.5M10 3.25v13.5' strokeLinecap='square' strokeWidth='2' stroke={hsl2} fill={hsl2} />
+            <path d='M3.25 10h13.5M10 3.25v13.5' strokeLinecap='square' strokeWidth='3' stroke={hsl2} fill={hsl2} />
         </PatternContainer>
     )
 }

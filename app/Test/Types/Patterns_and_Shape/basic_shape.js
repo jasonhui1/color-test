@@ -8,7 +8,7 @@ export const TriangleShape = ({ size, fill, stroke = 'none', strokeWidth = 10, t
     />
 }
 
-export const StarShape = ({ points, size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
+export const StarShape = ({ points = 5, size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
     const outerRadius = size / 2;
     const innerRadius = outerRadius / 2;
     const angleStep = (Math.PI * 2) / points;
@@ -22,7 +22,7 @@ export const StarShape = ({ points, size, fill, stroke = 'none', strokeWidth = 1
     }
     pathData += "Z";
 
-    return <path d={pathData} fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform} />
+    return <path d={pathData} fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform}  />
 
 }
 

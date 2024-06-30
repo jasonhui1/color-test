@@ -1,7 +1,7 @@
 
 import { useState } from "react"
 import { CheckResultButton, NextButton } from "../test";
-import { generateId, getRandomIntStep } from "../../General/utils";
+import { calculateHLSDifference, generateId, getRandomIntStep } from "../../General/utils";
 import { defaultHLS, generateRandomColorAdvanced, hlsToString } from "../../General/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
 import { CheckerboardPattern, CircuitBoardPattern, PlusPattern, PolkaDotsPattern, SpeedLinesPattern, StripePattern, TartanPlaidPattern } from "./Patterns_and_Shape/patterns";
@@ -12,18 +12,30 @@ import { Cross, Star, Triangle } from "./Patterns_and_Shape/basic_shape";
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
 
-
     // // Not the maximum
     // let newLRange = [lRange[0], lRange[1] - step]
     // let newSRange = [sRange[0], sRange[1] - step]
 
-    const color1 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
+    let color1 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
 
-    // // Not less than ref
+    // Not less than ref
     // newLRange = [color1.l + step, lRange[1]]
-    // newSRange = [color1.s + step, sRange[1]]
+    // newSRange = [sRange[0], color1.s]
 
-    const color2 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
+    let color2;
+
+
+    do {
+        color2 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
+        let diff = calculateHLSDifference(color1, color2);
+        if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
+    } while (true)
+
+    if (color1.l < color2.l || (color1.l === color2.l && color1.s > color2.s)) {
+        [color1, color2] = [color2, color1];
+    }
+    console.log('color1 :>> ', color1);
+    console.log('color2 :>> ', color2);
 
     return { color1, color2 }
 }
@@ -42,8 +54,6 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
         setCheckedResult(false)
 
         const { color1, color2 } = generatePair(hRange, lRange, sRange, mode, step);
-        console.log('color1 :>> ', color1);
-        console.log('color2 :>> ', color2);
         setRefColor(color1)
         setTargetColor(color2)
 
@@ -82,8 +92,9 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
     //     const { h, s, l } = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step)
     //     corrects.push({ h, s, l })
 
-    //     counter[l] = counter[l] || {}
-    //     counter[l][s] = (counter[l][s] || 0) + 1
+    //     // counter[l] = counter[l] || {}
+    //     // counter[l][s] = (counter[l][s] || 0) + 1
+    //     counter[s] = (counter[s] || 0) + 1
     // }
 
     // console.log('counter :>> ', counter);
@@ -93,7 +104,6 @@ const CompareTest = ({ hRange, sRange, lRange, mode = 'normal', length = 2, step
         <div>
             {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
-            <Cross fill='red' />
             <TestDisplay refColor={refColor} targetColor={targetColor} guessColor={guessColor} />
             <button
                 onClick={reset}
@@ -118,6 +128,7 @@ const TestDisplay = ({ refColor, targetColor, guessColor, patternDensity = 30 })
     // const [currentIndex, setCurrentIndex] = useState(0)
     // const [guesses, setGuesses] = useState([])
     // const [checkedResult, setCheckedResult] = useState(false)
+    console.log('rerendering :>> ');
 
     return (
         <div>
@@ -129,6 +140,7 @@ const TestDisplay = ({ refColor, targetColor, guessColor, patternDensity = 30 })
 
             </div>
             <PlusPattern width={25} color1={refColor} color2={targetColor} rotation={45} />
+            <PolkaDotsPattern width={25} color1={refColor} color2={targetColor} rotation={45} />
 
             <FakeSphere color1={refColor} color2={targetColor} />
             {/* <svg width="100" height="100" viewBox="0 0 24 24">

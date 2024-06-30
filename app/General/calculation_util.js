@@ -1,4 +1,4 @@
-export function withinTriangle_strict(x, y, bb = { x1: 0, y1: 0, x2: 2 / Math.sqrt(3), y2: 1 }) {
+export function withinTriangle_strict(x, y, bb = { x1: 0, y1: 0, x2: Math.sqrt(3)/2, y2: 1 }) {
     // Define the three vertices of the triangle
     const [x1, y1] = [bb.x1, bb.y2]; // Bottom vertex
     const [x2, y2] = [bb.x1, bb.y1]; // Top vertex

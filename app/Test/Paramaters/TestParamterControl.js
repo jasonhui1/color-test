@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { SelectBox } from '../../General/SelectBox';
-import { allDifficulties } from './parameters';
+import { allDifficulties, all_modes, all_testNum } from './parameters';
 import { addNewTest, getTests } from '../../Storage/test_parameters';
 import TestCreate from '../Create/TestCreate';
 import { FaEdit } from "react-icons/fa";
 import { generateId } from '../../General/utils';
-const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRange, sRange, setLRange, lRange, mode, testId, setTestId }) => {
-
+import { useSettings } from '../../Context/setting';
+const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) => {
 
     //Create New Test
     //Select from existing tests
     const [creatingTest, setCreatingTest] = useState(false);
     const [createdTests, setCreatedTests] = useState([]);
+
+    const { difficulties, setDifficulties, mode, setMode, testNum, setTestNum } = useSettings();
 
     useEffect(() => {
         //Newest show first
@@ -56,9 +58,13 @@ const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRa
 
     return (
         <div className="mt-6">
-            <div className='flex justify-between'>
+            <div className='flex flex-col justify-between'>
                 <h3 className="text-lg font-semibold mb-2">Color Test</h3>
-                {testSelected && <SelectBox current={difficulties} onChange={onChangeDifficulty} options={allDifficulties} label={'Difficulty'} />}
+                <div className='flex gap-4 flex-row'>
+                    {testSelected && <SelectBox current={difficulties} onChange={onChangeDifficulty} options={allDifficulties} label={'Difficulty'} />}
+                    {testSelected && <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />}
+                    {testSelected && <SelectBox current={testNum} onChange={setTestNum} options={all_testNum} label={'TestNum'} />}
+                </div>
             </div>
 
             {inInitial &&
@@ -68,7 +74,6 @@ const TestControls = ({ difficulties, setDifficulties, setHRange, hRange, setSRa
                 </div>
             }
 
-            {testSelected && <TestParameterDisplay hRange={hRange} sRange={sRange} lRange={lRange} mode={mode} name={name} />}
             {creatingTest && <TestCreate createTest={createTest} />}
         </div>
     );
@@ -96,27 +101,6 @@ const TestDisplay = ({ test, onSelect }) => {
     )
 }
 
-
-const TestParameterDisplay = ({ hRange, sRange, lRange, mode, name }) => {
-
-    return (
-        <div className='flex flex-col gap-4 my-4'>
-
-            {/* <div className='flex gap-2 flex-row items-center'>
-
-                <label className="font-medium">{name} </label>
-                <span><FaEdit className="w-5 h-5" /></span>
-            </div> */}
-            {mode !== 'bw' &&
-                <label className="font-medium">H: {`${hRange[0]} - ${hRange[1]}`}</label>
-            }
-            <label className="font-medium">L: {`${lRange[0]} - ${lRange[1]}`}</label>
-
-            {mode !== 'bw' &&
-                <label className="font-medium">S: {`${sRange[0]} - ${sRange[1]}`}</label>
-            }
-        </div>)
-}
 
 
 export default TestControls;

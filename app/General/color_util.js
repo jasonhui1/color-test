@@ -6,6 +6,7 @@ function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100],
     // triangle with w = 1 
     const height = Math.sqrt(3) / 2
     const bb = { x1: 0, y1: l_range[0] / 100, x2: height, y2: l_range[1] / 100 }
+    // console.log('bb :>> ', bb);
 
     // find a point within the triangle and range
     function generatePosition() {
@@ -17,6 +18,8 @@ function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100],
             let { s: s_, v: l_ } = getSVFromPosition(x, y)
             s = s_
             l = l_
+
+            // console.log('x,y,s,l :>> ', x,y,s,l,withinTriangle_strict(x, y, bb) , s < s_range[0], s > s_range[1],   );
         } while (!withinTriangle_strict(x, y, bb) || s < s_range[0] || s > s_range[1])
 
         return { x, y }
@@ -30,7 +33,7 @@ function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100],
     const stepInTriangle = step * height / 100
     //Normalise for uniform distribution after rounding
     const horizonalLength = getXLengthInTriangle(y)
-    x = map(x, 0, horizonalLength, - stepInTriangle / 2 , horizonalLength + stepInTriangle / 2 )
+    // x = map(x, 0, horizonalLength, - stepInTriangle / 2 , horizonalLength + stepInTriangle / 2 )
     x = roundToStep(x, stepInTriangle).toFixed(2)
 
     let { s, v: l } = getSVFromPosition(x, y)
@@ -61,7 +64,9 @@ export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, 
             newColor = generateRandomColorFromTriangle(hRange, sRange, lRange, step);
         }
 
+        
         if (!prevColor) break;
+        console.log('prevColor  :>> ', prevColor);
 
         let diff = calculateHLSDifference(prevColor, newColor);
         if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
