@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { changeSettings, getSettings } from '../Storage/test_settings';
 
 // Create a context for history
 const SettingContext = createContext(undefined);
@@ -7,15 +8,38 @@ const SettingContext = createContext(undefined);
 export const SettingProvider = ({ children }) => {
     const [practicing, setPracticing] = useState(true);
     const [saveToHistory, setSaveToHistory] = useState(false);
-    const [difficulties, setDifficulties] = useState('easy');
+    const [difficulty, setDifficulty] = useState('easy');
     const [mode, setMode] = useState('normal');
     const [testNum, setTestNum] = useState(25)
+
+    const [initial, setInitial] = useState(true)
+
+    useEffect(() => {
+        const settings = getSettings()
+
+        if (settings) {
+            setPracticing(settings.practicing)
+            setSaveToHistory(settings.saveToHistory)
+            setDifficulty(settings.difficulty)
+            setMode(settings.mode)
+            setTestNum(settings.testNum)
+        }
+
+        setInitial(false)
+    }, [])
+
+
+    useEffect(() => {
+        if (!initial) {
+            changeSettings({ practicing, saveToHistory, difficulty, mode, testNum })
+        }
+    }, [practicing, saveToHistory, difficulty, mode, testNum])
 
     return (
         <SettingContext.Provider value={{
             practicing, setPracticing,
             saveToHistory, setSaveToHistory,
-            difficulties, setDifficulties,
+            difficulties: difficulty, setDifficulties: setDifficulty,
             mode, setMode,
             testNum, setTestNum
         }}>
