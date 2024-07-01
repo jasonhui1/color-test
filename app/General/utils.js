@@ -48,6 +48,14 @@ export function roundToStep(value, step) {
     return Math.round(value / step) * step;
 }
 
+export function ceilToStep(value, step) {
+    return Math.ceil(value / step) * step;
+}
+
+export function floorToStep(value, step) {
+    return Math.floor(value / step) * step;
+}
+
 export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);

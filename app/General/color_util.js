@@ -1,5 +1,5 @@
 import { withinTriangle_strict } from "./calculation_util";
-import { calculateHLSDifference, getRandomFloat, getRandomInt, getRandomIntStep, map, roundToStep, stepInDifficulty } from "./utils";
+import { calculateHLSDifference, ceilToStep, floorToStep, getRandomFloat, getRandomInt, getRandomIntStep, map, roundToStep, stepInDifficulty } from "./utils";
 
 function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
 
@@ -46,8 +46,14 @@ function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100],
 
 
 function generateRandomColor(h_range, s_range, l_range, step = { h: 15, l: 20, s: 20 }) {
+
+    const ValueToStep = (f1, f2, arr, step) => [f1(arr[0], step), f2(arr[1], step)]
+
+    h_range = ValueToStep(ceilToStep, floorToStep, h_range, step.h)
+    s_range = ValueToStep(ceilToStep, floorToStep, s_range, step.s)
+    l_range = ValueToStep(ceilToStep, floorToStep, l_range, step.l)
+
     // allow wrapping
-    //TODO: hacking h difficulty
     const h = getRandomIntStep(h_range[0], h_range[1] + (h_range[1] < h_range[0] ? 360 : 0), step.h) % 361;
     const s = getRandomIntStep(s_range[0], s_range[1] + (s_range[1] < s_range[0] ? 100 : 0), step.s) % 101;
     const l = getRandomIntStep(l_range[0], l_range[1] + (l_range[1] < l_range[0] ? 100 : 0), step.l) % 101;
