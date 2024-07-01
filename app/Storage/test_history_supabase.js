@@ -1,5 +1,4 @@
-import superbaseClient from "./supabase_client";
-const supabase = superbaseClient;
+import supabase from "./supabase_client";
 const tableName = 'color_test_history';
 
 let memoizedResults = {

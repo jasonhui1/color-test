@@ -42,7 +42,7 @@ function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
     return [color1, color2]
 }
 
-const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted }) => {
+const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted, setSelectedColor }) => {
 
     const [refColor, setRefColor] = useState(defaultHLS)
     const [targetColor, setTargetColor] = useState(defaultHLS)
@@ -67,6 +67,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
         //     [color1, color2] = [refColor, targetColor]
         // } else {
         [color1, color2] = generatePair(hRange, lRange, sRange, mode, stepInDifficulty(difficulties));
+        setSelectedColor(color1)
         // const newHistory = [...testHistory, { color1, color2 }];
         // setTestHistory(newHistory)
         // }
@@ -121,13 +122,13 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
             <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
 
+            {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulties} />}
             <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
             <div className="flex h-[200px]">
                 <ExampleDisplay refColor={refColor} targetColor={targetColor} />
                 {checkedResult && <ExampleDisplay refColor={refColor} targetColor={selectedColor} />}
             </div>
-            {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulties} />}
 
 
         </div>
@@ -138,13 +139,14 @@ const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false, 
     // const [currentIndex, setCurrentIndex] = useState(0)
     // const [guesses, setGuesses] = useState([])
     // const [checkedResult, setCheckedResult] = useState(false)
+    const incorrect = showTarget?[targetColor]:[]
 
     return (
         <div>
 
             <div className="flex flex-row justify-center items-center gap-4">
                 {/* <ColorSwatch color={guessColor} /> */}
-                <TriangularColorPickerDisplayHistory hue={refColor.h} correct={[refColor]} size={150} />
+                <TriangularColorPickerDisplayHistory hue={refColor.h} correct={[refColor]} incorrect={incorrect} size={150} />
                 <div className="">
                     <h3 className="text-lg font-semibold mb-2">Ref Color</h3>
                     <ColorSwatch color={refColor} size={3} border={true} />

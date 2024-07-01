@@ -9,6 +9,8 @@ import ColorSwatch from './Color Picker/ColorSwatch';
 import CheckBox from './General/CheckBox';
 import { SelectBox } from './General/SelectBox';
 import { SettingProvider, useSettings } from './Context/setting';
+import GoogleLogin from './Test/General/GoogleLogin';
+
 
 const ColorTrainingTool = () => {
     const [selectedColor, setSelectedColor] = useState({ h: 30, s: 100, l: 50 });
@@ -16,10 +18,11 @@ const ColorTrainingTool = () => {
     return (
         <div>
             <div className='flex flex-col justify-center items-center'>
+            <GoogleLogin />
                 <div className="mx-auto p-4  flex flex-row items-center">
                     <div className='flex gap-4'>
                         <SettingProvider >
-                            <Test selectedColor={selectedColor} />
+                            <Test selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                         </SettingProvider>
                         <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                     </div>
@@ -34,7 +37,7 @@ const ColorTrainingTool = () => {
     );
 }
 
-const Test = ({ selectedColor }) => {
+const Test = ({ selectedColor, setSelectedColor }) => {
     const { practicing, setPracticing, setSaveToHistory } = useSettings();
 
     return (
@@ -43,7 +46,7 @@ const Test = ({ selectedColor }) => {
             <div className='flex items-center justify-end gap-4'>
                 <CheckBox checked={practicing} onChange={(e) => { setPracticing(!practicing); setSaveToHistory(practicing) }} label={'Practice'} />
             </div>
-            <ColorTest selectedColor={selectedColor} />
+            <ColorTest selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
         </div>
     )
 }
@@ -57,25 +60,39 @@ const DisplayColorRange = ({ hue, step = 20 }) => {
         rangeArray.push(i);
     }
 
+    const rangeArray10 = [];
+    for (let i = 0; i <= 100; i += 10) {
+        rangeArray10.push(i);
+    }
+
     return (
         <>
             {practicing &&
-                <div className='flex flex-col gap-2' >
-                    {
-                        rangeArray.toReversed().map((l, index) => {
-                            return (
-                                <div className='flex flex-row gap-2' key={index}>
-                                    {rangeArray.map((s, j) => {
+                <>
+                    <div className='flex flex-row gap-2'>
+                        {rangeArray10.toReversed().map((l, index) => (
+                            <ColorSwatch key={index} color={{ h: hue, s: 0, l }} size={1} />
+                        )
+                        )}
+                    </div>
+                    <div className='flex flex-col gap-2' >
 
-                                        return (
-                                            <ColorSwatch key={j} color={{ h: hue, s, l }} size={1} />
-                                        )
-                                    })}
-                                </div>
-                            )
-                        })
-                    }
-                </div>
+                        {
+                            rangeArray.toReversed().map((l, index) => {
+                                return (
+                                    <div className='flex flex-row gap-2' key={index}>
+                                        {rangeArray.map((s, j) => {
+
+                                            return (
+                                                <ColorSwatch key={j} color={{ h: hue, s, l }} size={1} />
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                </>
             }
         </>
 

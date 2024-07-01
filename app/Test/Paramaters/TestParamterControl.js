@@ -36,7 +36,7 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
         try {
             setLoading(true);
 
-            const id = await addTestSB(hRange, sRange, lRange, name);
+            const id = await addTestSB(hRange, lRange, sRange, name);
             updatePara({ id, hRange, sRange, lRange });
             setCreatingTest(false);
         } catch (error) {

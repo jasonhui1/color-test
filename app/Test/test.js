@@ -11,7 +11,7 @@ import { useSettings } from '../Context/setting';
 import SingleTest from './Types/single';
 import { BackButton } from './General/TestBottom';
 
-const ColorTest = ({ selectedColor, }) => {
+const ColorTest = ({ selectedColor, setSelectedColor }) => {
 
     const [hRange, setHRange] = useState([0, 360]);
     const [sRange, setSRange] = useState([0, 100]);
@@ -47,7 +47,7 @@ const ColorTest = ({ selectedColor, }) => {
                     }
                 </div>
 
-                {testStarted && <RenderTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} />}
+                {testStarted && <RenderTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} setSelectedColor={setSelectedColor} />}
 
             </div>
 
@@ -59,7 +59,7 @@ const ColorTest = ({ selectedColor, }) => {
     );
 }
 
-const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId, setTestStarted }) => {
+const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId, setTestStarted, setSelectedColor }) => {
     const { mode } = useSettings()
 
     return (
@@ -68,7 +68,7 @@ const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId, setTestStar
             {
                 (mode === 'normal' || mode === 'bw') ?
                     <SingleTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} /> :
-                    <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} />
+                    <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} setSelectedColor={setSelectedColor} />
             }
         </>
     )

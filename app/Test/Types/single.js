@@ -95,11 +95,11 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                 </div>
             }
 
+            {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}
             <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
 
 
-            {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}
 
         </div>
 
