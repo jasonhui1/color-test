@@ -82,7 +82,8 @@ export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, 
     return newColor
 };
 
-export const defaultHLS = { h: 0, l: 0, s: 0, }
+export const defaultHLS = { h: 0, l: 100, s: 0, }
+export const defaultLS = (h) => ({ h, l: 100, s: 0, });
 export const hlsToString = (hsl) => `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
 export const hlsToId = (hsl) => [hsl.h, hsl.s, hsl.l].join('');
 

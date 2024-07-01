@@ -1,4 +1,4 @@
-import ColorHistoryTable from "../../history"
+import ColorHistoryTable from "../../history_table"
 import { calculateHLSDifference, stepInDifficulty } from "../../General/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";

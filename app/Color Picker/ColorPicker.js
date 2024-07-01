@@ -250,8 +250,6 @@ export const TriangularColorPickerDisplayHistory = ({ hue = 30, size = 300, corr
     }
     const w = bb.y2 - bb.y1
 
-    console.log('hue :>> ', hue);
-
     const correctSVPosition = correct.map(({ h, s, l }) => getPositionFromSV(s, l, w, bb))
     const correctHuePosition = correct.map(({ h, s, l }) => getPositionFromHue(h + defaultHueShift, radius, center, center))
     const inCorrectSVPosition = incorrect.map(({ h, s, l }) => getPositionFromSV(s, l, w, bb))

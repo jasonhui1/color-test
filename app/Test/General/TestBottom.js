@@ -53,7 +53,9 @@ export const NextButton = ({ testEnded, onClick }) => {
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === 'w') {
-                onClick();
+                if (!testEnded) {
+                    onClick();
+                }
             }
         };
 

@@ -21,10 +21,12 @@ const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal', di
                         <th className="px-4 py-2 text-left">L Diff</th>
                         {mode !== 'bw' && <th className="px-4 py-2 text-left">S Diff</th>}
                         {mode !== 'bw' && <th className="px-4 py-2 text-left">Distance</th>}
+                        <th className="px-4 py-2 text-left">Time(s)</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    {history.map(({ targetColor, selectedColor, timestamp }, index) => {
+                    {history.map(({ targetColor, selectedColor, timestamp, time }, index) => {
                         const differences = getDifferences(targetColor, selectedColor);
                         const accuracy = getAccuracy(targetColor, differences, difficulty);
 
@@ -58,6 +60,8 @@ const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal', di
                                 <td className="px-4 py-2 border-t">{differences.l}</td>
                                 {mode !== 'bw' && <td className="px-4 py-2 border-t">{differences.s} ({(differences.xDistance * 100).toFixed(1)})</td>}
                                 {mode !== 'bw' && <td className="px-4 py-2 border-t">{differences.distance.toFixed(1)}</td>}
+                                <td className="px-4 py-2 border-t">{(time / 1000).toFixed(1)}</td>
+
                             </tr>
                         );
                     })}

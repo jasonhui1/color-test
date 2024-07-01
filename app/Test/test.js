@@ -67,7 +67,7 @@ const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId, setTestStar
 
             {
                 (mode === 'normal' || mode === 'bw') ?
-                    <SingleTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} /> :
+                    <SingleTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} setSelectedColor={setSelectedColor} /> :
                     <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} setSelectedColor={setSelectedColor} />
             }
         </>

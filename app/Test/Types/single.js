@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
-import { defaultHLS, generateRandomColorAdvanced, getIsCorrect } from "../../General/color_util";
+import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect } from "../../General/color_util";
 import { stepInDifficulty } from "../../General/utils";
 import { useSettings } from "../../Context/setting";
 import { addHistory } from "../../Storage/test_history";
@@ -9,11 +9,12 @@ import TestBottom from "../General/TestBottom";
 import Evaluation from "../Result/Evaluation";
 import { addHistorySB } from "../../Storage/test_history_supabase";
 
-function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted }) {
+function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted, setSelectedColor }) {
     const [targetColor, setTargetColor] = useState(defaultHLS)
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [testHistory, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
+    const [startTime, setStartTime] = useState(Date.now());
 
     const [retrying, setRetrying] = useState(false);
     const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
@@ -46,12 +47,16 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         } else {
             nextTest()
         }
+
+        // if (mode === ' bw') setSelectedColor(defaultLS(selectedColor.h))
+        // else setSelectedColor(defaultHLS)
+
+        setSelectedColor(defaultLS(selectedColor.h))
+        setStartTime(Date.now())
     };
 
     const handleBack = () => {
-        if (currentTestNum === 0) {
-            setTestStarted(false)
-        }
+        setTestStarted(false)
     }
 
     const handleRetry = () => {
@@ -70,8 +75,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         setCheckedResult(true)
 
         const correct = getIsCorrect(targetColor, selectedColor, mode, difficulty)
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, correct });
-        setTestHistory(history => [...history, { targetColor, selectedColor, correct, isRetry: retrying }]);
+        const ellapsedTime = Date.now() - startTime
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, correct, time: ellapsedTime });
+        setTestHistory(history => [...history, { targetColor, selectedColor, correct, isRetry: retrying, time: ellapsedTime }]);
     };
 
     const incorrectHistory = testHistory.filter(({ correct, isRetry }) => !correct && !isRetry)
@@ -101,7 +107,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
             }
 
             {testEnded && (!retrying || retryEnded) && <Evaluation history={testHistory.toReversed()} mode={mode} difficulty={difficulty} />}
-            <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+            <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
 
         </div>

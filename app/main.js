@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { ColorPicker } from './Color Picker/ColorPicker';
 import ColorTest from './Test/test';
-import ColorHistoryTable from './history';
+import ColorHistoryTable from './history_table';
 import OrderTest from './Test/Types/reorder';
 import { getHistory } from './Storage/test_history';
 import Evaluation from './Test/Result/Evaluation';

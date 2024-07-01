@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react"
 import { calculateHLSDifference, generateId, getRandomIntStep, getRandomValue, stepInDifficulty } from "../../General/utils";
-import { defaultHLS, generateRandomColorAdvanced, getIsCorrect, hlsToString } from "../../General/color_util";
+import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect, hlsToString } from "../../General/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 import { useSettings } from "../../Context/setting";
@@ -23,6 +23,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [testHistory, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
+    const [startTime, setStartTime] = useState(Date.now());
 
     const [retrying, setRetrying] = useState(false);
     const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
@@ -64,12 +65,14 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
                 nextRetry()
             }
         }
+        if (mode === ' bw') setSelectedColor(defaultLS(selectedColor.h))
+        else setSelectedColor(defaultHLS)
+        setStartTime(Date.now())
+
     }
 
     const handleBack = () => {
-        if (currentTestNum === 0) {
-            setTestStarted(false)
-        }
+        setTestStarted(false)
     }
 
     const handleRetry = () => {
@@ -93,10 +96,11 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
         setCheckedResult(true)
 
         const correct = getIsCorrect(targetColor, selectedColor, mode, difficulty)
-        const newHistory = [...testHistory, { refColor, targetColor, selectedColor, pattern, shape, isRetry: retrying, correct }];
+        const ellapsedTime = Date.now() - startTime
+        const newHistory = [...testHistory, { refColor, targetColor, selectedColor, pattern, shape, isRetry: retrying, correct, time: ellapsedTime }];
         setTestHistory(newHistory)
 
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor, correct });
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor, correct, time: ellapsedTime });
     };
     const incorrectHistory = testHistory.filter(({ correct, isRetry }) => !correct && !isRetry)
     const retryEnded = currentRetryingNum >= incorrectHistory.length && checkedResult
@@ -113,7 +117,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
             <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
 
             {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}
-            <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+            <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
             <div className="flex h-[200px]">
                 <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} />
