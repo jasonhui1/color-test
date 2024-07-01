@@ -1,6 +1,6 @@
 import ColorHistoryTable from "../../history"
 import { calculateHLSDifference, stepInDifficulty } from "../../General/utils";
-import { getAccuracy } from "./ResultDisplay";
+import { getAccuracy, getDifferences } from "./ResultDisplay";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 import { getHistorySupabase } from "../../Storage/test_history_supabase";
@@ -14,13 +14,25 @@ function calculatestat(history, mode, difficulty) {
 
     const defineKey = (data, key) => data[key] = data[key] ?? {}
     const selfIncrement = (data, key) => data[key] = (data[key] ?? 0) + 1
+    const checkCorrect = (data, key) => data[key] == 'correct'
+
+    function handleCheckAndIncrement(current, accuracy, differences, type, key, differenceKey) {
+
+        if (!checkCorrect(accuracy, key)) {
+            selfIncrement(current, `incorrect${type.toUpperCase()}`);
+
+            if (differences[differenceKey] < 0) {
+                selfIncrement(current, `under${type.toUpperCase()}`);
+            } else {
+                selfIncrement(current, `over${type.toUpperCase()}`);
+            }
+        }
+    }
 
     history.map(({ targetColor, selectedColor }) => {
 
-        const { hue_diff: h, sat_diff: s, lig_diff: l, distance_diff } = getAccuracy(targetColor, selectedColor, difficulty)
-        const [absH, absS, absL] = [Math.abs(h), Math.abs(s), Math.abs(l)]
-        const step = stepInDifficulty(difficulty)
-        const allowance = 10
+        const differences = getDifferences(targetColor, selectedColor);
+        const accuracy = getAccuracy(targetColor, differences, difficulty);
 
         if (mode === 'bw') {
             const lKey = `${targetColor.l}`;
@@ -28,7 +40,7 @@ function calculatestat(history, mode, difficulty) {
             const current = Data[lKey]
 
             // Correct
-            if (absL < allowance) {
+            if (checkCorrect(accuracy, 'l')) {
                 correct.push({ h: 0, s: 0, l: targetColor.l });
                 selfIncrement(current, 'correct')
                 return
@@ -38,7 +50,7 @@ function calculatestat(history, mode, difficulty) {
             selfIncrement(current, 'incorrect')
 
             // Over estimated/ under estimated
-            if (l < 0) selfIncrement(current, 'over');
+            if (differences.l < 0) selfIncrement(current, 'over');
             else selfIncrement(current, 'under');
 
         } else {
@@ -51,31 +63,25 @@ function calculatestat(history, mode, difficulty) {
             defineKey(Data[hKey][lKey], sKey);
 
             const current = Data[hKey][lKey][sKey]
+            const correctH = checkCorrect(accuracy, 'h')
+            const correctSV = checkCorrect(accuracy, 'distance')
 
             // if (absH < allowance && absS < allowance && absL < allowance) correct += 1
-            if (distance_diff < allowance && absH < allowance) {
+            if (correctH && correctSV) {
                 correct.push(targetColor);
                 selfIncrement(current, 'correct')
                 return
             }
+
             incorrect.push(targetColor)
             selfIncrement(current, 'incorrect')
 
-            //TODO: HUE too
+
+
             // over saturated/ over light
-            if (absS > allowance / 2) {
-                selfIncrement(current, 'incorrectS')
-
-                if (s < 0) selfIncrement(current, 'underS');
-                else selfIncrement(current, 'overS');
-            }
-
-            if (absL > allowance / 2) {
-                selfIncrement(current, 'incorrectL')
-
-                if (l < 0) selfIncrement(current, 'underL');
-                else selfIncrement(current, 'overL');
-            }
+            handleCheckAndIncrement(current, accuracy, differences, 'h', 'h', 'h');
+            handleCheckAndIncrement(current, accuracy, differences, 's', 'sDistance', 'xDistance');
+            handleCheckAndIncrement(current, accuracy, differences, 'l', 'l', 'l');
         }
     })
 
@@ -91,37 +97,34 @@ function findTendency(data, mode) {
 
     const getKey = (data, key) => data[key] || 0
 
+    const setTendency = (data, suffix = '') => {
+        const correct = getKey(data, 'correct')
+        const incorrect = getKey(data, 'incorrect' + suffix)
+        data['percentage' + suffix] = (correct / (correct + incorrect)) * 100
+
+        if (incorrect === 0) return
+        const over = getKey(data, 'over' + suffix)
+        const under = getKey(data, 'under' + suffix)
+
+        data['overTendency' + suffix] = (over / incorrect) * 100
+        data['underTendency' + suffix] = (under / incorrect) * 100
+    }
+
     if (mode === 'bw') {
         Object.keys(data).forEach(L => {
             const current = data[L]
-            const over = getKey(current, 'over')
-            const under = getKey(current, 'under')
-            const incorrect = current.incorrect || 1000000
-
-            current.overTendency = over / incorrect
-            current.underTendency = under / incorrect
+            setTendency(current)
         });
     } else if (mode === 'normal') {
+
 
         Object.keys(data).forEach(H => {
             Object.keys(data[H]).forEach(S => {
                 Object.keys(data[H][S]).forEach(L => {
-
                     const current = data[H][S][L]
-
-                    const overS = getKey(current, 'overS')
-                    const underS = getKey(current, 'underS')
-                    const incorrectS = current.incorrectS || 1000000
-
-                    current.overTendencyS = overS / incorrectS
-                    current.underTendencyS = underS / incorrectS
-
-                    const overL = getKey(current, 'overL')
-                    const underL = getKey(current, 'underL')
-                    const incorrectL = current.incorrectL || 1000000
-
-                    current.overTendencyL = overL / incorrectL
-                    current.underTendencyL = underL / incorrectL
+                    setTendency(current, 'H')
+                    setTendency(current, 'S')
+                    setTendency(current, 'L')
                 })
             })
         })
@@ -137,13 +140,14 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
     4. IS in suitable level (+= 1 difficulty)
     **/
     const { percentage, correct, incorrect, data } = calculatestat(history, mode, difficulty)
+    // console.log('percentage, correct, incorrect :>> ', percentage, correct, incorrect);
 
 
     return (
         <div>
-            <label> Evaluation: {percentage}%</label>
+            {/* <label> Evaluation: {percentage}%</label> */}
             <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
-            <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
+            {/* <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} /> */}
         </div>
     )
 }

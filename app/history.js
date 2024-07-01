@@ -1,10 +1,10 @@
 import { getHistory } from "./Storage/test_history"
-import { RenderResultIcon, getAccuracy } from "./Test/Result/ResultDisplay";
+import { RenderResultIcon, getAccuracy, getDifferences } from "./Test/Result/ResultDisplay";
 import { calculateHLSDifference } from "./General/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 
 
-const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal' , difficulty='easy' }) => {
+const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal', difficulty = 'easy' }) => {
     // const history = getHistory();
 
     return (
@@ -24,12 +24,13 @@ const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal' , d
                 </thead>
                 <tbody>
                     {history.map(({ targetColor, selectedColor, timestamp }, index) => {
-                        const { hue_diff, lig_diff, sat_diff, distance, distance_diff } = getAccuracy(targetColor, selectedColor, difficulty);
+                        const differences = getDifferences(targetColor, selectedColor);
+                        const accuracy = getAccuracy(targetColor, differences, difficulty);
 
                         return (
                             <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                                <td className="px-4 py-2 border-t"><RenderResultIcon result={distance}/></td>
-                                
+                                <td className="px-4 py-2 border-t"><RenderResultIcon result={mode === 'bw' ? accuracy.l : accuracy.distance} /></td>
+
                                 {showTimeStamp && <td className="px-4 py-2 border-t">{new Date(timestamp).toLocaleString()}</td>}
 
                                 <td className=" px-4 py-2 border-t">
@@ -52,10 +53,10 @@ const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal' , d
                                     </div>
                                 </td>
 
-                                {mode !== 'bw' && <td className="px-4 py-2 border-t">{hue_diff}</td>}
-                                <td className="px-4 py-2 border-t">{lig_diff}</td>
-                                {mode !== 'bw' && <td className="px-4 py-2 border-t">{sat_diff}</td>}
-                                {mode !== 'bw' && <td className="px-4 py-2 border-t">{distance_diff.toFixed(1)}</td>}
+                                {mode !== 'bw' && <td className="px-4 py-2 border-t">{differences.h}</td>}
+                                <td className="px-4 py-2 border-t">{differences.l}</td>
+                                {mode !== 'bw' && <td className="px-4 py-2 border-t">{differences.s} ({(differences.xDistance * 100).toFixed(1)})</td>}
+                                {mode !== 'bw' && <td className="px-4 py-2 border-t">{differences.distance.toFixed(1)}</td>}
                             </tr>
                         );
                     })}

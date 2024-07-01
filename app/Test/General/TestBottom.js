@@ -1,4 +1,6 @@
-const TestBottom = ({showBackButton, testEnded, checkedResult, onNext, onCheck, onBack }) => {
+import { useEffect } from "react"
+
+const TestBottom = ({ showBackButton, testEnded, checkedResult, onNext, onCheck, onBack }) => {
 
     // const showBackButton = currentTestNum > 0
 
@@ -38,6 +40,19 @@ export const NextButton = ({ testEnded, onClick }) => {
         label = 'End Test'
     }
 
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'w') {
+                onClick();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onClick]);
     return (
         <div className="flex justify-end">
             <button
@@ -51,6 +66,20 @@ export const NextButton = ({ testEnded, onClick }) => {
 }
 
 export const CheckResultButton = ({ onClick, }) => {
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'w') {
+                onClick();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onClick]);
 
     return (
         <div className="flex justify-end">
