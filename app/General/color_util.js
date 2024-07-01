@@ -1,4 +1,4 @@
-import { getPositionFromSV, withinTriangle_strict } from "./calculation_util";
+import { getPositionFromSV, getSVFromPosition, withinTriangle_strict } from "./calculation_util";
 import { calculateDistance, calculateHLSDifference, ceilToStep, floorToStep, getRandomFloat, getRandomInt, getRandomIntStep, map, roundToStep, stepInDifficulty } from "./utils";
 
 function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
@@ -87,9 +87,9 @@ export const hlsToString = (hsl) => `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
 export const hlsToId = (hsl) => [hsl.h, hsl.s, hsl.l].join('');
 
 
-export const getIsCorrect = (targetColor, selectedColor, mode) => {
+export const getIsCorrect = (targetColor, selectedColor, mode, difficulty) => {
     const diff = getDifferences(targetColor, selectedColor)
-    const accuracy = getAccuracy(targetColor, diff, mode)
+    const accuracy = getAccuracy(targetColor, diff, difficulty)
 
     return mode === 'bw' ? accuracy.l === 'correct' : accuracy.distance === 'correct'
 }
@@ -111,7 +111,6 @@ export const getDifferences = (targetColor, selectedColor) => {
 
 export const getAccuracy = (targetColor, differences, difficulty, allowance = 10) => {
     if (!targetColor) return null;
-    console.log('difficultes :>> ', difficulty);
 
     const step = stepInDifficulty(difficulty);
     const { x } = getPositionFromSV(targetColor.s, targetColor.l)

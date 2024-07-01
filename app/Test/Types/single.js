@@ -4,7 +4,7 @@ import { defaultHLS, generateRandomColorAdvanced, getIsCorrect } from "../../Gen
 import { stepInDifficulty } from "../../General/utils";
 import { useSettings } from "../../Context/setting";
 import { addHistory } from "../../Storage/test_history";
-import { Result, ResultDisplay,  } from "../Result/ResultDisplay";
+import { Result, ResultDisplay, } from "../Result/ResultDisplay";
 import TestBottom from "../General/TestBottom";
 import Evaluation from "../Result/Evaluation";
 import { addHistorySB } from "../../Storage/test_history_supabase";
@@ -14,7 +14,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [testHistory, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
+
     const [retrying, setRetrying] = useState(false);
+    const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
 
     const { mode, difficulty, testNum, saveToHistory, practicing } = useSettings()
 
@@ -27,11 +29,17 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         setTargetColor(newTargetColor);
     };
 
-    const handleNext = () => {
-        const nextTest = () => {
-            setRandomTargetColor();
+    const nextTest = () => {
+        if (!retrying) {
+            setRandomTargetColor()
             setCurrentTestNum(num => num + 1)
-        };
+        } else {
+            setTargetColor(incorrectHistory[currentRetryingNum+1].targetColor)
+            setCurrentRetryingNume(num => num + 1)
+        }
+    };
+
+    const handleNext = () => {
         const restartTest = () => {
             setRandomTargetColor();
             setCurrentTestNum(0)
@@ -49,7 +57,6 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     };
 
     const handleBack = () => {
-
         if (currentTestNum === 0) {
             setTestStarted(false)
         }
@@ -59,7 +66,10 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     }
 
     const handleRetry = () => {
+        setRetrying(true)
         setCheckedResult(false)
+
+        setTargetColor(incorrectHistory[currentRetryingNum].targetColor)
     }
 
 
@@ -67,17 +77,20 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         if (checkedResult) return
         setCheckedResult(true)
 
-        const correct = getIsCorrect(targetColor, selectedColor)
+        const correct = getIsCorrect(targetColor, selectedColor, mode, difficulty)
         if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, correct });
-        setTestHistory(history => [...history, { targetColor, selectedColor, correct }]);
+        setTestHistory(history => [...history, { targetColor, selectedColor, correct, isRetry: retrying }]);
     };
 
-    const testEnded = currentTestNum >= (testNum - 1) && checkedResult
-    const canRetry = testHistory.filter(({ correct }) => correct).length > 0 && !retrying && testEnded
+    const incorrectHistory = testHistory.filter(({ correct, isRetry }) => !correct && !isRetry)
+    const retryEnded = currentRetryingNum >= (incorrectHistory.length - 1) && checkedResult
+
+    const testEnded = currentTestNum >= (testNum - 1) && checkedResult && (!retrying || retryEnded)
+    const canRetry = incorrectHistory.length > 0 && !retrying && testEnded
 
     return (
         <div>
-            <label>{(currentTestNum + 1)} / {(testNum)}</label>
+            <label>{!retrying ? (currentTestNum + 1) : (currentRetryingNum + 1)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
             {targetColor &&
                 <div className="flex mb-4 justify-center items-center gap-5">
                     <div className="">
@@ -95,9 +108,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                 </div>
             }
 
-            {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}
-            <TestBottom showRetryButton={canRetry} onRetry={() => setRetrying(true)} showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            {checkedResult && <Result targetColor={targetColor} selectedColor={selectedColor} testId={testId} setHistory={setTestHistory} />}
+            {testEnded && (!retrying || retryEnded) && <Evaluation history={testHistory.toReversed()} mode={mode} difficulty={difficulty} />}
+            <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
 
         </div>
 
