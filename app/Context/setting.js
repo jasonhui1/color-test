@@ -18,11 +18,11 @@ export const SettingProvider = ({ children }) => {
         const settings = getSettings()
 
         if (settings) {
-            setPracticing(settings.practicing)
-            setSaveToHistory(settings.saveToHistory)
-            setDifficulty(settings.difficulty)
-            setMode(settings.mode)
-            setTestNum(settings.testNum)
+            if (settings.practicing) setPracticing(settings.practicing)
+            if (settings.saveToHistory) setSaveToHistory(settings.saveToHistory)
+            if (settings.difficulty) setDifficulty(settings.difficulty)
+            if (settings.mode) setMode(settings.mode)
+            if (settings.testNum) setTestNum(settings.testNum)
         }
 
         setInitial(false)

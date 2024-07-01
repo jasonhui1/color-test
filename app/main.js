@@ -16,6 +16,7 @@ import supabase from './Storage/supabase_client';
 const ColorTrainingTool = () => {
     const [selectedColor, setSelectedColor] = useState({ h: 30, s: 100, l: 50 });
 
+    // console.log('supabase.getSession() :>> ', await supabase.auth.getSession().session);
     return (
         <div>
             <div className='flex flex-col justify-center items-center '>
@@ -23,7 +24,7 @@ const ColorTrainingTool = () => {
 
                     <GoogleLogin />
                 </div>}
-                <div className="mx-auto p-4  flex flex-row items-center">
+                <div className="p-4  flex flex-row items-center">
                     <div className='flex gap-4'>
                         <SettingProvider >
                             <Test selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
@@ -45,7 +46,7 @@ const Test = ({ selectedColor, setSelectedColor }) => {
     const { practicing, setPracticing, setSaveToHistory } = useSettings();
 
     return (
-        <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
+        <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md min-w">
 
             <div className='flex items-center justify-end gap-4'>
                 <CheckBox checked={practicing} onChange={(e) => { setPracticing(!practicing); setSaveToHistory(practicing) }} label={'Practice'} />

@@ -17,7 +17,7 @@ export const ResultDisplay = ({ targetColor, selectedColor }) => {
                         {mode !== 'bw' && <RenderResult type='Distance' result={accuracy.distance} difference={differences.distance} />}
                         {mode !== 'bw' && <RenderResult type='Hue' result={accuracy.h} difference={differences.h} />}
                         <RenderResult type='Lightness' result={accuracy.l} difference={differences.l} />
-                        {mode !== 'bw' && <RenderResult type='Saturation' result={accuracy.sDistance} difference={differences.xDistance.toFixed(1)} />}
+                        {mode !== 'bw' && <RenderResult type='Saturation' result={accuracy.sDistance} difference={`${differences.s} , (${differences.xDistance.toFixed(2)})`} />}
                     </div>
                 );
             })()}
