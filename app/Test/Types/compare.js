@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react"
 import { calculateHLSDifference, generateId, getRandomIntStep, getRandomValue, stepInDifficulty } from "../../General/utils";
-import { defaultHLS, generateRandomColorAdvanced, hlsToString } from "../../General/color_util";
+import { defaultHLS, generateRandomColorAdvanced, getIsCorrect, hlsToString } from "../../General/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 import { useSettings } from "../../Context/setting";
@@ -23,6 +23,10 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [testHistory, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
+
+    const [retrying, setRetrying] = useState(false);
+    const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
+
     const { mode, difficulty, testNum, saveToHistory, practicing } = useSettings()
 
     // Guessing Bright/Dark
@@ -36,6 +40,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
         setColors();
         setPattern(getRandomValue(patterns))
         setShape(getRandomValue(shapes))
+        setCurrentTestNum(currentTestNum + 1)
     }
 
     const direction = ['S', 'L']
@@ -48,14 +53,17 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
 
 
     const handleNext = () => {
+        setCheckedResult(false);
         if (testEnded) {
             setTestStarted(false)
-        } else {
-            setup()
-            setCurrentTestNum(num => num + 1)
-        }
 
-        setCheckedResult(false);
+        } else {
+            if (!retrying) {
+                setup()
+            } else {
+                nextRetry()
+            }
+        }
     }
 
     const handleBack = () => {
@@ -64,27 +72,49 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
         }
     }
 
+    const handleRetry = () => {
+        setRetrying(true)
+        setCheckedResult(false)
+        nextRetry()
+        // setTargetColor(incorrectHistory[currentRetryingNum].targetColor)
+    }
+
+    const nextRetry = () => {
+        setTargetColor(incorrectHistory[currentRetryingNum].targetColor)
+        setRefColor(incorrectHistory[currentRetryingNum].refColor)
+        setPattern(incorrectHistory[currentRetryingNum].pattern)
+        setCurrentRetryingNume(num => num + 1)
+        setShape(incorrectHistory[currentRetryingNum].shape)
+    }
+
+
     const checkResult = () => {
         if (checkedResult) return
-        const newHistory = [...testHistory, { refColor, targetColor, selectedColor }];
+        setCheckedResult(true)
+
+        const correct = getIsCorrect(targetColor, selectedColor, mode, difficulty)
+        const newHistory = [...testHistory, { refColor, targetColor, selectedColor, pattern, shape, isRetry: retrying, correct }];
         setTestHistory(newHistory)
 
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor });
-        setCheckedResult(true)
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor, correct });
     };
-    const testEnded = currentTestNum >= (testNum - 1) && checkedResult
+    const incorrectHistory = testHistory.filter(({ correct, isRetry }) => !correct && !isRetry)
+    const retryEnded = currentRetryingNum >= incorrectHistory.length && checkedResult
 
-    console.log('pattern, shape :>> ', pattern, shape);
+    const testEnded = currentTestNum >= testNum && checkedResult && (!retrying || retryEnded)
+    const canRetry = incorrectHistory.length > 0 && !retrying && testEnded
 
     return (
         <div>
+            <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
+
             {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
             <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
 
             {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}
-            <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulty={difficulty} />}
+            <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
             <div className="flex h-[200px]">
                 <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} />
                 {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} />}
