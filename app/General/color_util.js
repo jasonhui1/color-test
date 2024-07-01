@@ -1,5 +1,5 @@
-import { withinTriangle_strict } from "./calculation_util";
-import { calculateHLSDifference, ceilToStep, floorToStep, getRandomFloat, getRandomInt, getRandomIntStep, map, roundToStep, stepInDifficulty } from "./utils";
+import { getPositionFromSV, withinTriangle_strict } from "./calculation_util";
+import { calculateDistance, calculateHLSDifference, ceilToStep, floorToStep, getRandomFloat, getRandomInt, getRandomIntStep, map, roundToStep, stepInDifficulty } from "./utils";
 
 function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
 
@@ -86,44 +86,66 @@ export const defaultHLS = { h: 0, l: 0, s: 0, }
 export const hlsToString = (hsl) => `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
 export const hlsToId = (hsl) => [hsl.h, hsl.s, hsl.l].join('');
 
-export function getPositionFromSV(s, v, w = 1, bb = { x1: 0, y1: 0 }) {
-    function getPositionFromSVNormalised() {
-        let y = (100 - v) / 100
-        const horizontalLineLength = getXLengthInTriangle(y)
-        let x = s / 100 * horizontalLineLength
-        return { x, y }
-    }
 
-    const { x, y } = getPositionFromSVNormalised()
+export const getIsCorrect = (targetColor, selectedColor, mode) => {
+    const diff = getDifferences(targetColor, selectedColor)
+    const accuracy = getAccuracy(targetColor, diff, mode)
 
-    return { x: x * w + bb.x1, y: y * w + bb.y1 }
+    return mode === 'bw' ? accuracy.l === 'correct' : accuracy.distance === 'correct'
 }
 
-export function getSVFromPosition(x, y, w = 1) {
-    x /= w
-    y /= w
-    //trigonometry
+export const getDifferences = (targetColor, selectedColor) => {
+    if (!targetColor) return null;
 
-    const horizontalLineLength = getXLengthInTriangle(y)
-    if (horizontalLineLength < 0.01) return { s: 0, v: 0 }
-    const newSaturation = Math.round(x / horizontalLineLength * 100)
-    const newValue = Math.round(100 - (y) * 100);
+    const { h, s, l } = calculateHLSDifference(targetColor, selectedColor, false);
 
-    return { s: newSaturation, v: newValue }
+    // @ts-ignore
+    const { x, y } = getPositionFromSV(selectedColor.s, selectedColor.l)
+    const { x: tx, y: ty } = getPositionFromSV(targetColor.s, targetColor.l)
+    const distance = calculateDistance(x, y, tx, ty) * 100
+    const xDistance = x - tx
+
+
+    return { h, s, l, distance, xDistance }
 }
 
-export function getHueFromPosition(x, y, centerX, centerY) {
-    return Math.round(Math.atan2(y - centerY, x - centerX) * 180 / Math.PI + 180)
-}
+export const getAccuracy = (targetColor, differences, difficulty, allowance = 10) => {
+    if (!targetColor) return null;
+    console.log('difficultes :>> ', difficulty);
 
-export function getPositionFromHue(hue, radius, centerX, centerY) {
+    const step = stepInDifficulty(difficulty);
+    const { x } = getPositionFromSV(targetColor.s, targetColor.l)
+
+    //TODO: my bias hue calculation (> a certain saturation (thinking of using map range), not too bright/dark )
+    const HIgnore = x * 100 < step.s || targetColor.l < step.l || targetColor.l > 100 - allowance / step.l / 2
+    const hAccurate = HIgnore || Math.abs(differences.h) < step.h / 2
+    const sAccurate = Math.abs(differences.s) < step.s / 2;
+    const lAccurate = Math.abs(differences.l) < step.l / 2;
+    const distanceAccurate = differences.distance <= allowance;
+
+    const stepS = Math.sqrt(3) / 2 * (step.s / 100)
+    const sDistanceAccurate = (Math.abs(differences.xDistance)) < (stepS / 2)
+
     return {
-        x: -(centerX - radius / 2) * Math.cos((hue) / 180 * Math.PI) + centerX,
-        y: -(centerY - radius / 2) * Math.sin((hue) / 180 * Math.PI) + centerY,
-    }
-}
+        h: hAccurate ? 'correct' : differences.h < 0 ? 'low' : 'high',
+        l: lAccurate ? 'correct' : differences.l < 0 ? 'low' : 'high',
+        s: sAccurate ? 'correct' : differences.s < 0 ? 'low' : 'high',
 
-function getXLengthInTriangle(y) {
-    const yh = (y < 0.5) ? y : 1 - y
-    return Math.tan(Math.PI / 3) * yh
-}
+        distance: distanceAccurate ? 'correct' : 'wrong',
+        sDistance: sDistanceAccurate ? 'correct' : differences.xDistance < 0 ? 'low' : 'high',
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+

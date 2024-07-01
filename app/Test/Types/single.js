@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
-import { defaultHLS, generateRandomColorAdvanced } from "../../General/color_util";
+import { defaultHLS, generateRandomColorAdvanced, getIsCorrect } from "../../General/color_util";
 import { stepInDifficulty } from "../../General/utils";
 import { useSettings } from "../../Context/setting";
 import { addHistory } from "../../Storage/test_history";
-import { ResultDisplay } from "../Result/ResultDisplay";
+import { Result, ResultDisplay,  } from "../Result/ResultDisplay";
 import TestBottom from "../General/TestBottom";
 import Evaluation from "../Result/Evaluation";
 import { addHistorySB } from "../../Storage/test_history_supabase";
@@ -12,8 +12,9 @@ import { addHistorySB } from "../../Storage/test_history_supabase";
 function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted }) {
     const [targetColor, setTargetColor] = useState(defaultHLS)
     const [currentTestNum, setCurrentTestNum] = useState(0)
-    const [test_history, setTestHistory] = useState([])
+    const [testHistory, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
+    const [retrying, setRetrying] = useState(false);
 
     const { mode, difficulty, testNum, saveToHistory, practicing } = useSettings()
 
@@ -34,6 +35,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         const restartTest = () => {
             setRandomTargetColor();
             setCurrentTestNum(0)
+            setRetrying(false)
         };
 
         if (testEnded) {
@@ -56,27 +58,26 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         // }
     }
 
+    const handleRetry = () => {
+        setCheckedResult(false)
+    }
+
 
     const checkResult = () => {
         if (checkedResult) return
-        const newHistory = [...test_history, { targetColor, selectedColor }];
-
-        setTestHistory(newHistory)
-        if (currentTestNum >= testNum) {
-            //Print Evaluation Result
-            console.log('test ended, print result :>> ',);
-            console.log('AllHistory :>> ', newHistory);
-        }
-
-        // if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulty ); 
-
         setCheckedResult(true)
+
+        const correct = getIsCorrect(targetColor, selectedColor)
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, correct });
+        setTestHistory(history => [...history, { targetColor, selectedColor, correct }]);
     };
 
     const testEnded = currentTestNum >= (testNum - 1) && checkedResult
+    const canRetry = testHistory.filter(({ correct }) => correct).length > 0 && !retrying && testEnded
 
     return (
         <div>
+            <label>{(currentTestNum + 1)} / {(testNum)}</label>
             {targetColor &&
                 <div className="flex mb-4 justify-center items-center gap-5">
                     <div className="">
@@ -94,11 +95,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                 </div>
             }
 
-            {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulty} />}
-            <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor}/>}
-
-
+            {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}
+            <TestBottom showRetryButton={canRetry} onRetry={() => setRetrying(true)} showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+            {checkedResult && <Result targetColor={targetColor} selectedColor={selectedColor} testId={testId} setHistory={setTestHistory} />}
 
         </div>
 

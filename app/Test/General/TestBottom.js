@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-const TestBottom = ({ showBackButton, testEnded, checkedResult, onNext, onCheck, onBack }) => {
+const TestBottom = ({ showBackButton = false, testEnded, checkedResult, onNext, onCheck, onBack, showRetryButton = false, onRetry = null }) => {
 
     // const showBackButton = currentTestNum > 0
 
@@ -12,23 +12,33 @@ const TestBottom = ({ showBackButton, testEnded, checkedResult, onNext, onCheck,
             {showBackButton && <BackButton onClick={onBack} />}
             {showNextButton && <NextButton testEnded={testEnded} onClick={onNext} />}
             {showCheckButton && <CheckResultButton onClick={onCheck} />}
+            {showRetryButton && <RetryButton onClick={onRetry} />}
         </div>)
 }
 
 
 export default TestBottom
 
-export const BackButton = ({ onClick }) => {
-
+const Button = ({ label, onClick, color = 'bg-blue-500', hoverColor = 'bg-blue-600', textColor = 'text-white' }) => {
     return (
-        <div className="flex justify-end">
-            <button
-                onClick={onClick}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-                Back
-            </button>
-        </div>
+        <button
+            onClick={onClick}
+            className={`${color} ${textColor} px-4 py-2 rounded hover:${hoverColor}`}
+        >
+            {label}
+        </button>
+    )
+}
+
+export const BackButton = ({ onClick }) => {
+    return (
+        <Button label={'Back'} onClick={onClick} />
+    )
+}
+
+export const RetryButton = ({ onClick }) => {
+    return (
+        <Button label={'Retry'} onClick={onClick} />
     )
 }
 
@@ -54,13 +64,9 @@ export const NextButton = ({ testEnded, onClick }) => {
         };
     }, [onClick]);
     return (
+
         <div className="flex justify-end">
-            <button
-                onClick={onClick}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-                {label}
-            </button>
+            <Button label={label} onClick={onClick} />
         </div>
     )
 }
@@ -83,13 +89,7 @@ export const CheckResultButton = ({ onClick, }) => {
 
     return (
         <div className="flex justify-end">
-
-            <button
-                onClick={onClick}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-                Check Result
-            </button>
+            <Button label={'Check Result'} onClick={onClick} color="bg-green-500" hoverColor="bg-green-600" />
         </div>
     )
 }

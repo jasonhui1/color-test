@@ -3,7 +3,7 @@ import color_wheel from "../../public/color_wheel.png";
 import Image from 'next/image';
 import HueShiftImage from './HueShiftImage';
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { getHueFromPosition, getPositionFromHue, getPositionFromSV, getSVFromPosition } from '../General/color_util';
+import { getHueFromPosition, getPositionFromHue, getPositionFromSV, getSVFromPosition } from '../General/calculation_util';
 import { withinCircle, withinTriangle_strict } from '../General/calculation_util';
 
 

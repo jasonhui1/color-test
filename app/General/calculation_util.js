@@ -26,3 +26,46 @@ export function withinCircle(x, y, center, radius) {
     const dist = Math.sqrt((x - x1) ** 2 + (y - y1) ** 2);
     return dist >= (center - radius)
 }
+
+
+export function getPositionFromSV(s, v, w = 1, bb = { x1: 0, y1: 0 }) {
+    function getPositionFromSVNormalised() {
+        let y = (100 - v) / 100
+        const horizontalLineLength = getXLengthInTriangle(y)
+        let x = s / 100 * horizontalLineLength
+        return { x, y }
+    }
+
+    const { x, y } = getPositionFromSVNormalised()
+
+    return { x: x * w + bb.x1, y: y * w + bb.y1 }
+}
+
+export function getSVFromPosition(x, y, w = 1) {
+    x /= w
+    y /= w
+    //trigonometry
+
+    const horizontalLineLength = getXLengthInTriangle(y)
+    if (horizontalLineLength < 0.01) return { s: 0, v: 0 }
+    const newSaturation = Math.round(x / horizontalLineLength * 100)
+    const newValue = Math.round(100 - (y) * 100);
+
+    return { s: newSaturation, v: newValue }
+}
+
+export function getHueFromPosition(x, y, centerX, centerY) {
+    return Math.round(Math.atan2(y - centerY, x - centerX) * 180 / Math.PI + 180)
+}
+
+export function getPositionFromHue(hue, radius, centerX, centerY) {
+    return {
+        x: -(centerX - radius / 2) * Math.cos((hue) / 180 * Math.PI) + centerX,
+        y: -(centerY - radius / 2) * Math.sin((hue) / 180 * Math.PI) + centerY,
+    }
+}
+
+function getXLengthInTriangle(y) {
+    const yh = (y < 0.5) ? y : 1 - y
+    return Math.tan(Math.PI / 3) * yh
+}

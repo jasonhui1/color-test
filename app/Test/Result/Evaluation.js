@@ -1,9 +1,9 @@
 import ColorHistoryTable from "../../history"
 import { calculateHLSDifference, stepInDifficulty } from "../../General/utils";
-import { getAccuracy, getDifferences } from "./ResultDisplay";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 import { getHistorySupabase } from "../../Storage/test_history_supabase";
+import { getAccuracy, getDifferences } from "../../General/color_util";
 
 
 function calculatestat(history, mode, difficulty) {
@@ -145,9 +145,9 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
 
     return (
         <div>
-            {/* <label> Evaluation: {percentage}%</label> */}
+            <label> Evaluation: {percentage}%</label>
             <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
-            {/* <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} /> */}
+            <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
         </div>
     )
 }
