@@ -10,6 +10,7 @@ import CheckBox from './General/CheckBox';
 import { SelectBox } from './General/SelectBox';
 import { SettingProvider, useSettings } from './Context/setting';
 import GoogleLogin from './Test/General/GoogleLogin';
+import supabase from './Storage/supabase_client';
 
 
 const ColorTrainingTool = () => {
@@ -17,8 +18,11 @@ const ColorTrainingTool = () => {
 
     return (
         <div>
-            <div className='flex flex-col justify-center items-center'>
-            <GoogleLogin />
+            <div className='flex flex-col justify-center items-center '>
+                {!supabase && <div className='flex justify-start w-full p-3'>
+
+                    <GoogleLogin />
+                </div>}
                 <div className="mx-auto p-4  flex flex-row items-center">
                     <div className='flex gap-4'>
                         <SettingProvider >

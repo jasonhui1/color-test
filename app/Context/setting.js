@@ -39,7 +39,7 @@ export const SettingProvider = ({ children }) => {
         <SettingContext.Provider value={{
             practicing, setPracticing,
             saveToHistory, setSaveToHistory,
-            difficulties: difficulty, setDifficulties: setDifficulty,
+            difficulty, setDifficulty,
             mode, setMode,
             testNum, setTestNum
         }}>

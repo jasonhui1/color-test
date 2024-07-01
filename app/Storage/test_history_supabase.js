@@ -50,14 +50,15 @@ export async function getHistorySB({ testId = null, mode = 'normal', last = Infi
     return data;
 }
 
-export async function addHistorySB({ testId, targetColor, selectedColor, mode = 'normal', difficulty, refColor }) {
+export async function addHistorySB({ testId, targetColor, selectedColor, mode = 'normal', difficulty, refColor, correct }) {
     const newEntry = {
         testId,
-        targetColor, 
-        selectedColor, 
+        targetColor,
+        selectedColor,
         mode,
         difficulty,
-        refColor 
+        refColor,
+        correct
     };
 
     await querySupabase(

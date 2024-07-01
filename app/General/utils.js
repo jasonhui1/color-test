@@ -96,6 +96,7 @@ export const calculateDistance = (x, y, x1, y1) => {
     return Math.sqrt((x - x1) ** 2 + (y - y1) ** 2)
 }
 
+
 export const generateId = (length = 8) => {
     return uuidv4().substring(0, length)
 }

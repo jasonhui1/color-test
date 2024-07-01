@@ -50,7 +50,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [testHistory, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
-    const { mode, difficulties, testNum, saveToHistory, practicing } = useSettings()
+    const { mode, difficulty, testNum, saveToHistory, practicing } = useSettings()
 
     const [chosenDirection, setChosenDirection] = useState('L')
 
@@ -66,7 +66,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
         //     const { refColor , targetColor } = testHistory[currentTestNum]
         //     [color1, color2] = [refColor, targetColor]
         // } else {
-        [color1, color2] = generatePair(hRange, lRange, sRange, mode, stepInDifficulty(difficulties));
+        [color1, color2] = generatePair(hRange, lRange, sRange, mode, stepInDifficulty(difficulty));
         setSelectedColor(color1)
         // const newHistory = [...testHistory, { color1, color2 }];
         // setTestHistory(newHistory)
@@ -109,8 +109,8 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
             console.log('AllHistory :>> ', newHistory);
         }
 
-        // if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties, refColor);
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulties, refColor });
+        // if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulty, refColor);
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor });
 
         setCheckedResult(true)
     };
@@ -122,9 +122,9 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
             {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
             <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
 
-            {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulties} />}
+            {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}
             <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
+            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulty={difficulty} />}
             <div className="flex h-[200px]">
                 <ExampleDisplay refColor={refColor} targetColor={targetColor} />
                 {checkedResult && <ExampleDisplay refColor={refColor} targetColor={selectedColor} />}

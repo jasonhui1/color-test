@@ -51,9 +51,9 @@ const ColorTest = ({ selectedColor, setSelectedColor }) => {
 
             </div>
 
-            {/* {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />} */}
+            {/* {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulty} />} */}
             {/* <OrderTest hRange={hRange} sRange={sRange} lRange={lRange} length={4} step={20} checkedResult={checkedResult} setCheckedResult={setCheckedResult}/> */}
-            {/* <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} step={stepInDifficulty(difficulties)} checkedResult={checkedResult} setCheckedResult={setCheckedResult} /> */}
+            {/* <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} step={stepInDifficulty(difficulty)} checkedResult={checkedResult} setCheckedResult={setCheckedResult} /> */}
 
         </div>
     );

@@ -8,8 +8,7 @@ const loadResultsFromStorage = () => {
 
 
 export const changeSettings = ({ mode, difficulty, testNum, practicing, saveToHistory }) => {
-    const settings = getSettings() || {};
-    console.log('change settings :>> ', settings);
+    const settings = getSettings();
 
     if (mode !== null) settings.mode = mode;
     if (difficulty !== null) settings.difficulty = difficulty;

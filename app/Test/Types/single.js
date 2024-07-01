@@ -15,14 +15,14 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     const [test_history, setTestHistory] = useState([])
     const [checkedResult, setCheckedResult] = useState(false);
 
-    const { mode, difficulties, testNum, saveToHistory, practicing } = useSettings()
+    const { mode, difficulty, testNum, saveToHistory, practicing } = useSettings()
 
     useEffect(() => {
         setRandomTargetColor();
     }, [])
 
     const setRandomTargetColor = () => {
-        const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, stepInDifficulty(difficulties), targetColor);
+        const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, stepInDifficulty(difficulty), targetColor);
         setTargetColor(newTargetColor);
     };
 
@@ -68,8 +68,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
             console.log('AllHistory :>> ', newHistory);
         }
 
-        // if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulties ); 
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulties });
+        // if (saveToHistory) addHistory(testId, targetColor, selectedColor, mode, difficulty ); 
 
         setCheckedResult(true)
     };
@@ -95,9 +94,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                 </div>
             }
 
-            {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulties} />}
+            {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulty} />}
             <TestBottom showBackButton={currentTestNum === 0} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} mode={mode} difficulties={difficulties} />}
+            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor}/>}
 
 
 
@@ -106,5 +105,40 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     )
 
 }
+
+
+// const NumberSelector = ({ setSelectedColor, targetColor }) => {
+
+//     const { mode, difficulty } = useSettings()
+//     const [options, setOptions] = useState([])
+
+//     useEffect(() => {
+//         const step = stepInDifficulty(difficulty)
+//         if (mode === 'bw') {
+//             const l = targetColor.l
+//             const newOptions = []
+
+//             // Range [-2*step, +2*step]
+//             for (let i = -2; i <= 2; i++) {
+//                 const answer = targetColor.l + step.l * i
+//                 if (answer < 0 || answer > 100) continue
+//                 newOptions.push(answer)
+//             }
+
+//             // remove 3 random options, could include the actual answer
+//             while (newOptions.length > 5) {
+//                 if (Math.random() > 0.5) newOptions.pop()
+//                 else newOptions.shift()
+//             }
+
+//             setOptions(newOptions)
+//         }
+//     }, [targetColor])
+
+//     return (
+
+//     )
+// }
+
 
 export default SingleTest
