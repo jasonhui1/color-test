@@ -56,6 +56,10 @@ export function floorToStep(value, step) {
     return Math.floor(value / step) * step;
 }
 
+export function getRandomValue(array) {
+    return array[Math.floor(Math.random() * array.length)]
+}
+
 export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);

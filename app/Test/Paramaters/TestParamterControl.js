@@ -15,7 +15,7 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
     const [creatingTest, setCreatingTest] = useState(false);
     const createdTests = useFetchTests()
 
-    const { difficulty, setDifficulties, mode, setMode, testNum, setTestNum } = useSettings();
+    const { difficulty, setDifficulty, mode, setMode, testNum, setTestNum } = useSettings();
     const [loading, setLoading] = useState(false);
 
     const updatePara = (test) => {
@@ -60,7 +60,7 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
             <div className='flex flex-col justify-between'>
                 <h3 className="text-lg font-semibold mb-2">Color Test</h3>
                 <div className='flex gap-4 flex-row'>
-                    {testSelected && <SelectBox current={difficulty} onChange={setDifficulties} options={allDifficulties} label={'Difficulty'} />}
+                    {testSelected && <SelectBox current={difficulty} onChange={setDifficulty} options={allDifficulties} label={'Difficulty'} />}
                     {testSelected && <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />}
                     {testSelected && <SelectBox current={testNum} onChange={setTestNum} options={all_testNum} label={'TestNum'} />}
                 </div>
