@@ -1,11 +1,11 @@
-import { createRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useMemo, useRef } from "react";
 import { generateAllColorFromTriangle } from "../../Utils/color_util";
 import { roundToStep } from "../../Utils/utils";
 import ColorSwatch from "../Color Picker/ColorSwatch";
 import { useSettings } from "../../Contexts/setting";
+import RevealEffect from "../General/RevealEffect";
 
 const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, l_range }) => {
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const { step, practicing, mode } = useSettings()
     const gridRef = useRef(null);
 
@@ -16,30 +16,6 @@ const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, 
         else return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, s_range, step)
     }, [selectedColor.h, step]);
 
-    const handleMouseMove = (event) => {
-        if (gridRef.current) {
-            const rect = gridRef.current.getBoundingClientRect();
-            setMousePosition({
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
-            });
-        }
-    }
-    const handleMouseLeave = useCallback(() => {
-        setMousePosition({ x: -1000, y: -1000 }); // Move spotlight off-screen
-    }, []);
-
-    useEffect(() => {
-        const grid = gridRef.current;
-        if (grid) {
-            grid.addEventListener('mousemove', handleMouseMove);
-            grid.addEventListener('mouseleave', handleMouseLeave);
-            return () => {
-                grid.removeEventListener('mousemove', handleMouseMove);
-                grid.removeEventListener('mouseleave', handleMouseLeave);
-            };
-        }
-    }, [practicing, handleMouseMove, handleMouseLeave]);
 
     return (
         <div ref={gridRef} className="relative">
@@ -49,16 +25,8 @@ const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, 
                 hue={rounded_hue}
             />
 
-            {/* Reveal effect */}
             {!practicing && (
-                <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                        background: `radial-gradient(circle 150px at ${mousePosition.x}px ${mousePosition.y}px,  rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), 50%,  rgba(255, 255, 255, 1))`,
-                        mixBlendMode: 'color',
-                        // opacity: mousePosition.x > 0 ? 1 : 0,
-                    }}
-                />
+                <RevealEffect gridRef={gridRef} />
             )}
 
 
@@ -106,5 +74,6 @@ const ColorSwatchRow = ({ array, setSelectedColor, color, }) => {
         </div>
     )
 }
+
 
 export default DisplayColorRange

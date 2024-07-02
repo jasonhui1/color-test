@@ -93,26 +93,28 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                 <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
                 <div className="flex flex-row justify-center gap-5">
                     {targetColor &&
-                        <div className="flex mb-4 justify-center items-center gap-5">
-                            <div className="">
-                                <h3 className="text-lg font-semibold mb-2">Target Color</h3>
-                                <ColorSwatch color={targetColor} size={3} border={true} />
+                        <div>
+                            <div className="flex mb-4 justify-center items-center gap-5">
+                                <div className="">
+                                    <h3 className="text-lg font-semibold mb-2">Target Color</h3>
+                                    <ColorSwatch color={targetColor} size={3} border={true} />
 
-                            </div>
-
-                            {(checkedResult || practicing) && (
-                                <div >
-                                    <h3 className="text-lg font-semibold mb-2">Your Color</h3>
-                                    <ColorSwatch color={selectedColor} size={3} border={true} />
                                 </div>
-                            )}
+
+                                {(checkedResult || practicing) && (
+                                    <div >
+                                        <h3 className="text-lg font-semibold mb-2">Your Color</h3>
+                                        <ColorSwatch color={selectedColor} size={3} border={true} />
+                                    </div>
+                                )}
+                            </div>
+                            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
                         </div>
                     }
                     {<DisplayColorRange selectedColor={selectedColor} setSelectedColor={setSelectedColor} h_range={hRange} s_range={sRange} l_range={lRange} />}
                 </div>
                 {testEnded && (!retrying || retryEnded) && <Evaluation history={testHistory.toReversed()} mode={mode} difficulty={difficulty} />}
                 <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-                {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
 
             </div>
 

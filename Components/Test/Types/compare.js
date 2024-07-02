@@ -11,6 +11,7 @@ import Evaluation from "../../Evaluation/Evaluation";
 import { addHistorySB } from "../../../Storage/test_history_supabase";
 import PatternRenderer, { patterns } from "../../General/Patterns_and_Shape/PatternRenderer";
 import { shapes } from "../../General/Patterns_and_Shape/ShapeRenderer.";
+import DisplayContrasts from "../../Practice/DisplayContrast";
 
 
 const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted, setSelectedColor }) => {
@@ -109,19 +110,27 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
 
     return (
         <div>
-            <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
+            <div className="flex flex-col gap-3">
 
-            {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
-            {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
-            <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
+                <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
+                <div className="flex flex-row justify-center gap-5">
 
+                    {/* <ReorderList guessList={guessList} setGuessList={setGuessList} /> */}
+                    {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
+                    <div>
+                        <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
+                        <div className="flex h-[200px]">
+                            <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} />
+                            {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} />}
+                        </div>
+                            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
+                    </div>
+                    {<DisplayContrasts pattern={pattern} shape={shape} refColor={refColor} selectedColor={selectedColor} setSelectedColor={setSelectedColor} h_range={hRange} s_range={sRange} l_range={[lRange[0], refColor.l]} />}
+                </div>
+            </div>
             {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}
             <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
-            <div className="flex h-[200px]">
-                <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} />
-                {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} />}
-            </div>
+
 
 
         </div>

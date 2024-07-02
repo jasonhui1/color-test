@@ -2,7 +2,7 @@ import ShapeRenderer from "./ShapeRenderer.";
 import { hlsToId, hlsToString } from "../../../Utils/color_util";
 
 const createPatternComponent = (patternName, renderPattern) => {
-    return ({ width, color1, color2, rotation = 0, shape = 'Star', patternWidth = 40, patternHeight = 40, ...props }) => {
+    return ({ width, color1, color2, rotation = 0, shape = 'Star', patternWidth = 40, patternHeight = 40, onClick, ...props }) => {
         const hsl1 = hlsToString(color1);
         const hsl2 = hlsToString(color2);
         const id = `${patternName}-${hlsToId(color1)}-${hlsToId(color2)}`;
@@ -19,7 +19,7 @@ const PatternContainer = ({ children, id, width, height, patternWidth, patternHe
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={viewBox}>
             <defs>
-                <pattern id={id} patternUnits="userSpaceOnUse" width={patternWidth} height={patternHeight} patternTransform={`translate(${patternWidth/4}, ${patternHeight/4}) rotate(${rotation}) scale(${scale})`}>
+                <pattern id={id} patternUnits="userSpaceOnUse" width={patternWidth} height={patternHeight} patternTransform={`translate(${patternWidth / 4}, ${patternHeight / 4}) rotate(${rotation}) scale(${scale})`}>
                     {children}
                 </pattern>
             </defs>
