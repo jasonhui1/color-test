@@ -21,31 +21,52 @@ const DisplayColorRange = ({ step = { h: 15, s: 20, l: 20 }, selectedColor, setS
     return (
         <>
             {practicing && (
-                <div className="flex flex-col items-center justify-center">
-                    {Object.keys(dict).map((H, index) => {
-                        const h = roundToStep(selectedColor.h, step.h);
-                        let current = dict[h];
-                        return (
-                            <div key={index} className='flex flex-col gap-2'>
-                                {current && Object.keys(current).reverse().map((L) => {
-                                    const rangeArray = current[L];
-                                    const l = L
-                                    return (
-                                        <div key={L} className='flex flex-row gap-2' >
-                                            {rangeArray.map((s, j) => (
-                                                <ColorSwatch key={j} color={{ h, s, l }} size={1} border onClick={() => setSelectedColor({ h, s, l })} />
-                                            ))}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        );
-                    })}
-                </div>
+                <ColorSwatchGrid dict={dict} setSelectedColor={setSelectedColor} hue={roundToStep(selectedColor.h, step.h)} />
             )}
         </>
+    )
+}
 
+const ColorSwatchGrid = ({ dict, setSelectedColor, hue }) => {
+    return (
+        <div className="relative">
+            <div className="flex flex-col items-center justify-center">
+                {Object.keys(dict).map((H, index) => {
+                    const h = hue;
+                    let current = dict[h];
+                    return (
+                        <ColorSwatchColumn key={index} dict={current} setSelectedColor={setSelectedColor} color={{ h }} />
+                    );
+                })}
+            </div>
+            {/* <div className="w-full h-full top-0 absolute" style={{ backgroundColor: 'black', opacity: 0.5 }}></div> */}
+        </div>
+    )
+}
 
+const ColorSwatchColumn = ({ dict, setSelectedColor, color }) => {
+    return (
+        <div className='flex flex-col gap-2'>
+            {dict && Object.keys(dict).reverse().map((L, i) => {
+                const rangeArray = dict[L];
+                const newColor = { ...color, l: L };
+
+                return (
+                    <ColorSwatchRow key={L} array={rangeArray} setSelectedColor={setSelectedColor} color={newColor} />
+                );
+            })}
+        </div>
+    )
+}
+
+const ColorSwatchRow = ({ array, setSelectedColor, color }) => {
+    return (
+        <div className='flex flex-row gap-2' >
+            {array.map((s, j) => {
+                const newColor = { ...color, s };
+                return <ColorSwatch key={j} color={newColor} size={1} border onClick={() => setSelectedColor(newColor)} />
+            })}
+        </div>
     )
 }
 
