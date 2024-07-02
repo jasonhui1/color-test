@@ -1,8 +1,8 @@
-import ColorHistoryTable from "../../history_table"
+import ColorHistoryTable from "../../../Components/HistoryTable"
 import { calculateHLSDifference, stepInDifficulty } from "../../General/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
-import { getHistorySupabase } from "../../Storage/test_history_supabase";
+import { TriangularColorPickerDisplayHistory } from "../../../Components/Color Picker/ColorPicker";
+import { getHistorySupabase } from "../../../Storage/test_history_supabase";
 import { getAccuracy, getDifferences } from "../../General/color_util";
 
 

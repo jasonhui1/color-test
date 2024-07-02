@@ -2,14 +2,13 @@
 import { useEffect, useState } from "react"
 import { calculateHLSDifference, generateId, getRandomIntStep, getRandomValue, stepInDifficulty } from "../../General/utils";
 import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect, hlsToString } from "../../General/color_util";
-import ColorSwatch from "../../Color Picker/ColorSwatch";
-import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
-import { useSettings } from "../../Context/setting";
-import TestBottom from "../General/TestBottom";
+import ColorSwatch from "../../../Components/Color Picker/ColorSwatch";
+import { TriangularColorPickerDisplayHistory } from "../../../Components/Color Picker/ColorPicker";
+import { useSettings } from "../../../Contexts/setting";
+import TestBottom from "../../../Components/Test/TestBottom";
 import { ResultDisplay } from "../Result/ResultDisplay";
 import Evaluation from "../Result/Evaluation";
-import { addHistory } from "../../Storage/test_history";
-import { addHistorySB } from "../../Storage/test_history_supabase";
+import { addHistorySB } from "../../../Storage/test_history_supabase";
 import PatternRenderer, { patterns } from "./Patterns_and_Shape/PatternRenderer";
 import { shapes } from "./Patterns_and_Shape/ShapeRenderer.";
 

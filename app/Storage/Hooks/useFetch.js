@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getTestSB } from '../test_parameters_sb';
-import { getHistorySB } from '../test_history_supabase';
+import { getTestSB } from '../../../Storage/test_parameters_sb';
+import { getHistorySB } from '../../../Storage/test_history_supabase';
 
 export const useFetchTests = () => {
     const [createdTests, setCreatedTests] = useState([]);

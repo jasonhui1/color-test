@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { SelectBox } from '../../General/SelectBox';
 import { allDifficulties, all_modes, all_testNum } from './parameters';
-import { addNewTest, getTests } from '../../Storage/test_parameters';
-import TestCreate from '../Create/TestCreate';
+import TestCreate from '../../../Components/Test/Create/TestCreate';
 import { FaEdit } from "react-icons/fa";
 import { generateId } from '../../General/utils';
-import { useSettings } from '../../Context/setting';
-import { addTestSB } from '../../Storage/test_parameters_sb';
+import { useSettings } from '../../../Contexts/setting';
+import { addTestSB } from '../../../Storage/test_parameters_sb';
 import { useFetchTests } from '../../Storage/Hooks/useFetch';
 const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) => {
 

@@ -1,15 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { addHistory } from '../Storage/test_history';
-import TestControls from './Paramaters/TestParamterControl';
-import { RenderResult, ResultDisplay } from './Result/ResultDisplay';
-import Evaluation from './Result/Evaluation';
-import OrderTest from './Types/reorder';
-import { generateRandomColorAdvanced } from '../General/color_util';
-import { stepInDifficulty } from '../General/utils';
-import CompareTest from './Types/compare';
-import { useSettings } from '../Context/setting';
-import SingleTest from './Types/single';
-import { BackButton } from './General/TestBottom';
+import TestControls from '../../app/Test/Paramaters/TestParamterControl';
+import { RenderResult, ResultDisplay } from '../../app/Test/Result/ResultDisplay';
+import Evaluation from '../../app/Test/Result/Evaluation';
+import OrderTest from '../../app/Test/Types/reorder';
+import { generateRandomColorAdvanced } from '../../app/General/color_util';
+import { stepInDifficulty } from '../../app/General/utils';
+import CompareTest from '../../app/Test/Types/compare';
+import { useSettings } from '../../Contexts/setting';
+import SingleTest from '../../app/Test/Types/single';
+import { BackButton } from './TestBottom';
 
 const ColorTest = ({ selectedColor, setSelectedColor }) => {
 

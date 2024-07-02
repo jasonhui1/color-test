@@ -1,16 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { ColorPicker } from './Color Picker/ColorPicker';
-import ColorTest from './Test/test';
-import ColorHistoryTable from './history_table';
-import OrderTest from './Test/Types/reorder';
-import { getHistory } from './Storage/test_history';
-import Evaluation from './Test/Result/Evaluation';
-import ColorSwatch from './Color Picker/ColorSwatch';
+import { ColorPicker } from '../Components/Color Picker/ColorPicker';
+import ColorTest from '../Components/Test/test';
+import ColorSwatch from '../Components/Color Picker/ColorSwatch';
 import CheckBox from './General/CheckBox';
 import { SelectBox } from './General/SelectBox';
-import { SettingProvider, useSettings } from './Context/setting';
-import GoogleLogin from './Test/General/GoogleLogin';
-import supabase from './Storage/supabase_client';
+import { SettingProvider, useSettings } from '../Contexts/setting';
+import GoogleLogin from '../Components/General/GoogleLogin';
+import supabase from '../Storage/supabase_client';
 
 
 const ColorTrainingTool = () => {
