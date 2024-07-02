@@ -120,8 +120,8 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
             <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
             <div className="flex h-[200px]">
-                <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} />
-                {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} />}
+                <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} />
+                {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} />}
             </div>
 
 

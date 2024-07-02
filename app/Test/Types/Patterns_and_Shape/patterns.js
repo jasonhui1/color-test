@@ -1,8 +1,8 @@
 import { hlsToId, hlsToString } from "../../../General/color_util"
-import { CrescentShape, Diamond, DiamondShape, HeartShape, StarShape, TriangleShape } from "./basic_shape"
+import ShapeRenderer from "./ShapeRenderer.";
+import { CrescentShape, HeartShape, StarShape, TriangleShape } from "./basic_shape"
 
 const PatternContainer = ({ children, id, width, height, rotation = 0, scale = 1, viewBox = '0 0 100% 100%', shape = 'Star' }) => {
-    console.log('shape :>> ', shape);
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width='200' height='100%' viewBox={viewBox}>
             <defs>
@@ -12,7 +12,7 @@ const PatternContainer = ({ children, id, width, height, rotation = 0, scale = 1
             </defs>
             {/* <rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} /> */}
             {/* {(shape === 'Star') && <CrescentShape size='200' fill={`url(#${id})`} />} */}
-            <DiamondShape size='200' fill={`url(#${id})`} />
+            <ShapeRenderer size='200' fill={`url(#${id})`} shape={shape} />
         </svg>
     )
 }
