@@ -7,14 +7,16 @@ export function generateAllColorFromTriangle(h_range = [0, 360], s_range = [0, 1
     const dict = {}
     const defineKey = (data, key, value = {}) => data[key] = data[key] ?? value
 
+    const lowH = ceilToStep(h_range[0], step.h)
+    const highH = floorToStep(h_range[1], step.h)
 
-    for (let h = h_range[0]; h <= h_range[1]; h += step.h) {
+    for (let h = lowH; h <= highH; h += step.h) {
 
         defineKey(dict, h)
-        const low = ceilToStep(l_range[0], step.l)
-        const high = floorToStep(l_range[1], step.l)
+        const lowL = ceilToStep(l_range[0], step.l)
+        const highL = floorToStep(l_range[1], step.l)
 
-        for (let l = low; l <= high; l += step.l) {
+        for (let l = lowL; l <= highL; l += step.l) {
             const horizonalLength = getXLengthInTriangle(l / 100)
             const stepInTriangle = step.s * triangle_height / 100
 
@@ -25,16 +27,14 @@ export function generateAllColorFromTriangle(h_range = [0, 360], s_range = [0, 1
             for (let x = 0; x <= horizonalLength + 0.02; x += stepInTriangle) {
                 let { s } = getSVFromPosition(x, y)
 
+                if (!(s >= s_range[0] && s <= s_range[1])) continue
+
                 dict[h][l].push(s)
                 array.push({ h, l, s })
             }
 
         }
     }
-
-    console.log('array :>> ', array);
-    console.log('dict :>> ', dict);
-
     return { array, dict }
 }
 
@@ -64,27 +64,20 @@ function generateRandomColor(h_range, s_range, l_range, step = { h: 15, l: 20, s
 
 export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, prevColor) => {
 
-    let max = 5
-    let i = 0
     let newColor;
     do {
-        i += 1
         if (mode === 'bw') {
             newColor = generateRandomColor([0, 0], [0, 0], lRange, step);
         } else {
             newColor = generateRandomColorFromTriangle(hRange, sRange, lRange, step);
         }
 
-        console.log('newColor :>> ', newColor);
-
-
         if (!prevColor) break;
-        console.log('prevColor  :>> ', prevColor, newColor);
 
         let diff = calculateHLSDifference(prevColor, newColor);
         if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
 
-    } while (true && i < max);
+    } while (true);
 
     return newColor
 };

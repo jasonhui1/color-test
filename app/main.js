@@ -30,7 +30,7 @@ const ColorTrainingTool = () => {
                 <div className='flex flex-row gap-5'>
 
                     <SettingProvider >
-                        <DisplayColorRange selectedColor={selectedColor} />
+                        <DisplayColorRange selectedColor={selectedColor} setSelectedColor={setSelectedColor}/>
                         {/* <DisplayContrasts selectedColor={selectedColor} step={20} /> */}
                     </SettingProvider>
 
