@@ -65,7 +65,7 @@ export function getPositionFromHue(hue, radius, centerX, centerY) {
     }
 }
 
-function getXLengthInTriangle(y) {
+export function getXLengthInTriangle(y) {
     const yh = (y < 0.5) ? y : 1 - y
     return Math.tan(Math.PI / 3) * yh
 }

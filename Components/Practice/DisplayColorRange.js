@@ -1,8 +1,11 @@
+import { generateAllColorFromTriangle } from "../../Utils/color_util";
 import ColorSwatch from "../Color Picker/ColorSwatch";
 
-const DisplayColorRange = ({ step = 20, selectedColor }) => {
+const DisplayColorRange = ({ step = { h: 15, s: 20, l: 20 }, selectedColor }) => {
     // const { practicing } = useSettings();
     const practicing = true;
+
+    const { array, dict } = generateAllColorFromTriangle([15, 15], [0, 100], [0, 100], step)
 
     const rangeArray = [];
     for (let i = 0; i <= 100; i += step) {
@@ -16,9 +19,9 @@ const DisplayColorRange = ({ step = 20, selectedColor }) => {
 
     return (
         <>
-            {practicing &&
+            {/* {practicing &&
                 <div className="flex flex-col items-center justify-center">
-                    <div className='flex flex-row gap-2'>
+                    <div className='flex flex-col gap-2'>
                         {rangeArray10.toReversed().map((l, index) => (
                             <ColorSwatch key={index} color={{ h: selectedColor.h, s: 0, l }} size={1} />
                         )
@@ -33,7 +36,7 @@ const DisplayColorRange = ({ step = 20, selectedColor }) => {
                                         {rangeArray.map((s, j) => {
 
                                             return (
-                                                <ColorSwatch key={j} color={{ h: selectedColor.h, s, l }} size={1} />
+                                                <ColorSwatch key={j} color={rangeArray[selectedColor.h][]} size={1} />
                                             )
                                         })}
                                     </div>
@@ -42,7 +45,7 @@ const DisplayColorRange = ({ step = 20, selectedColor }) => {
                         }
                     </div>
                 </div>
-            }
+            } */}
         </>
 
     )

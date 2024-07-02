@@ -1,47 +1,48 @@
-import { getPositionFromSV, getSVFromPosition, withinTriangle_strict } from "./calculation_util";
-import { calculateDistance, calculateHLSDifference, ceilToStep, floorToStep, getRandomFloat, getRandomInt, getRandomIntStep, map, roundToStep, stepInDifficulty } from "./utils";
+import { getPositionFromSV, getSVFromPosition, getXLengthInTriangle, withinTriangle_strict } from "./calculation_util";
+import { calculateDistance, calculateHLSDifference, ceilToStep, floorToStep, getRandomFloat, getRandomInt, getRandomIntStep, getRandomValue, map, roundToStep, stepInDifficulty } from "./utils";
 
-function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
+const triangle_height = Math.sqrt(3) / 2
+export function generateAllColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
+    const array = []
+    const dict = {}
+    const defineKey = (data, key, value = {}) => data[key] = data[key] ?? value
 
-    // triangle with w = 1 
-    const height = Math.sqrt(3) / 2
-    const bb = { x1: 0, y1: l_range[0] / 100, x2: height, y2: l_range[1] / 100 }
-    // console.log('bb :>> ', bb);
 
-    // find a point within the triangle and range
-    function generatePosition() {
-        let x, y;
-        let s, l
+    for (let h = h_range[0]; h <= h_range[1]; h += step.h) {
 
-        do {
-            [x, y] = [getRandomFloat(bb.x1, bb.x2), getRandomFloat(bb.y1, bb.y2)]
-            let { s: s_, v: l_ } = getSVFromPosition(x, y)
-            s = s_
-            l = l_
+        defineKey(dict, h)
+        const low = ceilToStep(l_range[0], step.l)
+        const high = floorToStep(l_range[1], step.l)
 
-            // console.log('x,y,s,l :>> ', x,y,s,l,withinTriangle_strict(x, y, bb) , s < s_range[0], s > s_range[1],   );
-        } while (!withinTriangle_strict(x, y, bb) || s < s_range[0] || s > s_range[1])
+        for (let l = low; l <= high; l += step.l) {
+            const horizonalLength = getXLengthInTriangle(l / 100)
+            const stepInTriangle = step.s * triangle_height / 100
 
-        return { x, y }
+            const y = l / 100
+            defineKey(dict[h], l, [])
+
+
+            for (let x = 0; x <= horizonalLength + 0.02; x += stepInTriangle) {
+                let { s } = getSVFromPosition(x, y)
+
+                dict[h][l].push(s)
+                array.push({ h, l, s })
+            }
+
+        }
     }
 
-    let { x, y } = generatePosition()
+    console.log('array :>> ', array);
+    console.log('dict :>> ', dict);
+
+    return { array, dict }
+}
 
 
-    y = roundToStep(y, step.l / 100).toFixed(2)
 
-    const stepInTriangle = step.s * height / 100
-    //Normalise for uniform distribution after rounding
-    // const horizonalLength = getXLengthInTriangle(y)
-    // x = map(x, 0, horizonalLength, - stepInTriangle / 2 , horizonalLength + stepInTriangle / 2 )
-    x = roundToStep(x, stepInTriangle).toFixed(2)
-
-    let { s, v: l } = getSVFromPosition(x, y)
-    s = Math.min(100, Math.max(0, s))
-
-    const h = getRandomIntStep(h_range[0], h_range[1] + (h_range[1] < h_range[0] ? 360 : 0), step.h) % 361;
-
-    return { h, s, l };
+function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
+    const { array } = generateAllColorFromTriangle(h_range, s_range, l_range, step)
+    return getRandomValue(array);
 }
 
 

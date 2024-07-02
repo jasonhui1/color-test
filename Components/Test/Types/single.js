@@ -7,6 +7,7 @@ import { ResultDisplay, } from "../../Evaluation/ResultDisplay";
 import TestBottom from "../TestBottom";
 import Evaluation from "../../Evaluation/Evaluation";
 import { addHistorySB } from "../../../Storage/test_history_supabase";
+import DisplayColorRange from "../../Practice/DisplayColorRange";
 
 function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted, setSelectedColor }) {
     const [targetColor, setTargetColor] = useState(defaultHLS)
@@ -86,29 +87,38 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     const canRetry = incorrectHistory.length > 0 && !retrying && testEnded
 
     return (
-        <div>
-            <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
-            {targetColor &&
-                <div className="flex mb-4 justify-center items-center gap-5">
-                    <div className="">
-                        <h3 className="text-lg font-semibold mb-2">Target Color</h3>
-                        <ColorSwatch color={targetColor} size={3} border={true} />
+        <div className="flex flex-row justify-center items-center">
 
-                    </div>
+            <div>
+                <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
+                {targetColor &&
+                    <div className="flex mb-4 justify-center items-center gap-5">
+                        <div className="">
+                            <h3 className="text-lg font-semibold mb-2">Target Color</h3>
+                            <ColorSwatch color={targetColor} size={3} border={true} />
 
-                    {(checkedResult || practicing) && (
-                        <div >
-                            <h3 className="text-lg font-semibold mb-2">Your Color</h3>
-                            <ColorSwatch color={selectedColor} size={3} border={true} />
                         </div>
-                    )}
-                </div>
-            }
 
-            {testEnded && (!retrying || retryEnded) && <Evaluation history={testHistory.toReversed()} mode={mode} difficulty={difficulty} />}
-            <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
-            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
+                        {(checkedResult || practicing) && (
+                            <div >
+                                <h3 className="text-lg font-semibold mb-2">Your Color</h3>
+                                <ColorSwatch color={selectedColor} size={3} border={true} />
+                            </div>
+                        )}
+                    </div>
+                }
 
+                {testEnded && (!retrying || retryEnded) && <Evaluation history={testHistory.toReversed()} mode={mode} difficulty={difficulty} />}
+                <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
+                {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
+
+            </div>
+
+            <div>
+
+
+                <DisplayColorRange selectedColor={selectedColor}  />
+            </div>
         </div>
 
     )
