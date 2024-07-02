@@ -1,11 +1,9 @@
 'use client'
 import { useEffect, useState } from "react"
-import { getTests } from "../Storage/test_parameters"
-import Evaluation from "../Test/Result/Evaluation";
-import { getHistory } from "../Storage/test_history";
-import { SelectBox } from "../General/SelectBox";
-import { all_modes } from "../Test/Paramaters/parameters";
-import { useFetchHistory, useFetchTests } from "../Storage/Hooks/useFetch";
+import Evaluation from "../../Components/Evaluation/Evaluation";
+import { SelectBox } from "../../Components/General/SelectBox";
+import { all_modes } from "../../Components/Test/Parameters/parameters";
+import { useFetchHistory, useFetchTests } from "../../Storage/useFetch";
 
 export default function Page() {
   const createdTests = useFetchTests();

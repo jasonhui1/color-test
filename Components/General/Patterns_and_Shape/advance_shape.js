@@ -1,4 +1,4 @@
-import { hlsToString } from "../../../General/color_util"
+import { hlsToString } from "../../../Utils/color_util"
 
 
 export const YingYangLike = ({ color1, color2, radius }) => {

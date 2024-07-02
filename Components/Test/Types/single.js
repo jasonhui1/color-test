@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import ColorSwatch from "../../../Components/Color Picker/ColorSwatch";
-import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect } from "../../General/color_util";
-import { stepInDifficulty } from "../../General/utils";
+import ColorSwatch from "../../Color Picker/ColorSwatch";
+import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect } from "../../../Utils/color_util";
+import { stepInDifficulty } from "../../../Utils/utils";
 import { useSettings } from "../../../Contexts/setting";
-import { ResultDisplay, } from "../Result/ResultDisplay";
-import TestBottom from "../../../Components/Test/TestBottom";
-import Evaluation from "../Result/Evaluation";
+import { ResultDisplay, } from "../../Evaluation/ResultDisplay";
+import TestBottom from "../TestBottom";
+import Evaluation from "../../Evaluation/Evaluation";
 import { addHistorySB } from "../../../Storage/test_history_supabase";
 
 function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted, setSelectedColor }) {

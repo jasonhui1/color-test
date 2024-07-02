@@ -1,16 +1,16 @@
 
 import { useEffect, useState } from "react"
-import { calculateHLSDifference, generateId, getRandomIntStep, getRandomValue, stepInDifficulty } from "../../General/utils";
-import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect, hlsToString } from "../../General/color_util";
-import ColorSwatch from "../../../Components/Color Picker/ColorSwatch";
-import { TriangularColorPickerDisplayHistory } from "../../../Components/Color Picker/ColorPicker";
+import { calculateHLSDifference, generateId, getRandomIntStep, getRandomValue, stepInDifficulty } from "../../../Utils/utils";
+import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect, hlsToString } from "../../../Utils/color_util";
+import ColorSwatch from "../../Color Picker/ColorSwatch";
+import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 import { useSettings } from "../../../Contexts/setting";
-import TestBottom from "../../../Components/Test/TestBottom";
-import { ResultDisplay } from "../Result/ResultDisplay";
-import Evaluation from "../Result/Evaluation";
+import TestBottom from "../TestBottom";
+import { ResultDisplay } from "../../Evaluation/ResultDisplay";
+import Evaluation from "../../Evaluation/Evaluation";
 import { addHistorySB } from "../../../Storage/test_history_supabase";
-import PatternRenderer, { patterns } from "./Patterns_and_Shape/PatternRenderer";
-import { shapes } from "./Patterns_and_Shape/ShapeRenderer.";
+import PatternRenderer, { patterns } from "../../General/Patterns_and_Shape/PatternRenderer";
+import { shapes } from "../../General/Patterns_and_Shape/ShapeRenderer.";
 
 
 const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted, setSelectedColor }) => {

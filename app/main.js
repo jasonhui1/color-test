@@ -2,8 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { ColorPicker } from '../Components/Color Picker/ColorPicker';
 import ColorTest from '../Components/Test/test';
 import ColorSwatch from '../Components/Color Picker/ColorSwatch';
-import CheckBox from './General/CheckBox';
-import { SelectBox } from './General/SelectBox';
+import CheckBox from '../Components/General/CheckBox';
+import { SelectBox } from '../Components/General/SelectBox';
 import { SettingProvider, useSettings } from '../Contexts/setting';
 import GoogleLogin from '../Components/General/GoogleLogin';
 import supabase from '../Storage/supabase_client';
@@ -12,7 +12,6 @@ import supabase from '../Storage/supabase_client';
 const ColorTrainingTool = () => {
     const [selectedColor, setSelectedColor] = useState({ h: 30, s: 100, l: 50 });
 
-    // console.log('supabase.getSession() :>> ', await supabase.auth.getSession().session);
     return (
         <div>
             <div className='flex flex-col justify-center items-center '>

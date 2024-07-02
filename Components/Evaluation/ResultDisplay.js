@@ -1,6 +1,6 @@
 import { FaCheck, FaTimes, FaArrowUp, FaArrowDown } from 'react-icons/fa';
-import { useSettings } from '../../../Contexts/setting';
-import { getAccuracy, getDifferences } from '../../General/color_util';
+import { useSettings } from '../../Contexts/setting';
+import { getAccuracy, getDifferences } from '../../Utils/color_util';
 
 export const ResultDisplay = ({ targetColor, selectedColor }) => {
     const { mode, difficulty } = useSettings()

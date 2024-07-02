@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import TestControls from '../../app/Test/Paramaters/TestParamterControl';
-import { RenderResult, ResultDisplay } from '../../app/Test/Result/ResultDisplay';
-import Evaluation from '../../app/Test/Result/Evaluation';
-import OrderTest from '../../app/Test/Types/reorder';
-import { generateRandomColorAdvanced } from '../../app/General/color_util';
-import { stepInDifficulty } from '../../app/General/utils';
-import CompareTest from '../../app/Test/Types/compare';
+import TestControls from './Parameters/TestParamterControl';
+import { RenderResult, ResultDisplay } from '../Evaluation/ResultDisplay';
+import Evaluation from '../Evaluation/Evaluation';
+import OrderTest from './Types/reorder';
+import { generateRandomColorAdvanced } from '../../Utils/color_util';
+import { stepInDifficulty } from '../../Utils/utils';
+import CompareTest from './Types/compare';
 import { useSettings } from '../../Contexts/setting';
-import SingleTest from '../../app/Test/Types/single';
+import SingleTest from './Types/single';
 import { BackButton } from './TestBottom';
 
 const ColorTest = ({ selectedColor, setSelectedColor }) => {

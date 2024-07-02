@@ -1,4 +1,4 @@
-import { hlsToId, hlsToString } from "../../../General/color_util"
+import { hlsToId, hlsToString } from "../../../Utils/color_util"
 import ShapeRenderer from "./ShapeRenderer.";
 import { CrescentShape, HeartShape, StarShape, TriangleShape } from "./basic_shape"
 

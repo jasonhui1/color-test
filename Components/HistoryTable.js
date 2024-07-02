@@ -1,7 +1,7 @@
-import { RenderResultIcon, } from "../app/Test/Result/ResultDisplay";
-import { calculateHLSDifference } from "../app/General/utils";
+import { RenderResultIcon, } from "./Evaluation/ResultDisplay";
+import { calculateHLSDifference } from "../Utils/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { getAccuracy, getDifferences } from "../app/General/color_util";
+import { getAccuracy, getDifferences } from "../Utils/color_util";
 
 
 const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal', difficulty = 'easy' }) => {

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { allDifficulties } from '../Test/Paramaters/parameters';
+import { allDifficulties } from '../Components/Test/Parameters/parameters';
 
 // First, let's include our previous RGB to HSL conversion function
 export function rgbToHsl(r, g, b) {

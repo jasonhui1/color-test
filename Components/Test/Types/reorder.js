@@ -1,8 +1,8 @@
 
 import { Reorder } from "framer-motion"
 import { useState } from "react"
-import { generateId, getRandomIntStep } from "../../General/utils";
-import { CheckResultButton, NextButton } from "../../../Components/Test/TestBottom";
+import { generateId, getRandomIntStep } from "../../../Utils/utils";
+import { CheckResultButton, NextButton } from "../TestBottom";
 
 function generateProgressiveList(step = 20, length = 4, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], direction = ['L'], extremeFirst = false, useSmallest = false) {
     const [hStart, hEnd] = hRange;
