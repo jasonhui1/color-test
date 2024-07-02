@@ -1,5 +1,5 @@
 
-const ColorSwatch = ({ color, size = 1, border = false, onClick=null }) => {
+const ColorSwatch = ({ color, size = 1, border = false, onClick = null, style = {} }) => {
 
     const backgroundColor = `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
     const width = size * 3 + 'rem'
@@ -7,7 +7,7 @@ const ColorSwatch = ({ color, size = 1, border = false, onClick=null }) => {
 
     return (
         <div
-            style={{ backgroundColor: `${backgroundColor}`, width: width, height: width }}
+            style={{ backgroundColor: `${backgroundColor}`, width: width, height: width, ...style }}
             className={`w-6 h-6 rounded ${borderStyle} ${onClick ? 'cursor-pointer' : ''}`}
             onClick={onClick}
         />

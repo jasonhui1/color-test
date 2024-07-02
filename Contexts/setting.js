@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { changeSettings, getSettings } from '../Storage/test_settings';
+import { stepInDifficulty } from '../Utils/utils';
 
 // Create a context for history
 const SettingContext = createContext(undefined);
@@ -41,7 +42,8 @@ export const SettingProvider = ({ children }) => {
             saveToHistory, setSaveToHistory,
             difficulty, setDifficulty,
             mode, setMode,
-            testNum, setTestNum
+            testNum, setTestNum,
+            step: stepInDifficulty(difficulty),
         }}>
             {children}
         </SettingContext.Provider>
