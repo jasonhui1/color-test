@@ -4,16 +4,18 @@ import { roundToStep } from "../../Utils/utils";
 import ColorSwatch from "../Color Picker/ColorSwatch";
 import { useSettings } from "../../Contexts/setting";
 
-const DisplayColorRange = ({ selectedColor, setSelectedColor }) => {
+const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, l_range }) => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const { step, practicing } = useSettings()
+    const { step, practicing, mode } = useSettings()
     const gridRef = useRef(null);
 
-    const { dict } = useMemo(() =>
-        generateAllColorFromTriangle([selectedColor.h, selectedColor.h], [0, 100], [0, 100], step),
-        [selectedColor.h, step]
-    );
-    
+    const rounded_hue = roundToStep(selectedColor.h, step.h)
+
+    const { dict } = useMemo(() => {
+        if (mode === 'bw') return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, [0, 0], step)
+        else return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, s_range, step)
+    }, [selectedColor.h, step]);
+
     const handleMouseMove = (event) => {
         if (gridRef.current) {
             const rect = gridRef.current.getBoundingClientRect();
@@ -28,35 +30,27 @@ const DisplayColorRange = ({ selectedColor, setSelectedColor }) => {
     }, []);
 
     useEffect(() => {
-        if (practicing) {
-            const grid = gridRef.current;
-            if (grid) {
-                grid.addEventListener('mousemove', handleMouseMove);
-                grid.addEventListener('mouseleave', handleMouseLeave);
-                return () => {
-                    grid.removeEventListener('mousemove', handleMouseMove);
-                    grid.removeEventListener('mouseleave', handleMouseLeave);
-                };
-            }
+        const grid = gridRef.current;
+        if (grid) {
+            grid.addEventListener('mousemove', handleMouseMove);
+            grid.addEventListener('mouseleave', handleMouseLeave);
+            return () => {
+                grid.removeEventListener('mousemove', handleMouseMove);
+                grid.removeEventListener('mouseleave', handleMouseLeave);
+            };
         }
     }, [practicing, handleMouseMove, handleMouseLeave]);
-
-
-    // const LRangeArray = [];
-    // for (let i = 0; i <= 100; i += step.l) {
-    //     LRangeArray.push(i);
-    // }
 
     return (
         <div ref={gridRef} className="relative">
             <ColorSwatchGrid
                 dict={dict}
                 setSelectedColor={setSelectedColor}
-                hue={roundToStep(selectedColor.h, step.h)}
+                hue={rounded_hue}
             />
 
             {/* Reveal effect */}
-            {true && (
+            {!practicing && (
                 <div
                     className="absolute inset-0 pointer-events-none"
                     style={{

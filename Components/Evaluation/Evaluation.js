@@ -2,7 +2,6 @@ import ColorHistoryTable from "../HistoryTable"
 import { calculateHLSDifference, stepInDifficulty } from "../../Utils/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { TriangularColorPickerDisplayHistory } from "../Color Picker/ColorPicker";
-import { getHistorySupabase } from "../../Storage/test_history_supabase";
 import { getAccuracy, getDifferences } from "../../Utils/color_util";
 
 

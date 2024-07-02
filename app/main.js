@@ -27,14 +27,7 @@ const ColorTrainingTool = () => {
                         <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                     </div>
                 </div>
-                <div className='flex flex-row gap-5'>
 
-                    <SettingProvider >
-                        <DisplayColorRange selectedColor={selectedColor} setSelectedColor={setSelectedColor}/>
-                        {/* <DisplayContrasts selectedColor={selectedColor} step={20} /> */}
-                    </SettingProvider>
-
-                </div>
             </div>
             {/* <ColorHistoryTable history={getHistory()} mode='bw' difficulty='easy'/> */}
             {/* <Evaluation history={getHistory()} mode={'normal'} difficulty={'easy'} /> */}
@@ -45,13 +38,16 @@ const ColorTrainingTool = () => {
 }
 
 const Test = ({ selectedColor, setSelectedColor }) => {
-    const { practicing, setPracticing, setSaveToHistory } = useSettings();
+    const { practicing, setPracticing, saveToHistory ,setSaveToHistory } = useSettings();
 
     return (
         <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md min-w">
 
             <div className='flex items-center justify-end gap-4'>
-                <CheckBox checked={practicing} onChange={(e) => { setPracticing(!practicing); setSaveToHistory(practicing) }} label={'Practice'} />
+                <div className='flex flex-row gap-4'>
+                    <CheckBox checked={saveToHistory} onChange={(e) => {setSaveToHistory(!practicing?!saveToHistory:false) }} label={'Save to history'} />
+                    <CheckBox checked={practicing} onChange={(e) => { setPracticing(!practicing); setSaveToHistory(false) }} label={'Practice'} />
+                </div>
             </div>
             <ColorTest selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
         </div>

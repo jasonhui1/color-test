@@ -2,7 +2,7 @@ import { getPositionFromSV, getSVFromPosition, getXLengthInTriangle, withinTrian
 import { calculateDistance, calculateHLSDifference, ceilToStep, floorToStep, getRandomFloat, getRandomInt, getRandomIntStep, getRandomValue, map, roundToStep, stepInDifficulty } from "./utils";
 
 const triangle_height = Math.sqrt(3) / 2
-export function generateAllColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
+export function generateAllColorFromTriangle(h_range = [0, 360], l_range = [0, 100], s_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
     const array = []
     const dict = {}
     const defineKey = (data, key, value = {}) => data[key] = data[key] ?? value
@@ -35,31 +35,32 @@ export function generateAllColorFromTriangle(h_range = [0, 360], s_range = [0, 1
 
         }
     }
+
     return { array, dict }
 }
 
 
 
-function generateRandomColorFromTriangle(h_range = [0, 360], s_range = [0, 100], l_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
-    const { array } = generateAllColorFromTriangle(h_range, s_range, l_range, step)
+function generateRandomColorFromTriangle(h_range = [0, 360], l_range = [0, 100], s_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
+    const { array } = generateAllColorFromTriangle(h_range, l_range, s_range, step)
     return getRandomValue(array);
 }
 
 
-function generateRandomColor(h_range, s_range, l_range, step = { h: 15, l: 20, s: 20 }) {
+function generateRandomColor(h_range, l_range, s_range, step = { h: 15, l: 20, s: 20 }) {
 
     const ValueToStep = (f1, f2, arr, step) => [f1(arr[0], step), f2(arr[1], step)]
 
     h_range = ValueToStep(ceilToStep, floorToStep, h_range, step.h)
-    s_range = ValueToStep(ceilToStep, floorToStep, s_range, step.s)
     l_range = ValueToStep(ceilToStep, floorToStep, l_range, step.l)
+    s_range = ValueToStep(ceilToStep, floorToStep, s_range, step.s)
 
     // allow wrapping
     const h = getRandomIntStep(h_range[0], h_range[1] + (h_range[1] < h_range[0] ? 360 : 0), step.h) % 361;
-    const s = getRandomIntStep(s_range[0], s_range[1] + (s_range[1] < s_range[0] ? 100 : 0), step.s) % 101;
     const l = getRandomIntStep(l_range[0], l_range[1] + (l_range[1] < l_range[0] ? 100 : 0), step.l) % 101;
+    const s = getRandomIntStep(s_range[0], s_range[1] + (s_range[1] < s_range[0] ? 100 : 0), step.s) % 101;
 
-    return { h, s, l };
+    return { h, l, s };
 }
 
 export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, prevColor) => {
@@ -67,9 +68,9 @@ export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, 
     let newColor;
     do {
         if (mode === 'bw') {
-            newColor = generateRandomColor([0, 0], [0, 0], lRange, step);
+            newColor = generateRandomColor([0, 0], lRange, [0, 0], step);
         } else {
-            newColor = generateRandomColorFromTriangle(hRange, sRange, lRange, step);
+            newColor = generateRandomColorFromTriangle(hRange, lRange, sRange, step);
         }
 
         if (!prevColor) break;

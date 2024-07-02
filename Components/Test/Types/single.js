@@ -89,8 +89,8 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     return (
         <div >
 
-            <div>
-                    <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
+            <div className="flex flex-col gap-3">
+                <label>{!retrying ? (currentTestNum) : (currentRetryingNum)} / {!retrying ? (testNum) : incorrectHistory.length}</label>
                 <div className="flex flex-row justify-center gap-5">
                     {targetColor &&
                         <div className="flex mb-4 justify-center items-center gap-5">
@@ -108,7 +108,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                             )}
                         </div>
                     }
-                    {<DisplayColorRange selectedColor={selectedColor} step={stepInDifficulty(difficulty)} setSelectedColor={setSelectedColor}/>}
+                    {<DisplayColorRange selectedColor={selectedColor} setSelectedColor={setSelectedColor} h_range={hRange} s_range={sRange} l_range={lRange} />}
                 </div>
                 {testEnded && (!retrying || retryEnded) && <Evaluation history={testHistory.toReversed()} mode={mode} difficulty={difficulty} />}
                 <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />
