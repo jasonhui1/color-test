@@ -21,8 +21,7 @@ const patternComponents = {
     SpeedLines: SpeedLinesPattern,
 };
 
-export const patterns = ['Plus', 'PolkaDots', 'Checkerboard', 'Stripe', 'Circuit board', 'Speed lines', 'Checkerboardv2']
-export const shapes = ['Star', 'Circle', 'Triangle', 'Cross', 'Square', 'Rectangle',]
+export const patterns = ['Plus', 'PolkaDots', 'Checkerboard', 'Stripe', 'Circuit board', 'Speed lines', 'Checkerboardv2', "SpeedLines"]
 
 const PatternRenderer = memo(({ pattern = 'PolkaDots', refColor, targetColor, shape = 'Star', width = 40, rotation = 45 }) => {
     const PatternComponent = patternComponents[pattern] || PolkaDotsPattern;

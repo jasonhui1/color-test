@@ -1,5 +1,5 @@
 const createShapeComponent = (ShapeComponent, defaultSize = 100) => {
-    return ({ size = defaultSize, fill, stroke = 'none', strokeWidth = 2, transform = 'none', ...props }) => (
+    return ({ size = defaultSize, fill, stroke = 'none', strokeWidth = 2, transform = '', ...props }) => (
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
             <ShapeComponent
                 size={size}
@@ -13,18 +13,15 @@ const createShapeComponent = (ShapeComponent, defaultSize = 100) => {
     );
 };
 
+const withCommonProps = (Component) => ({ commonProps, ...rest }) => <Component {...commonProps} {...rest} />;
 
-
-export const TriangleShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
+export const TriangleShape = withCommonProps(({ size, ...props }) => {
     const height = size * (Math.sqrt(3) / 2);
     const points = `${size / 2},0 0,${height} ${size},${height}`;
-    return <polygon
-        points={points}
-        fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform}
-    />
-}
+    return <polygon points={points} {...props} />
+})
 
-export const StarShape = ({ points = 5, size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
+export const StarShape = withCommonProps(({ points = 5, size, ...props }) => {
     const outerRadius = size / 2;
     const innerRadius = outerRadius / 2;
     const angleStep = (Math.PI * 2) / points;
@@ -38,21 +35,21 @@ export const StarShape = ({ points = 5, size, fill, stroke = 'none', strokeWidth
     }
     pathData += "Z";
 
-    return <path d={pathData} fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform} />
-
+    return <path d={pathData} {...props} />
 }
+)
 
-export const CrossShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
+export const CrossShape = withCommonProps(({ size, ...props }) => {
     const third = size / 3;
 
     return (
         <path
             d={`M${third},0 H${2 * third} V${third} H${size} V${2 * third} H${2 * third} V${size} H${third} V${2 * third} H0 V${third} H${third} Z`}
-            fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform}
+            {...props}
         />
     )
-}
-export const HeartShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = '' }) => {
+})
+export const HeartShape = withCommonProps(({ size, transform = '', ...props }) => {
     const width = size * 1.7;
     const height = size;
 
@@ -79,10 +76,10 @@ export const HeartShape = ({ size, fill, stroke = 'none', strokeWidth = 10, tran
     //         C ${width * 0.1} ${height * 0.2}, 0 ${height * 0.5}, ${width / 2} ${height}
     //         C ${width} ${height * 0.5}, ${width * 0.9} ${height * 0.2}, ${width / 2} ${height * 0.1}
     // `
-    return <path d={pathData} fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform} />
-}
+    return <path d={pathData} transform={transform}  {...props} />
+})
 
-export const CrescentShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
+export const CrescentShape = withCommonProps(({ size, ...props }) => {
     const center = size / 2;
 
     const subtractCenterX = center * 0.6
@@ -95,22 +92,20 @@ export const CrescentShape = ({ size, fill, stroke = 'none', strokeWidth = 10, t
                 <circle cx={subtractCenterX} cy={center} r={subtractR} fill="black" />
             </mask>
         </defs>
-        <circle cx={center} cy={center} r={center} fill={fill} mask="url(#crescent-mask)" />
+        <circle cx={center} cy={center} r={center} {...props} />
     </>;
-}
+})
 
-export const RhombusShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = '' }) => {
+export const RhombusShape = withCommonProps((({ size, transform = '', ...props }) => {
     const half = size / 2;
-
-    transform += ` scale(0.6,1)`
+    transform += ` scale(0.7,1)`
 
     return (
         <polygon
-            points={`${half},0 ${size},${half} ${half},${size} 0,${half}`}
-            fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform}
+            points={`${half},0 ${size},${half} ${half},${size} 0,${half}`} transform={transform} {...props}
         />
     )
-}
+}))
 export const Triangle = createShapeComponent(TriangleShape);
 export const Star = createShapeComponent(StarShape);
 export const Cross = createShapeComponent(CrossShape);

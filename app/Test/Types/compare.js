@@ -10,7 +10,8 @@ import { ResultDisplay } from "../Result/ResultDisplay";
 import Evaluation from "../Result/Evaluation";
 import { addHistory } from "../../Storage/test_history";
 import { addHistorySB } from "../../Storage/test_history_supabase";
-import PatternRenderer, { patterns, shapes } from "./Patterns_and_Shape/PatternRenderer";
+import PatternRenderer, { patterns } from "./Patterns_and_Shape/PatternRenderer";
+import { shapes } from "./Patterns_and_Shape/ShapeRenderer.";
 
 
 const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted, setSelectedColor }) => {

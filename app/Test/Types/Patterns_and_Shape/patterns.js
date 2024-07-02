@@ -129,16 +129,19 @@ export const TartanPlaidPattern = createPatternComponent('tartanPlaid', ({ width
     )
 })
 
-export const SpeedLinesPattern = createPatternComponent('speedLines', ({ width = 20, hsl1, hsl2, lineWidths = [0.5, 1, 2] }) => {
-    const [width1, width2, width3] = lineWidths
-    const totalWidth = width * 3
+export const SpeedLinesPattern = createPatternComponent('speedLines', ({ width = 20, hsl1, hsl2, lineWidths = [0.5, 2, 5] }) => {
+    let [width1, width2, width3] = lineWidths.map(w => w)
+
+    const pos2 = width1 + width2
+    const pos3 = pos2 + width2 + width3
+    const totalWidth = 30
 
     return (
         <>
             <rect width='100%' height='100%' fill={hsl1} />
             <line x1="0" y1="0" x2={totalWidth} y2={totalWidth} stroke={hsl2} strokeWidth={width1} />
-            <line x1={width} y1="0" x2={totalWidth + width} y2={totalWidth} stroke={hsl2} strokeWidth={width2} />
-            <line x1={width * 2} y1="0" x2={totalWidth + width * 2} y2={totalWidth} stroke={hsl2} strokeWidth={width3} />
+            <line x1={pos2} y1="0" x2={pos2 + totalWidth} y2={totalWidth} stroke={hsl2} strokeWidth={width2} />
+            <line x1={pos3} y1="0" x2={totalWidth + pos3} y2={totalWidth} stroke={hsl2} strokeWidth={width3} />
         </>
     )
 })
