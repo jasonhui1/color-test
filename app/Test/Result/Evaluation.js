@@ -7,7 +7,6 @@ import { getAccuracy, getDifferences } from "../../General/color_util";
 
 
 function calculatestat(history, mode, difficulty) {
-
     let correct = []
     let incorrect = []
     let Data = {}
@@ -122,6 +121,9 @@ function findTendency(data, mode) {
             Object.keys(data[H]).forEach(S => {
                 Object.keys(data[H][S]).forEach(L => {
                     const current = data[H][S][L]
+                    const correct = getKey(current, 'correct')
+                    const incorrect = getKey(current, 'incorrect')
+                    current['percentage'] = (correct / (correct + incorrect)) * 100
                     setTendency(current, 'H')
                     setTendency(current, 'S')
                     setTendency(current, 'L')
@@ -139,15 +141,49 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
     3. Suggest focus area (after X tests)
     4. IS in suitable level (+= 1 difficulty)
     **/
-    const { percentage, correct, incorrect, data } = calculatestat(history, mode, difficulty)
+    const { percentage, data } = calculatestat(history, mode, difficulty)
     // console.log('percentage, correct, incorrect :>> ', percentage, correct, incorrect);
+    const correct = []
+    const incorrect = []
+    const ok = []
+    const min_number = 6
+
+    if (mode === 'bw') {
+        Object.keys(data).forEach(L => {
+            const current = data[L]
+            const enoughData = (current.correct + current.incorrect) > min_number
+            if (!enoughData) return
+
+            const color = { h: 0, s: 0, l: L }
+            if (current.percentage > 90) { correct.push(color); return };
+            if (current.percentage < 60) { incorrect.push(color); return };
+            ok.push(color)
+        });
+    } else {
+        Object.keys(data).forEach(H => {
+            Object.keys(data[H]).forEach(S => {
+                Object.keys(data[H][S]).forEach(L => {
+                    const current = data[H][S][L]
+                    const enoughData = (current.correct + current.incorrect) > min_number
+                    if (!enoughData) return
+
+                    const color = { h: H, s: S, l: L }
+                    if (current.percentage > 90) { correct.push(color); return };
+                    if (current.percentage < 60) { incorrect.push(color); return };
+                    ok.push(color)
+                    // if (current.percentage < 50 && (current.correct + current.incorrect) > 5) incorrect.push({ h: H, s: S, l: L })
+                })
+            })
+        })
+    }
+
 
 
     return (
         <div>
             <label> Evaluation: {percentage}%</label>
-            <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
             <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
+            <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
         </div>
     )
 }

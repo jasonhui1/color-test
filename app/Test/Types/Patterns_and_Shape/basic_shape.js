@@ -1,3 +1,19 @@
+const createShapeComponent = (ShapeComponent, defaultSize = 100) => {
+    return ({ size = defaultSize, fill, stroke = 'none', strokeWidth = 2, transform = 'none', ...props }) => (
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <ShapeComponent
+          size={size}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+          transform={transform}
+          {...props}
+        />
+      </svg>
+    );
+  };
+
+
 
 export const TriangleShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
     const height = size * (Math.sqrt(3) / 2);
@@ -26,24 +42,20 @@ export const StarShape = ({ points = 5, size, fill, stroke = 'none', strokeWidth
 
 }
 
-export const Triangle = ({ fill, size = 100, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
-    const height = size * (Math.sqrt(3) / 2);
+export const CrossShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
+    const third = size / 3;
 
     return (
-        <svg width={size} height={height} viewBox={`0 0 ${size} ${height}`}>
-            <TriangleShape size={size} fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform} />
-        </svg>
-    );
-};
+        <path
+            d={`M${third},0 H${2 * third} V${third} H${size} V${2 * third} H${2 * third} V${size} H${third} V${2 * third} H0 V${third} H${third} Z`}
+            fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform}
+        />
+    )
+}
 
-
-export const Star = ({ size = 100, points = 5, fill, stroke = "none", strokeWidth = 5, transform = 'none' }) => {
-    return (
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-            <StarShape points={points} size={size} fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform} />
-        </svg>
-    );
-};
+export const Triangle = createShapeComponent(TriangleShape);
+export const Star = createShapeComponent(StarShape);
+export const Cross = createShapeComponent(CrossShape);
 
 // export const Crescent = ({ size = 100, fill = "gold", stroke = "orange", strokeWidth = 2 }) => {
 //     const radius = size / 2;
@@ -84,22 +96,3 @@ export const Star = ({ size = 100, points = 5, fill, stroke = "none", strokeWidt
 //     );
 //   };
 
-export const CrossShape = ({ size, fill, stroke = 'none', strokeWidth = 10, transform = 'none' }) => {
-    const third = size / 3;
-
-    return (
-        <path
-            d={`M${third},0 H${2 * third} V${third} H${size} V${2 * third} H${2 * third} V${size} H${third} V${2 * third} H0 V${third} H${third} Z`}
-            fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform}
-        />
-    )
-}
-
-
-export const Cross = ({ size = 100, fill = "green", stroke = "darkgreen", strokeWidth = 2, transform = 'none' }) => {
-    return (
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-            <CrossShape size={size} fill={fill} stroke={stroke} strokeWidth={strokeWidth} transform={transform} />
-        </svg>
-    );
-};
