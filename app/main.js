@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { ColorPicker } from '../Components/Color Picker/ColorPicker';
 import ColorTest from '../Components/Test/test';
-import ColorSwatch from '../Components/Color Picker/ColorSwatch';
 import CheckBox from '../Components/General/CheckBox';
-import { SelectBox } from '../Components/General/SelectBox';
 import { SettingProvider, useSettings } from '../Contexts/setting';
 import GoogleLogin from '../Components/General/GoogleLogin';
 import supabase from '../Storage/supabase_client';
+import DisplayColorRange from '../Components/Practice/DisplayColorRange';
+import DisplayContrasts from '../Components/Practice/DisplayContrast';
 
 
 const ColorTrainingTool = () => {
@@ -27,7 +27,14 @@ const ColorTrainingTool = () => {
                         <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                     </div>
                 </div>
-                <DisplayColorRange hue={selectedColor.h} step={20} />
+                <div className='flex flex-row gap-5'>
+
+                    <SettingProvider >
+                        <DisplayColorRange selectedColor={selectedColor} step={20} />
+                        <DisplayContrasts selectedColor={selectedColor} step={20} />
+                    </SettingProvider>
+
+                </div>
             </div>
             {/* <ColorHistoryTable history={getHistory()} mode='bw' difficulty='easy'/> */}
             {/* <Evaluation history={getHistory()} mode={'normal'} difficulty={'easy'} /> */}
@@ -50,54 +57,5 @@ const Test = ({ selectedColor, setSelectedColor }) => {
         </div>
     )
 }
-
-const DisplayColorRange = ({ hue, step = 20 }) => {
-    // const { practicing } = useSettings();
-    const practicing = true;
-
-    const rangeArray = [];
-    for (let i = 0; i <= 100; i += step) {
-        rangeArray.push(i);
-    }
-
-    const rangeArray10 = [];
-    for (let i = 0; i <= 100; i += 10) {
-        rangeArray10.push(i);
-    }
-
-    return (
-        <>
-            {practicing &&
-                <>
-                    <div className='flex flex-row gap-2'>
-                        {rangeArray10.toReversed().map((l, index) => (
-                            <ColorSwatch key={index} color={{ h: hue, s: 0, l }} size={1} />
-                        )
-                        )}
-                    </div>
-                    <div className='flex flex-col gap-2' >
-
-                        {
-                            rangeArray.toReversed().map((l, index) => {
-                                return (
-                                    <div className='flex flex-row gap-2' key={index}>
-                                        {rangeArray.map((s, j) => {
-
-                                            return (
-                                                <ColorSwatch key={j} color={{ h: hue, s, l }} size={1} />
-                                            )
-                                        })}
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-                </>
-            }
-        </>
-
-    )
-}
-
 
 export default ColorTrainingTool;

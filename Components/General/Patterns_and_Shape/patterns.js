@@ -1,36 +1,32 @@
-import { hlsToId, hlsToString } from "../../../Utils/color_util"
 import ShapeRenderer from "./ShapeRenderer.";
-import { CrescentShape, HeartShape, StarShape, TriangleShape } from "./basic_shape"
-
-const PatternContainer = ({ children, id, width, height, rotation = 0, scale = 1, viewBox = '0 0 100% 100%', shape = 'Star' }) => {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width='200' height='100%' viewBox={viewBox}>
-            <defs>
-                <pattern id={id} patternUnits="userSpaceOnUse" width={width} height={height} patternTransform={`rotate(${rotation}) scale(${scale})`}>
-                    {children}
-                </pattern>
-            </defs>
-            {/* <rect x="0" y="0" width="100%" height="100%" fill={`url(#${id})`} /> */}
-            {/* {(shape === 'Star') && <CrescentShape size='200' fill={`url(#${id})`} />} */}
-            <ShapeRenderer size='200' fill={`url(#${id})`} shape={shape} />
-        </svg>
-    )
-}
+import { hlsToId, hlsToString } from "../../../Utils/color_util";
 
 const createPatternComponent = (patternName, renderPattern) => {
-    return ({ width, color1, color2, rotation = 0, shape = 'Star', ...props }) => {
+    return ({ width, color1, color2, rotation = 0, shape = 'Star', patternWidth = 40, patternHeight = 40, ...props }) => {
         const hsl1 = hlsToString(color1);
         const hsl2 = hlsToString(color2);
         const id = `${patternName}-${hlsToId(color1)}-${hlsToId(color2)}`;
 
         return (
-            <PatternContainer id={id} width={width} height={width} rotation={rotation} shape={shape}>
-                {renderPattern({ width, hsl1, hsl2, ...props })}
+            <PatternContainer id={id} width={width} height={width} rotation={rotation} shape={shape} patternWidth={patternWidth} patternHeight={patternHeight}>
+                {renderPattern({ width: patternWidth, hsl1, hsl2, ...props })}
             </PatternContainer>
         );
     };
 }
 
+const PatternContainer = ({ children, id, width, height, patternWidth, patternHeight, rotation = 0, scale = 1, viewBox = '0 0 100% 100%', shape = 'Star' }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={viewBox}>
+            <defs>
+                <pattern id={id} patternUnits="userSpaceOnUse" width={patternWidth} height={patternHeight} patternTransform={`translate(${patternWidth/4}, ${patternHeight/4}) rotate(${rotation}) scale(${scale})`}>
+                    {children}
+                </pattern>
+            </defs>
+            <ShapeRenderer size={width} fill={`url(#${id})`} shape={shape} />
+        </svg>
+    )
+}
 
 export const CheckerboardPattern = createPatternComponent('checkboard', ({ width, hsl1, hsl2 }) => {
     const center = width / 2

@@ -62,22 +62,28 @@ function generateRandomColor(h_range, s_range, l_range, step = { h: 15, l: 20, s
 }
 
 export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, prevColor) => {
+
+    let max = 5
+    let i = 0
     let newColor;
     do {
+        i += 1
         if (mode === 'bw') {
             newColor = generateRandomColor([0, 0], [0, 0], lRange, step);
         } else {
             newColor = generateRandomColorFromTriangle(hRange, sRange, lRange, step);
         }
 
+        console.log('newColor :>> ', newColor);
+
 
         if (!prevColor) break;
-        console.log('prevColor  :>> ', prevColor);
+        console.log('prevColor  :>> ', prevColor, newColor);
 
         let diff = calculateHLSDifference(prevColor, newColor);
         if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
 
-    } while (true);
+    } while (true && i < max);
 
     return newColor
 };

@@ -65,8 +65,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
                 nextRetry()
             }
         }
-        if (mode === ' bw') setSelectedColor(defaultLS(selectedColor.h))
-        else setSelectedColor(defaultHLS)
+
         setStartTime(Date.now())
 
     }

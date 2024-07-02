@@ -92,7 +92,7 @@ export const CrescentShape = withCommonProps(({ size, ...props }) => {
                 <circle cx={subtractCenterX} cy={center} r={subtractR} fill="black" />
             </mask>
         </defs>
-        <circle cx={center} cy={center} r={center} {...props} />
+        <circle cx={center} cy={center} r={center} {...props} mask="url(#crescent-mask)" />
     </>;
 })
 
