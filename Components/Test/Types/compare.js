@@ -119,13 +119,14 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
                     {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
                     <div>
                         <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
-                        <div className="flex h-[200px]">
-                            <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} />
-                            {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} />}
+                        <div className="flex h-[300] gap-5">
+                            <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} width={300} />
+                            {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} width={300}/>}
                         </div>
-                            {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
+                        {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
                     </div>
-                    {<DisplayContrasts pattern={pattern} shape={shape} refColor={refColor} selectedColor={selectedColor} setSelectedColor={setSelectedColor} h_range={hRange} s_range={sRange} l_range={[lRange[0], refColor.l]} />}
+                    {<DisplayContrasts pattern={pattern} shape={shape} refColor={refColor} selectedColor={selectedColor} setSelectedColor={setSelectedColor}
+                        h_range={hRange} s_range={sRange} l_range={[lRange[0], refColor.l]} currentTestNum={currentTestNum + currentRetryingNum} />}
                 </div>
             </div>
             {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}

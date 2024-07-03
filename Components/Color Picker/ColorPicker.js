@@ -5,6 +5,7 @@ import HueShiftImage from './HueShiftImage';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { getHueFromPosition, getPositionFromHue, getPositionFromSV, getSVFromPosition } from '../../Utils/calculation_util';
 import { withinCircle, withinTriangle_strict } from '../../Utils/calculation_util';
+// import { useSettings } from '../../Contexts/setting';
 
 
 const defaultHueShift = 30 //by CSP
@@ -239,7 +240,7 @@ const HSLControl = ({ selectedColor, label, value, min, max, onChange }) => {
 
 export const TriangularColorPickerDisplayHistory = ({ hue = 30, size = 300, correct = [], incorrect = [] }) => {
     const center = size / 2
-    const ratio = size / 300 
+    const ratio = size / 300
     ///////////////////////////Cirlce///////////////////////
     const radius = 25 * ratio
 

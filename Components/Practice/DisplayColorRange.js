@@ -1,12 +1,13 @@
-import { memo, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { generateAllColorFromTriangle } from "../../Utils/color_util";
 import { roundToStep } from "../../Utils/utils";
 import ColorSwatch from "../Color Picker/ColorSwatch";
 import { useSettings } from "../../Contexts/setting";
 import RevealEffect from "../General/RevealEffect";
 
-const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, l_range }) => {
+const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, l_range, currentTestNum = -1 }) => {
     const { step, practicing, mode } = useSettings()
+
     const gridRef = useRef(null);
 
     const rounded_hue = roundToStep(selectedColor.h, step.h)
@@ -15,7 +16,6 @@ const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, 
         if (mode === 'bw') return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, [0, 0], step)
         else return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, s_range, step)
     }, [selectedColor.h, step]);
-
 
     return (
         <div ref={gridRef} className="relative">
@@ -26,7 +26,7 @@ const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, 
             />
 
             {!practicing && (
-                <RevealEffect gridRef={gridRef} />
+                <RevealEffect gridRef={gridRef} maxLife={5000} resetVariable={currentTestNum} />
             )}
 
 

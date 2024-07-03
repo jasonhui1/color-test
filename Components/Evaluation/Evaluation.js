@@ -3,6 +3,7 @@ import { calculateHLSDifference, stepInDifficulty } from "../../Utils/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { TriangularColorPickerDisplayHistory } from "../Color Picker/ColorPicker";
 import { getAccuracy, getDifferences } from "../../Utils/color_util";
+import { memo } from "react";
 
 
 function calculatestat(history, mode, difficulty) {
@@ -132,7 +133,7 @@ function findTendency(data, mode) {
     }
 }
 
-const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
+const Evaluation = memo(({ history, mode, difficulty = 'easy' }) => {
 
     /** Ideas
     1. Pattern
@@ -185,7 +186,7 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
             <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
         </div>
     )
-}
+})
 
 
 export default Evaluation;

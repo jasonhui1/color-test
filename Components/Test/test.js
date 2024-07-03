@@ -16,7 +16,6 @@ const ColorTest = ({ selectedColor, setSelectedColor }) => {
     const [sRange, setSRange] = useState([0, 100]);
     const [lRange, setLRange] = useState([0, 100]);
 
-
     // do later
     const [testId, setTestId] = useState('0');
     const [testStarted, setTestStarted] = useState(false);

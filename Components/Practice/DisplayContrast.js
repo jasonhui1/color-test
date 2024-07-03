@@ -6,7 +6,7 @@ import PatternRenderer from "../General/Patterns_and_Shape/PatternRenderer"
 import { useSettings } from "../../Contexts/setting"
 import RevealEffect from "../General/RevealEffect"
 
-const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, selectedColor, setSelectedColor, h_range, s_range, l_range }) => {
+const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, selectedColor, setSelectedColor, h_range, s_range, l_range, currentTestNum = -1 }) => {
 
     const { mode, step, practicing } = useSettings()
     const gridRef = useRef(null);
@@ -18,7 +18,6 @@ const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, sel
         else return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, s_range, step)
     }, [selectedColor.h, step, refColor]);
 
-    console.log('l_range :>> ', l_range);
     return (
         <div ref={gridRef} className="relative">
             <ColorSwatchGrid
@@ -32,7 +31,7 @@ const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, sel
 
             {/* Reveal effect */}
             {!practicing && (
-                <RevealEffect gridRef={gridRef} />
+                <RevealEffect gridRef={gridRef} maxLife={5000} resetVariable={currentTestNum} />
             )}
         </div>
     )
