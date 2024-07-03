@@ -2,13 +2,13 @@ import ShapeRenderer from "./ShapeRenderer.";
 import { hlsToId, hlsToString } from "../../../Utils/color_util";
 
 const createPatternComponent = (patternName, renderPattern) => {
-    return ({ width, color1, color2, rotation = 0, shape = 'Star', patternWidth = 40, patternHeight = 40, onClick, ...props }) => {
+    return ({ width, color1, color2, rotation = 0, shape = 'Star', patternWidth = 40, patternHeight = 40, scale, ...props }) => {
         const hsl1 = hlsToString(color1);
         const hsl2 = hlsToString(color2);
-        const id = `${patternName}-${hlsToId(color1)}-${hlsToId(color2)}`;
+        const id = `${patternName}-${hlsToId(color1)}-${hlsToId(color2)}-${width}`;
 
         return (
-            <PatternContainer id={id} width={width} height={width} rotation={rotation} shape={shape} patternWidth={patternWidth} patternHeight={patternHeight}>
+            <PatternContainer id={id} width={width} height={width} rotation={rotation} shape={shape} patternWidth={patternWidth} patternHeight={patternHeight} scale={scale}>
                 {renderPattern({ width: patternWidth, hsl1, hsl2, ...props })}
             </PatternContainer>
         );

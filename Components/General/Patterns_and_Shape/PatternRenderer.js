@@ -23,7 +23,13 @@ const patternComponents = {
 
 export const patterns = ['Plus', 'PolkaDots', 'Checkerboard', 'Stripe', 'Circuit board', 'Speed lines', 'Checkerboardv2', "SpeedLines"]
 
-const PatternRenderer = memo(({ pattern = 'PolkaDots', refColor, targetColor, shape = 'Star', width = 150, patternWidth = 40, patternHeight = 40, rotation = 45}) => {
+const PatternRenderer = memo(({ pattern = 'PolkaDots', refColor, targetColor, shape = 'Star', width = 150, patternWidth = -1, patternHeight = -1, rotation = 45, scale = -1 }) => {
+
+    //Scale automatially if not set
+    patternWidth = patternWidth > 0 ? patternWidth : width / 10
+    patternHeight = patternHeight > 0 ? patternHeight : patternWidth
+    scale = scale > 0 ? scale : Math.max(width / 150, 1)
+
     const PatternComponent = patternComponents[pattern] || PolkaDotsPattern;
     return (
         <PatternComponent
@@ -33,6 +39,7 @@ const PatternRenderer = memo(({ pattern = 'PolkaDots', refColor, targetColor, sh
             rotation={rotation}
             patternWidth={patternWidth}
             patternHeight={patternHeight}
+            scale={scale}
             shape={shape}
         />
     );

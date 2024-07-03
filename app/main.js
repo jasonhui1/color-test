@@ -38,14 +38,15 @@ const ColorTrainingTool = () => {
 }
 
 const Test = ({ selectedColor, setSelectedColor }) => {
-    const { practicing, setPracticing, saveToHistory ,setSaveToHistory } = useSettings();
+    const { practicing, setPracticing, saveToHistory, setSaveToHistory, useColorWheel, toggleUseColorWheel } = useSettings();
 
     return (
         <div className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md min-w">
 
             <div className='flex items-center justify-end gap-4'>
                 <div className='flex flex-row gap-4'>
-                    <CheckBox checked={saveToHistory} onChange={(e) => {setSaveToHistory(!practicing?!saveToHistory:false) }} label={'Save to history'} />
+                    {/* <CheckBox checked={useColorWheel} onChange={toggleUseColorWheel} label={'use Color Wheel'} /> */}
+                    <CheckBox checked={saveToHistory} onChange={(e) => { setSaveToHistory(!practicing ? !saveToHistory : false) }} label={'Save to history'} />
                     <CheckBox checked={practicing} onChange={(e) => { setPracticing(!practicing); setSaveToHistory(false) }} label={'Practice'} />
                 </div>
             </div>
