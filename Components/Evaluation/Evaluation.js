@@ -3,7 +3,11 @@ import { calculateHLSDifference, stepInDifficulty } from "../../Utils/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { TriangularColorPickerDisplayHistory } from "../Color Picker/ColorPicker";
 import { getAccuracy, getDifferences } from "../../Utils/color_util";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
+import { getPositionFromSV } from "../../Utils/calculation_util";
+import HeatmapComponent from "./Heatmap";
+import color_wheel from '/public/color_wheel.png';
+import Image from 'next/image';
 
 
 function calculatestat(history, mode, difficulty) {
@@ -133,7 +137,9 @@ function findTendency(data, mode) {
     }
 }
 
-const Evaluation = memo(({ history, mode, difficulty = 'easy' }) => {
+const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
+
+    const [percentage, setPercentage] = useState(0)
 
     /** Ideas
     1. Pattern
@@ -141,52 +147,81 @@ const Evaluation = memo(({ history, mode, difficulty = 'easy' }) => {
     3. Suggest focus area (after X tests)
     4. IS in suitable level (+= 1 difficulty)
     **/
-    const { percentage, data } = calculatestat(history, mode, difficulty)
-    // console.log('percentage, correct, incorrect :>> ', percentage, correct, incorrect);
     const correct = []
     const incorrect = []
-    const ok = []
-    const min_number = 6
+    const min_number = 20
 
-    if (mode === 'bw') {
-        Object.keys(data).forEach(L => {
-            const current = data[L]
-            const enoughData = (current.correct + current.incorrect) > min_number
-            if (!enoughData) return
+    const [heatmapData, setHeatmapData] = useState({
+        max: 100,
+        data: []
+    });
 
-            const color = { h: 0, s: 0, l: L }
-            if (current.percentage > 90) { correct.push(color); return };
-            if (current.percentage < 60) { incorrect.push(color); return };
-            ok.push(color)
-        });
-    } else {
-        Object.keys(data).forEach(H => {
-            Object.keys(data[H]).forEach(S => {
-                Object.keys(data[H][S]).forEach(L => {
-                    const current = data[H][S][L]
-                    const enoughData = (current.correct + current.incorrect) > min_number
-                    if (!enoughData) return
+    useEffect(() => {
+        const { percentage: percentage_, data } = calculatestat(history, mode, difficulty)
+        setPercentage(percentage_)
 
-                    const color = { h: H, s: S, l: L }
-                    if (current.percentage > 90) { correct.push(color); return };
-                    if (current.percentage < 60) { incorrect.push(color); return };
-                    ok.push(color)
-                    // if (current.percentage < 50 && (current.correct + current.incorrect) > 5) incorrect.push({ h: H, s: S, l: L })
+        const heatmapData_ = []
+
+        const ratio = 1
+        const bb = {
+            x1: 88 / ratio, y1: 45 / ratio,
+            x2: 269 / ratio, y2: 255 / ratio
+        }
+        const w = bb.y2 - bb.y1
+
+        if (mode === 'bw') {
+            Object.keys(data).forEach(L => {
+                // const enoughData = (current.correct + current.incorrect) > min_number
+                // if (!enoughData) return
+                const color = { h: 0, s: 0, l: L }
+                const { x, y } = getPositionFromSV(color.s, color.l, w, bb)
+                const current = data[L]
+
+                heatmapData_.push({ x, y, value: current.percentage })
+            });
+        } else {
+            Object.keys(data).forEach(H => {
+                Object.keys(data[H]).forEach(L => {
+                    Object.keys(data[H][L]).forEach(S => {
+                        const current = data[H][L][S]
+                        // const enoughData = (current.correct + current.incorrect) > min_number
+                        // if (!enoughData) return
+
+                        const color = { h: H, s: S, l: L }
+                        const { x, y } = getPositionFromSV(color.s, color.l, w, bb)
+
+                        heatmapData_.push({ x, y, value: current.percentage, color })
+                    })
                 })
             })
-        })
-    }
+        }
 
-
+        setHeatmapData(prev => ({ ...prev, data: heatmapData_ }));
+    }, [history, mode])
 
     return (
         <div>
             <label> Evaluation: {percentage}%</label>
-            <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
+            <div className="flex flex-col relative">
+                {/* <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} /> */}
+                <div className="flex">
+                    <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
+                        userSelect: 'none',
+                        WebkitUserDrag: 'none',
+                        KhtmlUserDrag: 'none',
+                        MozUserDrag: 'none',
+                        OUserDrag: 'none',
+                    }} />
+                    <HeatmapComponent data={heatmapData} width={300} height={300} />
+                    <svg width={300} height={300} className="absolute">
+                        <path d='M 88 45 L 88 255 L 269 150 z' stroke="black" strokeWidth={3} fill="transparent" />
+                    </svg>
+                </div>
+            </div>
             <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
         </div>
     )
-})
+}
 
 
 export default Evaluation;

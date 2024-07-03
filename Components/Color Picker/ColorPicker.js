@@ -105,13 +105,20 @@ const TriangularColorPicker = ({ size = 300, selectedColor, setSelectedColor }) 
 
     return (
         <div className={`w-[${size}px] h-[${size}px] relative`} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} ref={divRef}>
-            <Image className='absolute' src={color_wheel} alt="color_wheel" width={size} height={size} draggable={false} style={{
-                userSelect: 'none',
-                WebkitUserDrag: 'none',
-                KhtmlUserDrag: 'none',
-                MozUserDrag: 'none',
-                OUserDrag: 'none',
-            }} />
+
+            <div className='relative flex'>
+                {/* Hue not correctly calculated I think, same as hue rotate */}
+                {/* <Image src={"https://i.imgur.com/BRVZgWi.png"} width={size} height={size} alt="color_combined" /> */}
+                {/* <div className='w-full h-full absolute' style={{ background: `hsl(${selectedColor.h}, 100%, 50%)`, mixBlendMode: 'hue', clipPath: `path('M 88 45 L 88 255 L 269 150 z')` }} /> */}
+                <Image className='absolute' src={color_wheel} alt="color_wheel" width={size} height={size} draggable={false} style={{
+                    userSelect: 'none',
+                    WebkitUserDrag: 'none',
+                    KhtmlUserDrag: 'none',
+                    MozUserDrag: 'none',
+                    OUserDrag: 'none',
+                }} />
+            </div>
+            {/* Use Js canvas */}
             <HueShiftImage
                 src={"https://i.imgur.com/BRVZgWi.png"}
                 width={size}
