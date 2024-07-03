@@ -14,8 +14,6 @@ export const patterns = ['Plus', 'PolkaDpots', 'Checkerboard', 'Stripe', 'Circui
 export const shapes = ['Star',  'Triangle', 'Cross', 'Heart', 'Cross', 'Crescent']
 
 const ShapeRenderer = ({ shape = 'Star', size, fill, ...props }) => {
-    console.log('shape :>> ', shape);
-
     const ShapePathComponent = shapePathComponents[shape] || StarShape;
     return (
         <ShapePathComponent

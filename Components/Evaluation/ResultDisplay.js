@@ -3,7 +3,6 @@ import { useSettings } from '../../Contexts/setting';
 import { getAccuracy, getDifferences } from '../../Utils/color_util';
 
 export const ResultDisplay = ({ targetColor, selectedColor }) => {
-    console.log('targetColor, selectedColor :>> ', targetColor, selectedColor);
     const { mode, difficulty } = useSettings()
     const differences = getDifferences(targetColor, selectedColor);
     const accuracy = getAccuracy(targetColor, differences, difficulty);

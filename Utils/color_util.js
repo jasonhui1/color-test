@@ -72,11 +72,9 @@ export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, 
             newColor = generateRandomColorFromTriangle(hRange, lRange, sRange, step);
         }
 
-        console.log('newColor, prevColor :>> ', newColor, prevColor);
         if (!prevColor) break;
 
         let diff = calculateHLSDifference(prevColor, newColor);
-        console.log('diff :>> ', diff);
 
         if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
 

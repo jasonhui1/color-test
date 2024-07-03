@@ -32,7 +32,6 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
 
     const setRandomTargetColor = () => {
         const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step, targetColor);
-        console.log('newTargetColor :>> ', newTargetColor);
         setTargetColor(newTargetColor);
     };
 
