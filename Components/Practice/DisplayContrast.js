@@ -4,13 +4,10 @@ import { useSettings } from "../../Contexts/setting"
 import RevealEffect from "../General/RevealEffect"
 import { ColorGrid, useColorDict } from "./DisplayColorRange"
 import PatternRenderer from "../General/Patterns_and_Shape/PatternRenderer"
+import { DisplayColorComponent } from "./DisplayGeneral"
+
 
 const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, selectedColor, setSelectedColor, h_range, s_range, l_range, currentTestNum = -1 }) => {
-    const { step, practicing, mode } = useSettings();
-    const gridRef = useRef(null);
-
-    const { dict } = useColorDict(selectedColor, l_range, s_range, step, mode);
-
     const renderCell = useCallback((color, key) => (
         <div key={key} onClick={() => setSelectedColor(color)} className="cursor-pointer">
             <PatternRenderer
@@ -21,16 +18,10 @@ const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, sel
     ), [setSelectedColor, shape, pattern, refColor]);
 
     return (
-        <div ref={gridRef} className="relative">
-            <ColorGrid
-                dict={dict}
-                renderCell={renderCell}
-                hue={roundToStep(selectedColor.h, step.h)}
-            />
-            {!practicing && (
-                <RevealEffect gridRef={gridRef} maxLife={5000} resetVariable={currentTestNum} />
-            )}
-        </div>
+        <DisplayColorComponent renderCell={renderCell} selectedColor={selectedColor}
+            h_range={h_range} s_range={s_range} l_range={l_range}
+            currentTestNum={currentTestNum} />
+
     );
 };
 

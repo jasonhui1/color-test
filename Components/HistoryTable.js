@@ -2,9 +2,10 @@ import { RenderResultIcon, } from "./Evaluation/ResultDisplay";
 import { calculateHLSDifference } from "../Utils/utils";
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { getAccuracy, getDifferences } from "../Utils/color_util";
+import { memo } from "react";
 
 
-const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal', difficulty = 'easy' }) => {
+const ColorHistoryTable = memo(({ history, showTimeStamp = false, mode = 'normal', difficulty = 'easy' }) => {
     // const history = getHistory();
 
     return (
@@ -68,6 +69,6 @@ const ColorHistoryTable = ({ history, showTimeStamp = false, mode = 'normal', di
             </table>
         </div>
     );
-};
+})
 
 export default ColorHistoryTable;
