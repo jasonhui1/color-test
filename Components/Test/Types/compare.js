@@ -138,9 +138,6 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     )
 }
 
-
-
-
 const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false, showTarget = false }) => {
     // const [currentIndex, setCurrentIndex] = useState(0)
     // const [guesses, setGuesses] = useState([])
@@ -180,23 +177,8 @@ export default CompareTest;
 
 function generatePair(hRange, lRange, sRange, mode, step, direction = ['L']) {
 
-    // // Not the maximum
-    // let newLRange = [lRange[0], lRange[1] - step]
-    // let newSRange = [sRange[0], sRange[1] - step]
-
     let color1 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
-
-    // Not less than ref
-    // newLRange = [color1.l + step, lRange[1]]
-    // newSRange = [sRange[0], color1.s]
-
-    let color2;
-    do {
-        color2 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step);
-        let diff = calculateHLSDifference(color1, color2);
-        console.log('color1, color2, diff :>> ', color1, color2, diff);
-        if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
-    } while (true)
+    let color2 = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step, color1)
 
     if (color1.l < color2.l || (color1.l === color2.l && color1.s > color2.s)) {
         [color1, color2] = [color2, color1];

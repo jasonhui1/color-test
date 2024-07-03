@@ -11,7 +11,7 @@ export const useColorDict = (selectedColor, l_range, s_range, step, mode) => {
     return useMemo(() => {
         if (mode === 'bw') return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, [0, 0], step);
         return generateAllColorFromTriangle([rounded_hue, rounded_hue], l_range, s_range, step);
-    }, [rounded_hue, l_range, s_range, step, mode]);
+    }, [rounded_hue, l_range[0], l_range[1], s_range[0], s_range[1], step, mode]);
 };
 
 
@@ -25,6 +25,8 @@ const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, 
     const renderCell = useCallback((color, key) => (
         <ColorSwatch key={key} color={color} size={1} border onClick={() => setSelectedColor(color)} />
     ), [setSelectedColor,]);
+
+    
 
     return (
         <div ref={gridRef} className="relative">
@@ -44,7 +46,7 @@ const DisplayColorRange = ({ selectedColor, setSelectedColor, h_range, s_range, 
 }
 
 export const ColorGrid = memo(({ dict, renderCell, hue }) => {
-    console.log('updaing :>> ',);
+    // console.log('updaing :>> ',);
     return (
         <div className="flex flex-col items-center justify-center">
             {Object.keys(dict).map((H, index) => {
