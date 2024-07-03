@@ -1,11 +1,21 @@
+// export const allDifficulties = [
+//     { value: 'easy', label: 'Level 1', step: { h: 15, l: 20, s: 20 } },
+//     { value: 'normal-', label: 'Level 2', step: { h: 15, l: 10, s: 20 } },
+//     { value: 'normal', label: 'Level 3', step: { h: 15, l: 10, s: 10 } },
+//     { value: 'normal+', label: 'Level 4', step: { h: 10, l: 10, s: 10 } },
+//     { value: 'hard-', label: 'Level 5', step: { h: 10, l: 5, s: 10 } },
+//     { value: 'hard', label: 'Level 6', step: { h: 10, l: 5, s: 5 } },
+//     { value: 'hard+', label: 'Level 7', step: { h: 5, l: 5, s: 5 } },
+// ];
+
 export const allDifficulties = [
-    { value: 'easy', label: 'Level 1', step: { h: 15, l: 20, s: 20 } },
-    { value: 'normal-', label: 'Level 2', step: { h: 15, l: 10, s: 20 } },
-    { value: 'normal', label: 'Level 3', step: { h: 15, l: 10, s: 10 } },
-    { value: 'normal+', label: 'Level 4', step: { h: 10, l: 10, s: 10 } },
-    { value: 'hard-', label: 'Level 5', step: { h: 10, l: 5, s: 10 } },
-    { value: 'hard', label: 'Level 6', step: { h: 10, l: 5, s: 5 } },
-    { value: 'hard+', label: 'Level 7', step: { h: 5, l: 5, s: 5 } },
+    { value: 'easy', label: 'Level 1', step: { h: 15, l: 25, s: 25 } },
+    { value: 'normal-', label: 'Level 2', step: { h: 15, l: 12.5, s: 25} },
+    { value: 'normal', label: 'Level 3', step: { h: 15, l: 12.5, s: 12.5 } },
+    { value: 'normal+', label: 'Level 4', step: { h: 10, l: 12.5, s: 12.5 } },
+    { value: 'hard-', label: 'Level 5', step: { h: 10, l: 6.25, s: 12.5 } },
+    { value: 'hard', label: 'Level 6', step: { h: 10, l: 6.25, s: 6.25 } },
+    { value: 'hard+', label: 'Level 7', step: { h: 6.25, l: 6.25, s: 6.25 } },
 ];
 
 export const colorOptions = [

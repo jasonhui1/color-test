@@ -5,34 +5,33 @@ const triangle_height = Math.sqrt(3) / 2
 export function generateAllColorFromTriangle(h_range = [0, 360], l_range = [0, 100], s_range = [0, 100], step = { h: 15, l: 20, s: 20 }) {
     const array = []
     const dict = {}
-    const defineKey = (data, key, value = {}) => data[key] = data[key] ?? value
 
     const lowH = ceilToStep(h_range[0], step.h)
     const highH = floorToStep(h_range[1], step.h)
+    const lowL = ceilToStep(l_range[0], step.l)
+    const highL = floorToStep(l_range[1], step.l)
 
     for (let h = lowH; h <= highH; h += step.h) {
-
-        defineKey(dict, h)
-        const lowL = ceilToStep(l_range[0], step.l)
-        const highL = floorToStep(l_range[1], step.l)
+        dict[h] = {}
 
         for (let l = lowL; l <= highL; l += step.l) {
             const horizonalLength = getXLengthInTriangle(l / 100)
             const stepInTriangle = step.s * triangle_height / 100
 
+            const L = l > 50 ? Math.floor(l) : Math.ceil(l)
+            dict[h][L] = []
+            const current = dict[h][L]
             const y = l / 100
-            defineKey(dict[h], l, [])
-
 
             for (let x = 0; x <= horizonalLength + 0.02; x += stepInTriangle) {
                 let { s } = getSVFromPosition(x, y)
-
                 if (!(s >= s_range[0] && s <= s_range[1])) continue
 
-                dict[h][l].push(s)
-                array.push({ h, l, s })
-            }
+                const S = Math.floor(s)
 
+                current.push(S)
+                array.push({ h, l: L, s: S })
+            }
         }
     }
 
@@ -73,9 +72,12 @@ export const generateRandomColorAdvanced = (hRange, lRange, sRange, mode, step, 
             newColor = generateRandomColorFromTriangle(hRange, lRange, sRange, step);
         }
 
+        console.log('newColor, prevColor :>> ', newColor, prevColor);
         if (!prevColor) break;
 
         let diff = calculateHLSDifference(prevColor, newColor);
+        console.log('diff :>> ', diff);
+
         if (Math.abs(diff.h) >= 5 || Math.abs(diff.s) >= 5 || Math.abs(diff.l) >= 5) break;
 
     } while (true);

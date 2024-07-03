@@ -8,7 +8,7 @@ const App = () => {
         max: 1,
         data: [
             { x: 100, y: 115, value: 0.9},
-            { x: 150, y: 150, value: 0.8 },
+            { x: 120, y: 150, value: 0.8 },
             { x: 200, y: 180, value: 0.1 }
         ]
     });

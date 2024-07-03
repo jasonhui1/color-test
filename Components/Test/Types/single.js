@@ -19,7 +19,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     const [retrying, setRetrying] = useState(false);
     const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
 
-    const { mode, difficulty, testNum, saveToHistory, practicing } = useSettings()
+    const { mode, difficulty, testNum, saveToHistory, practicing, step } = useSettings()
 
     useEffect(() => {
         setup();
@@ -31,7 +31,8 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     }
 
     const setRandomTargetColor = () => {
-        const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, stepInDifficulty(difficulty), targetColor);
+        const newTargetColor = generateRandomColorAdvanced(hRange, lRange, sRange, mode, step, targetColor);
+        console.log('newTargetColor :>> ', newTargetColor);
         setTargetColor(newTargetColor);
     };
 

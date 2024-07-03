@@ -137,7 +137,7 @@ function findTendency(data, mode) {
     }
 }
 
-const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
+const Evaluation = ({ history, mode, difficulty = 'normal' }) => {
 
     const [percentage, setPercentage] = useState(0)
 
@@ -147,14 +147,20 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
     3. Suggest focus area (after X tests)
     4. IS in suitable level (+= 1 difficulty)
     **/
-    const correct = []
-    const incorrect = []
-    const min_number = 20
-
     const [heatmapData, setHeatmapData] = useState({
         max: 100,
         data: []
     });
+
+    const ratio = 1
+    const bb = {
+        x1: 88 / ratio, y1: 45 / ratio,
+        x2: 269 / ratio, y2: 255 / ratio
+    }
+    const w = bb.y2 - bb.y1
+    const clipPathData = `M ${bb.x1} ${bb.y1} L ${bb.x1} ${bb.y2} L ${bb.x2} ${(bb.y1 + bb.y2) / 2} z`
+    const clipPath = `path('${clipPathData}')`
+    const step = stepInDifficulty(difficulty).l / 100
 
     useEffect(() => {
         const { percentage: percentage_, data } = calculatestat(history, mode, difficulty)
@@ -162,12 +168,6 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
 
         const heatmapData_ = []
 
-        const ratio = 1
-        const bb = {
-            x1: 88 / ratio, y1: 45 / ratio,
-            x2: 269 / ratio, y2: 255 / ratio
-        }
-        const w = bb.y2 - bb.y1
 
         if (mode === 'bw') {
             Object.keys(data).forEach(L => {
@@ -177,20 +177,25 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
                 const { x, y } = getPositionFromSV(color.s, color.l, w, bb)
                 const current = data[L]
 
-                heatmapData_.push({ x, y, value: current.percentage })
+                heatmapData_.push({ x, y, value: current.percentage, radius: step * w })
             });
         } else {
             Object.keys(data).forEach(H => {
                 Object.keys(data[H]).forEach(L => {
                     Object.keys(data[H][L]).forEach(S => {
                         const current = data[H][L][S]
-                        // const enoughData = (current.correct + current.incorrect) > min_number
-                        // if (!enoughData) return
+                        const enoughData = (current.correct + current.incorrect) > 6
+                        if (!enoughData) return
 
                         const color = { h: H, s: S, l: L }
                         const { x, y } = getPositionFromSV(color.s, color.l, w, bb)
 
-                        heatmapData_.push({ x, y, value: current.percentage, color })
+
+                        // heatmapData_.push({ x, y, value:  current.percentage, color, radius:step*w })
+                        if (current.percentage < 90) {
+                            console.log('current.percentage, color, count :>> ', current.percentage, color, );
+                            heatmapData_.push({ x, y, value: current.percentage, color, radius: step * w })
+                        }
                     })
                 })
             })
@@ -198,6 +203,7 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
 
         setHeatmapData(prev => ({ ...prev, data: heatmapData_ }));
     }, [history, mode])
+
 
     return (
         <div>
@@ -212,9 +218,10 @@ const Evaluation = ({ history, mode, difficulty = 'easy' }) => {
                         MozUserDrag: 'none',
                         OUserDrag: 'none',
                     }} />
-                    <HeatmapComponent data={heatmapData} width={300} height={300} />
+                    <HeatmapComponent data={heatmapData} width={300} height={300} clipPath={clipPath} />
+                    {/* Border */}
                     <svg width={300} height={300} className="absolute">
-                        <path d='M 88 45 L 88 255 L 269 150 z' stroke="black" strokeWidth={3} fill="transparent" />
+                        <path d={clipPathData} stroke="black" strokeWidth={3} fill="transparent" />
                     </svg>
                 </div>
             </div>
