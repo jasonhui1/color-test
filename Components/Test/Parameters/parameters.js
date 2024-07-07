@@ -64,3 +64,9 @@ export const all_modes = [
     { value: 'compare', label: 'compare' },
 ];
 
+export const all_test_methods = [
+    { value: 'exact', label: 'exact' },
+    { value: 'h_only', label: 'H Only' },
+    { value: 'l_only', label: 'L Only' },
+    { value: 's_only', label: 'S Only' },
+];

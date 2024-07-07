@@ -150,6 +150,32 @@ const Evaluation = ({ history, mode, difficulty = 'normal', useHeatmap = false }
     3. Suggest focus area (after X tests)
     4. IS in suitable level (+= 1 difficulty)
     **/
+
+    useEffect(() => {
+        const { percentage: percentage_, data, correct, incorrect } = calculatestat(history, mode, difficulty)
+        setPercentage(percentage_)
+        setCorrect(correct)
+        setIncorrect(incorrect)
+        setData(data)
+    }, [history, mode, difficulty])
+
+    // console.log('history :>> ', history);
+
+    return (
+        <div>
+            <label> Evaluation: {percentage}%</label>
+            <div className="flex flex-col relative">
+                {!useHeatmap ? <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
+                    : <HeatmapDisplay data={data} mode={mode} step={stepInDifficulty(difficulty)/2} useHeatmap={useHeatmap} />
+                }
+            </div>
+            <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
+        </div >
+    )
+}
+
+
+const HeatmapDisplay = ({ data, mode, step, useHeatmap = false }) => {
     const [heatmapData, setHeatmapData] = useState({
         max: 100,
         data: []
@@ -161,18 +187,10 @@ const Evaluation = ({ history, mode, difficulty = 'normal', useHeatmap = false }
         x2: 269 / ratio, y2: 255 / ratio
     }
     const w = bb.y2 - bb.y1
-    const clipPathData = `M ${bb.x1} ${bb.y1} L ${bb.x1} ${bb.y2} L ${bb.x2} ${(bb.y1 + bb.y2) / 2} z`
-    const clipPath = `path('${clipPathData}')`
-    const step = stepInDifficulty(difficulty).l / 100
+
     const minForStat = 4
-
+    step = step / 100
     useEffect(() => {
-        const { percentage: percentage_, data, correct, incorrect } = calculatestat(history, mode, difficulty)
-        setPercentage(percentage_)
-        setCorrect(correct)
-        setIncorrect(incorrect)
-        setData(data)
-
         if (!useHeatmap) return
         const heatmapData_ = []
 
@@ -216,33 +234,28 @@ const Evaluation = ({ history, mode, difficulty = 'normal', useHeatmap = false }
         setHeatmapData(prev => ({ ...prev, data: heatmapData_ }));
     }, [history, mode, useHeatmap])
 
-    // console.log('history :>> ', history);
+    const clipPathData = `M ${bb.x1} ${bb.y1} L ${bb.x1} ${bb.y2} L ${bb.x2} ${(bb.y1 + bb.y2) / 2} z`
+    const clipPath = `path('${clipPathData}')`
 
     return (
-        <div>
-            <label> Evaluation: {percentage}%</label>
-            <div className="flex flex-col relative">
-                {!useHeatmap ? <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
-                    : <div className="flex">
-                        <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
-                            userSelect: 'none',
-                            WebkitUserDrag: 'none',
-                            KhtmlUserDrag: 'none',
-                            MozUserDrag: 'none',
-                            OUserDrag: 'none',
-                        }} />
-                        <HeatmapComponent data={heatmapData} width={300} height={300} clipPath={clipPath} />
-                        {/* Border */}
-                        <svg width={300} height={300} className="absolute">
-                            <path d={clipPathData} stroke="black" strokeWidth={2} fill="transparent" />
-                        </svg>
-                    </div>
-                }
-            </div>
-            <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
+        <div className="flex">
+            <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
+                userSelect: 'none',
+                WebkitUserDrag: 'none',
+                KhtmlUserDrag: 'none',
+                MozUserDrag: 'none',
+                OUserDrag: 'none',
+            }} />
+            <HeatmapComponent data={heatmapData} width={300} height={300} clipPath={clipPath} />
+            {/* Border */}
+            <svg width={300} height={300} className="absolute">
+                <path d={clipPathData} stroke="black" strokeWidth={2} fill="transparent" />
+            </svg>
         </div>
     )
+
 }
+
 
 
 export default Evaluation;
