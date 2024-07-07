@@ -4,7 +4,7 @@ const ColorSwatch = ({ color, size = 1, onClick = null, style = {}, border = fal
     const backgroundColor = `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
     const width = size * 3 + 'rem'
     // const borderStyle = border ? `border-${borderWidth} border-red-500` : ''
-    const borderStyle = border ? `border-${borderWidth} border-${borderColor}` : ''
+    const borderStyle = border ? `border-${borderWidth} border-slate-500` : ''
     return (
         <div
             style={{ backgroundColor: `${backgroundColor}`, width: width, height: width, ...style }}

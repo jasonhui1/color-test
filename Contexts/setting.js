@@ -12,6 +12,8 @@ export const SettingProvider = ({ children }) => {
     const [difficulty, setDifficulty] = useState('easy');
     const [mode, setMode] = useState('normal');
     const [testNum, setTestNum] = useState(25)
+
+    const [testMethod, setTestMethod] = useState('exact')
     const [useColorWheel, setUseColorWheel] = useState(true)
 
     const [initial, setInitial] = useState(true)
@@ -25,7 +27,9 @@ export const SettingProvider = ({ children }) => {
             if (settings.difficulty) setDifficulty(settings.difficulty)
             if (settings.mode) setMode(settings.mode)
             if (settings.testNum) setTestNum(settings.testNum)
-            if (settings.useColorWheel) setUseColorWheel(!settings.useColorWheel)
+            if (settings.testMethod) setTestMethod(settings.testMethod)
+
+            if (settings.useColorWheel) setUseColorWheel(settings.useColorWheel)
         }
 
         setInitial(false)
@@ -34,9 +38,9 @@ export const SettingProvider = ({ children }) => {
 
     useEffect(() => {
         if (!initial) {
-            changeSettings({ practicing, saveToHistory, difficulty, mode, testNum })
+            changeSettings({ practicing, saveToHistory, difficulty, mode, testNum, testMethod, useColorWheel })
         }
-    }, [practicing, saveToHistory, difficulty, mode, testNum, useColorWheel])
+    }, [practicing, saveToHistory, difficulty, mode, testNum, testMethod, useColorWheel])
 
     return (
         <SettingContext.Provider value={{
@@ -46,6 +50,7 @@ export const SettingProvider = ({ children }) => {
             mode, setMode,
             testNum, setTestNum,
             step: stepInDifficulty(difficulty),
+            testMethod, setTestMethod,
             useColorWheel: useColorWheel,
             toggleUseColorWheel: () => { setUseColorWheel(!useColorWheel) },
 

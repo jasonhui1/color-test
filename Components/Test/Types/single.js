@@ -112,7 +112,8 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
                         </div>
                     }
-                    {<DisplayColorRange selectedColor={selectedColor} setSelectedColor={setSelectedColor} h_range={hRange} s_range={sRange} l_range={lRange} currentTestNum={currentTestNum + currentRetryingNum} />}
+                    {<DisplayColorRange selectedColor={selectedColor} setSelectedColor={setSelectedColor} h_range={hRange} s_range={sRange} l_range={lRange}
+                        resetVariable={currentTestNum + currentRetryingNum} />}
                 </div>
                 {testEnded && (!retrying || retryEnded) && <Evaluation history={testHistory.toReversed()} mode={mode} difficulty={difficulty} />}
                 <TestBottom showRetryButton={canRetry} onRetry={handleRetry} showBackButton={currentTestNum <= 1} testEnded={testEnded} checkedResult={checkedResult} onNext={handleNext} onCheck={checkResult} onBack={handleBack} />

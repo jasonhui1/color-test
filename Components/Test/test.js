@@ -1,11 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import TestControls from './Parameters/TestParamterControl';
+import TestControls from './Create/TestSelect';
 import CompareTest from './Types/compare';
 import { useSettings } from '../../Contexts/setting';
 import SingleTest from './Types/single';
 import { BackButton } from './TestBottom';
 import TestParameterDisplay from './Parameters/TestParameterDisplay';
 import {  Play } from 'lucide-react';
+import TestSelect from './Create/TestSelect';
+
+
 const ColorTest = ({ selectedColor, setSelectedColor }) => {
 
     const [hRange, setHRange] = useState([0, 360]);
@@ -23,7 +26,7 @@ const ColorTest = ({ selectedColor, setSelectedColor }) => {
         <div>
             <div className="mt-6 min-w-[300px] h-full">
                 {!testStarted &&
-                    <TestControls
+                    <TestSelect
                         setHRange={setHRange} setSRange={setSRange} setLRange={setLRange}
                         testId={testId} setTestId={setTestId}
                     />
@@ -44,11 +47,6 @@ const ColorTest = ({ selectedColor, setSelectedColor }) => {
                 {testStarted && <RenderTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} setSelectedColor={setSelectedColor} />}
 
             </div>
-
-            {/* {testEnded && <Evaluation history={test_history} mode={mode} difficulty={difficulty} />} */}
-            {/* <OrderTest hRange={hRange} sRange={sRange} lRange={lRange} length={4} step={20} checkedResult={checkedResult} setCheckedResult={setCheckedResult}/> */}
-            {/* <CompareTest hRange={hRange} sRange={sRange} lRange={lRange} step={stepInDifficulty(difficulty)} checkedResult={checkedResult} setCheckedResult={setCheckedResult} /> */}
-
         </div>
     );
 }
@@ -58,7 +56,6 @@ const RenderTest = ({ hRange, sRange, lRange, selectedColor, testId, setTestStar
 
     return (
         <>
-
             {
                 (mode === 'normal' || mode === 'bw') ?
                     <SingleTest hRange={hRange} sRange={sRange} lRange={lRange} selectedColor={selectedColor} testId={testId} setTestStarted={setTestStarted} setSelectedColor={setSelectedColor} /> :

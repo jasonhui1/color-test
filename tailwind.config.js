@@ -8,6 +8,11 @@ module.exports = {
   safelist: [
     'bg-slate-200',
     'bg-slate-300',
+    'bg-slate-500',
+    'bg-slate-700',
+    'border-slate-500',
+    'border-slate-700',
+    'border-2',
     'hover:bg-slate-300',
     // Add other color combinations you might use
   ],
