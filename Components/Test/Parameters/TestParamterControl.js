@@ -7,6 +7,8 @@ import { generateId } from '../../../Utils/utils';
 import { useSettings } from '../../../Contexts/setting';
 import { addTestSB } from '../../../Storage/test_parameters_sb';
 import { useFetchTests } from '../../../Storage/useFetch';
+import { ChevronDown, HelpCircle, Play } from 'lucide-react';
+
 const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) => {
 
     //Create New Test
@@ -56,13 +58,11 @@ const TestControls = ({ setHRange, setSRange, setLRange, testId, setTestId }) =>
 
     return (
         <div className="mt-6">
-            <div className='flex flex-col justify-between'>
-                <h3 className="text-lg font-semibold mb-2">Color Test</h3>
-                <div className='flex gap-4 flex-row'>
-                    {testSelected && <SelectBox current={difficulty} onChange={setDifficulty} options={allDifficulties} label={'Difficulty'} />}
-                    {testSelected && <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />}
-                    {testSelected && <SelectBox current={testNum} onChange={setTestNum} options={all_testNum} label={'TestNum'} />}
-                </div>
+            <h3 className="text-3xl font-bold mb-6 text-blue-600 text-center">Color Test</h3>
+            <div className='flex gap-4 flex-col'>
+                {testSelected && <SelectBox current={difficulty} onChange={setDifficulty} options={allDifficulties} label={'Difficulty'} />}
+                {testSelected && <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />}
+                {testSelected && <SelectBox current={testNum} onChange={setTestNum} options={all_testNum} label={'TestNum'} />}
             </div>
 
             {inInitial &&
@@ -99,7 +99,6 @@ const TestDisplay = ({ test, onSelect }) => {
         </li>
     )
 }
-
 
 
 export default TestControls;

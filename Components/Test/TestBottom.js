@@ -19,11 +19,14 @@ const TestBottom = ({ showBackButton = false, testEnded, checkedResult, onNext, 
 
 export default TestBottom
 
-const Button = ({ label, onClick, color = 'bg-blue-500', hoverColor = 'bg-blue-600', textColor = 'text-white' }) => {
+const Button = ({ label, onClick, color = 'blue-500', hoverColor = 'blue-600', textColor = 'text-white' }) => {
+
+    const bgColor = `bg-${color}`
+    const hoverBgColor = `hover:bg-${hoverColor}`
     return (
         <button
             onClick={onClick}
-            className={`${color} ${textColor} px-4 py-2 rounded hover:${hoverColor}`}
+            className={`${bgColor} ${textColor} px-4 py-2 rounded ${hoverBgColor}`}
         >
             {label}
         </button>
@@ -32,7 +35,7 @@ const Button = ({ label, onClick, color = 'bg-blue-500', hoverColor = 'bg-blue-6
 
 export const BackButton = ({ onClick }) => {
     return (
-        <Button label={'Back'} onClick={onClick} />
+        <Button label={'Back'} onClick={onClick} color='slate-200' hoverColor="slate-300" textColor="text-gray-700" />
     )
 }
 
@@ -91,7 +94,7 @@ export const CheckResultButton = ({ onClick, }) => {
 
     return (
         <div className="flex justify-end">
-            <Button label={'Check Result'} onClick={onClick} color="bg-green-500" hoverColor="bg-green-600" />
+            <Button label={'Check Result'} onClick={onClick} color="green-500" hoverColor="green-600" />
         </div>
     )
 }

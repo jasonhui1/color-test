@@ -5,6 +5,13 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    'bg-slate-200',
+    'bg-slate-300',
+    'hover:bg-slate-300',
+    // Add other color combinations you might use
+  ],
+
   theme: {
     extend: {
       backgroundImage: {

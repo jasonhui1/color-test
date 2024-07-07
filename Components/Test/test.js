@@ -1,15 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import TestControls from './Parameters/TestParamterControl';
-import { RenderResult, ResultDisplay } from '../Evaluation/ResultDisplay';
-import Evaluation from '../Evaluation/Evaluation';
-import OrderTest from './Types/reorder';
-import { generateRandomColorAdvanced } from '../../Utils/color_util';
-import { stepInDifficulty } from '../../Utils/utils';
 import CompareTest from './Types/compare';
 import { useSettings } from '../../Contexts/setting';
 import SingleTest from './Types/single';
 import { BackButton } from './TestBottom';
-
+import TestParameterDisplay from './Parameters/TestParameterDisplay';
+import {  Play } from 'lucide-react';
 const ColorTest = ({ selectedColor, setSelectedColor }) => {
 
     const [hRange, setHRange] = useState([0, 360]);
@@ -36,7 +32,7 @@ const ColorTest = ({ selectedColor, setSelectedColor }) => {
                 <div>
                     {confirming &&
                         <>
-                            <TestParameterDisplay hRange={hRange} sRange={sRange} lRange={lRange} name={name} />
+                            <TestParameterDisplay hRange={hRange} sRange={sRange} lRange={lRange} />
                             <div className='flex flex-row justify-between'>
                                 <BackButton onClick={() => setTestId('0')} />
                                 <StartButton onClick={() => setTestStarted(true)} />
@@ -77,35 +73,14 @@ const StartButton = ({ onClick }) => {
     return (
         <button
             onClick={onClick}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center"
         >
+            <Play size={20} className="mr-2" />
             Start
         </button>
     )
 }
 
-const TestParameterDisplay = ({ hRange, sRange, lRange, name }) => {
-
-    const { mode } = useSettings()
-
-    return (
-        <div className='flex flex-col gap-4 my-4'>
-
-            {/* <div className='flex gap-2 flex-row items-center'>
-
-                <label className="font-medium">{name} </label>
-                <span><FaEdit className="w-5 h-5" /></span>
-            </div> */}
-            {mode !== 'bw' &&
-                <label className="font-medium">H: {`${hRange[0]} - ${hRange[1]}`}</label>
-            }
-            <label className="font-medium">L: {`${lRange[0]} - ${lRange[1]}`}</label>
-
-            {mode !== 'bw' &&
-                <label className="font-medium">S: {`${sRange[0]} - ${sRange[1]}`}</label>
-            }
-        </div>)
-}
 
 
 export default ColorTest;
