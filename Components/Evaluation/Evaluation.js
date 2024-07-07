@@ -89,7 +89,7 @@ function calculatestat(history, mode, difficulty) {
     })
 
     findTendency(Data, mode)
-    console.log('Data :>> ', Data);
+    // console.log('Data :>> ', Data);
 
     return {
         percentage: correct.length / history.length * 100, correct, incorrect, data: Data
@@ -137,9 +137,12 @@ function findTendency(data, mode) {
     }
 }
 
-const Evaluation = ({ history, mode, difficulty = 'normal' }) => {
+const Evaluation = ({ history, mode, difficulty = 'normal', useHeatmap = false }) => {
 
     const [percentage, setPercentage] = useState(0)
+    const [correct, setCorrect] = useState([])
+    const [incorrect, setIncorrect] = useState([])
+    const [data, setData] = useState({})
 
     /** Ideas
     1. Pattern
@@ -161,13 +164,17 @@ const Evaluation = ({ history, mode, difficulty = 'normal' }) => {
     const clipPathData = `M ${bb.x1} ${bb.y1} L ${bb.x1} ${bb.y2} L ${bb.x2} ${(bb.y1 + bb.y2) / 2} z`
     const clipPath = `path('${clipPathData}')`
     const step = stepInDifficulty(difficulty).l / 100
+    const minForStat = 4
 
     useEffect(() => {
-        const { percentage: percentage_, data } = calculatestat(history, mode, difficulty)
+        const { percentage: percentage_, data, correct, incorrect } = calculatestat(history, mode, difficulty)
         setPercentage(percentage_)
+        setCorrect(correct)
+        setIncorrect(incorrect)
+        setData(data)
 
+        if (!useHeatmap) return
         const heatmapData_ = []
-
 
         if (mode === 'bw') {
             Object.keys(data).forEach(L => {
@@ -184,46 +191,53 @@ const Evaluation = ({ history, mode, difficulty = 'normal' }) => {
                 Object.keys(data[H]).forEach(L => {
                     Object.keys(data[H][L]).forEach(S => {
                         const current = data[H][L][S]
-                        const enoughData = (current.correct + current.incorrect) > 6
-                        if (!enoughData) return
+                        const dataAmount = (current.correct ?? 0) + (current.incorrect ?? 0)
+                        const enoughData = dataAmount >= minForStat
+                        if (!enoughData) return;
 
                         const color = { h: H, s: S, l: L }
                         const { x, y } = getPositionFromSV(color.s, color.l, w, bb)
 
 
                         // heatmapData_.push({ x, y, value:  current.percentage, color, radius:step*w })
-                        if (current.percentage < 90) {
-                            console.log('current.percentage, color, count :>> ', current.percentage, color, );
-                            heatmapData_.push({ x, y, value: current.percentage, color, radius: step * w })
-                        }
+                        // if (current.percentage < 90) {
+                        console.log(color, (Math.round(current.percentage)) + '%', dataAmount, current);
+                        heatmapData_.push({
+                            x: Math.round(x), y: Math.round(y),
+                            value: (100 - current.percentage),
+                            radius: step * w
+                        })
+                        // }
                     })
                 })
             })
         }
 
         setHeatmapData(prev => ({ ...prev, data: heatmapData_ }));
-    }, [history, mode])
+    }, [history, mode, useHeatmap])
 
+    // console.log('history :>> ', history);
 
     return (
         <div>
             <label> Evaluation: {percentage}%</label>
             <div className="flex flex-col relative">
-                {/* <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} /> */}
-                <div className="flex">
-                    <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
-                        userSelect: 'none',
-                        WebkitUserDrag: 'none',
-                        KhtmlUserDrag: 'none',
-                        MozUserDrag: 'none',
-                        OUserDrag: 'none',
-                    }} />
-                    <HeatmapComponent data={heatmapData} width={300} height={300} clipPath={clipPath} />
-                    {/* Border */}
-                    <svg width={300} height={300} className="absolute">
-                        <path d={clipPathData} stroke="black" strokeWidth={3} fill="transparent" />
-                    </svg>
-                </div>
+                {!useHeatmap ? <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
+                    : <div className="flex">
+                        <Image className='absolute' src={color_wheel} alt="color_wheel" width={300} height={300} draggable={false} style={{
+                            userSelect: 'none',
+                            WebkitUserDrag: 'none',
+                            KhtmlUserDrag: 'none',
+                            MozUserDrag: 'none',
+                            OUserDrag: 'none',
+                        }} />
+                        <HeatmapComponent data={heatmapData} width={300} height={300} clipPath={clipPath} />
+                        {/* Border */}
+                        <svg width={300} height={300} className="absolute">
+                            <path d={clipPathData} stroke="black" strokeWidth={2} fill="transparent" />
+                        </svg>
+                    </div>
+                }
             </div>
             <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
         </div>

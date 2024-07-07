@@ -63,6 +63,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         setRetrying(true)
         setCheckedResult(false)
         nextRetry()
+        setStartTime(Date.now())
     }
 
     const nextRetry = () => {

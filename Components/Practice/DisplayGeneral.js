@@ -3,6 +3,7 @@ import { generateAllColorFromTriangle } from "../../Utils/color_util";
 import { roundToStep } from "../../Utils/utils";
 import { useSettings } from "../../Contexts/setting";
 import RevealEffect from "../General/RevealEffect";
+import SelectEffect from "../General/SelectEffect";
 
 export const useColorDict = (selectedColor, l_range, s_range, step, mode) => {
     const rounded_hue = roundToStep(selectedColor.h, step.h);
@@ -13,14 +14,14 @@ export const useColorDict = (selectedColor, l_range, s_range, step, mode) => {
     }, [rounded_hue, l_range[0], l_range[1], s_range[0], s_range[1], step, mode]);
 };
 
-export const DisplayColorComponent = ({ selectedColor, h_range, s_range, l_range, renderCell, currentTestNum = -1 }) => {
+export const DisplayColorComponent = ({ selectedColor, setSelectedColor, h_range, s_range, l_range, renderCell, currentTestNum = -1 }) => {
     const { step, practicing, mode } = useSettings();
     const gridRef = useRef(null);
 
     const { dict } = useColorDict(selectedColor, l_range, s_range, step, mode);
 
     return (
-        <div ref={gridRef} className="relative">
+        <div ref={gridRef} className="relative h-fit">
             <ColorGrid
                 dict={dict}
                 renderCell={renderCell}
@@ -29,12 +30,16 @@ export const DisplayColorComponent = ({ selectedColor, h_range, s_range, l_range
             {!practicing && (
                 <RevealEffect gridRef={gridRef} maxLife={5000} resetVariable={currentTestNum} />
             )}
+
+            {(
+                <SelectEffect gridRef={gridRef} dict={dict} setSelectedColor={setSelectedColor} resetVariable={currentTestNum} hue={selectedColor.h} />
+            )}
         </div>
     );
 };
 
 export const ColorGrid = memo(({ dict, renderCell, hue }) => {
-    // console.log('updaing :>> ',);
+    console.log('updaing :>> ',);
     return (
         <div className="flex flex-col items-center justify-center">
             {Object.keys(dict).map((H, index) => {

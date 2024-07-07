@@ -23,8 +23,8 @@ const ColorTrainingTool = () => {
                     <div className='flex gap-4'>
                         <SettingProvider >
                             <Test selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
+                            <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                         </SettingProvider>
-                        <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
                     </div>
                 </div>
 

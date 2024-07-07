@@ -4,11 +4,13 @@ import Evaluation from "../../Components/Evaluation/Evaluation";
 import { SelectBox } from "../../Components/General/SelectBox";
 import { all_modes } from "../../Components/Test/Parameters/parameters";
 import { useFetchHistory, useFetchTests } from "../../Storage/useFetch";
+import CheckBox from "../../Components/General/CheckBox";
 
 export default function Page() {
   const createdTests = useFetchTests();
   const [testId, setTestId] = useState('0');
   const [mode, setMode] = useState('normal');
+  const [useHeatmap, setUseHeatmap] = useState(false);
   const history = useFetchHistory(testId, mode);
 
   const onSelectTest = (testId) => {
@@ -25,9 +27,12 @@ export default function Page() {
     <div>
 
       <TestsSelect tests={createdTests} onSelect={onSelectTest} />
-      <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />
+      <div className="flex flex-row gap-5 my-2">
+        <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />
+        <CheckBox checked={useHeatmap} onChange={()=>setUseHeatmap(!useHeatmap)} label={'Heatmap'} />
+      </div>
       <label>Length: {history.length}</label>
-      {testSelected && <Evaluation history={history} mode={mode} />}
+      {testSelected && <Evaluation history={history} mode={mode} useHeatmap={useHeatmap} />}
     </div>
   )
 }

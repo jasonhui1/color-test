@@ -18,7 +18,7 @@ const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, sel
     ), [setSelectedColor, shape, pattern, refColor]);
 
     return (
-        <DisplayColorComponent renderCell={renderCell} selectedColor={selectedColor}
+        <DisplayColorComponent renderCell={renderCell} selectedColor={selectedColor} setSelectedColor={setSelectedColor}
             h_range={h_range} s_range={s_range} l_range={l_range}
             currentTestNum={currentTestNum} />
 

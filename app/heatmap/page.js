@@ -1,15 +1,17 @@
 "use client"
 // HeatmapComponent.js
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import HeatmapComponent from '../../Components/Evaluation/Heatmap';
 
 const App = () => {
     const [heatmapData, setHeatmapData] = useState({
-        max: 1,
+        max: 100,
         data: [
-            { x: 100, y: 115, value: 0.9},
-            { x: 120, y: 150, value: 0.8 },
-            { x: 200, y: 180, value: 0.1 }
+            // { x: 100, y: 115, value: 0.9 },
+            // { x: 120, y: 150, value: 0.8 },
+            // { x: 200, y: 180, value: 0.1 },
+            
+            { x: 123, y: 213, value: 90, radius: 26.25 }
         ]
     });
 

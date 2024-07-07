@@ -10,9 +10,9 @@ const configs = {
     gradient: {
         // Customize these colors as needed
         // The numbers represent the position in the gradient (0 to 1)
-        '0.6': 'red',    // Color for middle values
-        // '0.8': 'orange',    // Color for higher values
-        '1': 'white'   // Color for highest values
+        '0': 'white',   // Color for highest values
+        '0.25': 'orange',    // Color for higher values
+        '0.5': 'red',    // Color for middle values
     }
 }
 
@@ -23,7 +23,7 @@ const HeatmapComponent = ({ data, width = 300, height = 300, clipPath = `path('M
     const [url, setUrl] = useState('');
 
 
-
+    console.log('data :>> ', data);
     useEffect(() => {
         if (heatmapRef.current && !heatmapInstance.current) {
             heatmapInstance.current = h337.create({
