@@ -137,7 +137,7 @@ function findTendency(data, mode) {
     }
 }
 
-const Evaluation = ({ history, mode, difficulty = 'normal', useHeatmap = false }) => {
+const Evaluation = ({ history, mode, difficulty = 'normal', testMethod = 'exact', useHeatmap = false }) => {
 
     const [percentage, setPercentage] = useState(0)
     const [correct, setCorrect] = useState([])
@@ -166,11 +166,11 @@ const Evaluation = ({ history, mode, difficulty = 'normal', useHeatmap = false }
             <label> Evaluation: {percentage}%</label>
             <div className="flex flex-col relative">
                 {!useHeatmap ? <TriangularColorPickerDisplayHistory hue={(mode === 'bw' || history.length === 0) ? 0 : history[0].targetColor.h} correct={correct} incorrect={incorrect} />
-                    : <HeatmapDisplay data={data} mode={mode} step={stepInDifficulty(difficulty)/2} useHeatmap={useHeatmap} />
+                    : <HeatmapDisplay data={data} mode={mode} step={stepInDifficulty(difficulty) / 2} useHeatmap={useHeatmap} />
                 }
             </div>
             <ColorHistoryTable history={history} mode={mode} difficulty={difficulty} />
-        </div >
+        </div>
     )
 }
 

@@ -14,7 +14,7 @@ export const useColorDict = (selectedColor, l_range, s_range, step, mode) => {
     }, [rounded_hue, l_range[0], l_range[1], s_range[0], s_range[1], step, mode]);
 };
 
-export const DisplayColorComponent = ({ selectedColor, setSelectedColor, h_range, s_range, l_range, renderCell, resetVariable = -1 }) => {
+export const DisplayColorComponent = ({ selectedColor, setSelectedColor, h_range, s_range, l_range, renderCell, cellWidth = 48, cellSpacing = 4, resetVariable = -1, }) => {
     const { step, practicing, mode } = useSettings();
     const gridRef = useRef(null);
 
@@ -26,14 +26,15 @@ export const DisplayColorComponent = ({ selectedColor, setSelectedColor, h_range
     const useCol = testMethod === 'exact' || testMethod === 's_only';
 
     return (
-        <div ref={gridRef} className="relative mt-4 py-4 ">
+        <div ref={gridRef} className="relative mt-4 ">
             <ColorGrid
                 dict={dict}
                 renderCell={renderCell}
                 hue={roundToStep(selectedColor.h, step.h)}
             >
 
-                <SelectEffect gridRef={gridRef} dict={dict} setSelectedColor={setSelectedColor} resetVariable={resetVariable} hue={selectedColor.h} useRow={useRow} useCol={useCol} />
+                <SelectEffect gridRef={gridRef} dict={dict} setSelectedColor={setSelectedColor} resetVariable={resetVariable} hue={selectedColor.h}
+                    useRow={useRow} useCol={useCol} cellWidth={cellWidth} cellSpacing={cellSpacing} />
 
             </ColorGrid>
             {!practicing && (

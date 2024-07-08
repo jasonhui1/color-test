@@ -13,10 +13,10 @@ export const allDifficulties = [
     { value: 'normal-', label: 'Level 2', step: { h: 15, l: 12.5, s: 25 } },
     { value: 'normal-altS', label: 'Level 2 altS', step: { h: 15, l: 25, s: 12.5 } },
     { value: 'normal', label: 'Level 3', step: { h: 15, l: 12.5, s: 12.5 } },
-    { value: 'normal+', label: 'Level 4', step: { h: 10, l: 12.5, s: 12.5 } },
-    { value: 'hard-', label: 'Level 5', step: { h: 10, l: 6.25, s: 12.5 } },
-    { value: 'hard', label: 'Level 6', step: { h: 10, l: 6.25, s: 6.25 } },
-    { value: 'hard+', label: 'Level 7', step: { h: 6.25, l: 6.25, s: 6.25 } },
+    { value: 'normal+', label: 'Level 4', step: { h: 7.5, l: 12.5, s: 12.5 } },
+    { value: 'hard-', label: 'Level 5', step: { h: 7.5, l: 6.25, s: 12.5 } },
+    { value: 'hard', label: 'Level 6', step: { h: 7.5, l: 6.25, s: 6.25 } },
+    { value: 'hard+', label: 'Level 7', step: { h: 3.75, l: 6.25, s: 6.25 } },
 ];
 
 export const colorOptions = [

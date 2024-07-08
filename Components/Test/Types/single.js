@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ColorSwatch from "../../Color Picker/ColorSwatch";
+import ColorSwatch, { ColorGradient } from "../../Color Picker/ColorSwatch";
 import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect } from "../../../Utils/color_util";
 import { stepInDifficulty } from "../../../Utils/utils";
 import { useSettings } from "../../../Contexts/setting";
@@ -8,6 +8,7 @@ import TestBottom from "../TestBottom";
 import Evaluation from "../../Evaluation/Evaluation";
 import { addHistorySB } from "../../../Storage/test_history_supabase";
 import DisplayColorRange from "../../Practice/DisplayColorRange";
+import { getPositionFromSV, getSVFromPosition } from "../../../Utils/calculation_util";
 
 function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted, setSelectedColor }) {
     const [targetColor, setTargetColor] = useState(defaultHLS)
@@ -19,7 +20,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     const [retrying, setRetrying] = useState(false);
     const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
 
-    const { mode, difficulty, testNum, saveToHistory, practicing, step } = useSettings()
+    const { mode, difficulty, testNum, saveToHistory, practicing, step, testMethod } = useSettings()
 
     useEffect(() => {
         setup();
@@ -74,11 +75,12 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     const checkResult = () => {
         if (checkedResult) return
         setCheckedResult(true)
-
-        const correct = getIsCorrect(targetColor, selectedColor, mode, difficulty)
+        const color = getApproximateColor(targetColor, selectedColor, step, testMethod)
+        const correct = getIsCorrect(targetColor, color, mode, difficulty)
         const ellapsedTime = Date.now() - startTime
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, correct, time: ellapsedTime });
-        setTestHistory(history => [...history, { targetColor, selectedColor, correct, isRetry: retrying, time: ellapsedTime }]);
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor: color, mode, difficulty: difficulty, correct, time: ellapsedTime, testMethod });
+
+        setTestHistory(history => [...history, { targetColor, selectedColor: color, correct, isRetry: retrying, time: ellapsedTime }]);
     };
 
     const incorrectHistory = testHistory.filter(({ correct, isRetry }) => !correct && !isRetry)
@@ -103,10 +105,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
                                 </div>
 
                                 {(checkedResult || practicing) && (
-                                    <div >
-                                        <h3 className="text-lg font-semibold mb-2">Your Color</h3>
-                                        <ColorSwatch color={selectedColor} size={3} border={true} />
-                                    </div>
+                                    <DisplaySelectedColor targetColor={targetColor} selectedColor={selectedColor} />
                                 )}
                             </div>
                             {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
@@ -131,7 +130,73 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
 
 }
 
+const getApproximateColor = (targetColor, selectedColor, step, testMethod) => {
 
+    let color = selectedColor;
+
+    if (testMethod === 'h_only') {
+        color = { ...targetColor, h: selectedColor.h }
+    }
+    else if (testMethod === 'l_only') {
+        // Target -> shift lightness , assume s is correct, need to recalculate s from selected l
+        console.log('selectedColor :>> ', selectedColor);
+        const { x: tx, y: ty } = getPositionFromSV(targetColor.s, targetColor.l)
+        const offset = -(selectedColor.l - targetColor.l) / 100
+        let { s, v: l } = getSVFromPosition(tx, ty + offset)
+
+        s = Math.max(0, Math.min(100, s))
+        color = { ...targetColor, s, l }
+
+    } else if (testMethod === 's_only') {
+        // Target -> shift saturation , assume l is correct, but recalculate l if s is not possible (>100) -> recalculate s from selected position
+        const { x } = getPositionFromSV(selectedColor.s, selectedColor.l)
+        const y = (100 - targetColor.l)
+        let { s, v: l } = getSVFromPosition(x, y / 100)
+
+        // Search for lightness that can fit this saturation
+        let i = 0
+        while (s > 100) {
+            let increaseStep = i * step.l / 100
+            increaseStep *= l > 50 ? 1 : -1
+            const { s: s_, v: l_ } = getSVFromPosition(x, y / 100 + increaseStep)
+            s = s_
+            l = l_
+            i += 1
+        }
+
+        color = { ...targetColor, s, l }
+    }
+
+    return color
+}
+
+const DisplaySelectedColor = ({ targetColor, selectedColor, }) => {
+    const { testMethod, step } = useSettings()
+
+    let color = getApproximateColor(targetColor, selectedColor, step, testMethod);
+
+
+    // const { x } = getPositionFromSV(selectedColor.s, selectedColor.l)
+
+    // const l1 = x * Math.tan(Math.PI * 1 / 3 * x) * 100
+    // const l2 = 100 - l1
+
+    // console.log('l1,l2 :>> ', l1, l2);
+
+    // const showSwatch = true
+    const showSwatch = testMethod === 'exact' || testMethod === 'h_only'
+    // const showGradient = !showSwatch
+    // console.log('selectedColor :>> ', selectedColor);
+
+    return (
+        <div >
+            <h3 className="text-lg font-semibold mb-2">Your Color</h3>
+            {<ColorSwatch color={color} size={3} border={true} />}
+        </div>
+    )
+}
+
+// `linear-gradient(to right, ${hsl1} 0%,  ${hsl2}100% `
 // const NumberSelector = ({ setSelectedColor, targetColor }) => {
 
 //     const { mode, difficulty } = useSettings()

@@ -11,7 +11,7 @@ function calculateRowIndex(location, cellWidth, cellSpacing) {
 }
 
 function findColorAtPosition(rowIndex, colIndex, dict, hue, useRow, useCol) {
-    let l, s
+    let l, s = 0
 
     const defaultH = Object.keys(dict)[0]
     const lsDict = dict[hue] ? dict[hue] : dict[defaultH]
@@ -19,7 +19,9 @@ function findColorAtPosition(rowIndex, colIndex, dict, hue, useRow, useCol) {
 
     if (useRow) {
         const maxIndex = lsDict[l].length - 1
-        s = lsDict[l][Math.min(maxIndex, colIndex)]
+        if (useCol) {
+            s = lsDict[l][Math.min(maxIndex, colIndex)]
+        }
     } else {
         const array = Object.keys(lsDict)
         // pick color with the max saturation distance (50 is max)
@@ -28,10 +30,10 @@ function findColorAtPosition(rowIndex, colIndex, dict, hue, useRow, useCol) {
             return absValue < acc.absValue ? { value: num, absValue } : acc;
         }, { value: null, absValue: Infinity }).value;
 
-        l = maxWidthL
+        l = Number(maxWidthL)
         s = lsDict[l][colIndex]
     }
-    return { h: hue, l, s }
+    return { h: hue, l: Number(l), s }
 }
 
 const SelectEffect = ({ gridRef, hue = 30, setSelectedColor, resetVariable, dict, cellWidth = 48, cellSpacing = 4, useRow = true, useCol = true }) => {
@@ -103,13 +105,15 @@ const SelectEffect = ({ gridRef, hue = 30, setSelectedColor, resetVariable, dict
     const top = (selectedRow === -1 ? mousePosition.y - cellWidth / 2
         : (selectedRow) * (cellWidth + cellSpacing)) - cellSpacing
 
-
     const left = (selectedCol === -1 ? mousePosition.x - cellWidth / 2
-        : (selectedCol) * (cellWidth + cellSpacing))- cellSpacing
+        : (selectedCol) * (cellWidth + cellSpacing)) - cellSpacing
+
     return (
         <div className=" mix-blend-multiply">
-            {useRow && <div className='absolute inset-0 border-slate-700 border-solid border-4 pointer-events-none' style={{ top: top, width: '100%', height: cellWidth + cellSpacing *2}} />}
-            {(useCol && (!useRow || selectedRow !== -1)) && <div className='absolute inset-0 border-slate-700 border-solid border-4 pointer-events-none' style={{ left, height: '100%', width: cellWidth + cellSpacing*2 }} />}
+            {useRow && <div className='absolute inset-0 border-slate-700 border-solid border-4 pointer-events-none'
+                style={{ top: top, width: '100%', height: cellWidth + cellSpacing * 2 }} />}
+            {(useCol && (!useRow || selectedRow !== -1)) && <div className='absolute inset-0 border-slate-700 border-solid border-4 pointer-events-none'
+                style={{ left, height: '100%', width: cellWidth + cellSpacing * 2 }} />}
         </div>
     )
 }

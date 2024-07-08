@@ -29,7 +29,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     const [retrying, setRetrying] = useState(false);
     const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
 
-    const { mode, difficulty, testNum, saveToHistory, practicing } = useSettings()
+    const { mode, difficulty, testNum, saveToHistory, practicing, testMethod } = useSettings()
 
     // Guessing Bright/Dark
     const [chosenDirection, setChosenDirection] = useState('L')
@@ -100,7 +100,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
         const newHistory = [...testHistory, { refColor, targetColor, selectedColor, pattern, shape, isRetry: retrying, correct, time: ellapsedTime }];
         setTestHistory(newHistory)
 
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor, correct, time: ellapsedTime });
+        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor, correct, time: ellapsedTime, testMethod });
     };
     const incorrectHistory = testHistory.filter(({ correct, isRetry }) => !correct && !isRetry)
     const retryEnded = currentRetryingNum >= incorrectHistory.length && checkedResult

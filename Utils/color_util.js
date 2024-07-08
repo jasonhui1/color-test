@@ -6,8 +6,8 @@ export function generateAllColorFromTriangle(h_range = [0, 360], l_range = [0, 1
     const array = []
     const dict = {}
 
-    const lowH = ceilToStep(h_range[0], step.h)
-    const highH = floorToStep(h_range[1], step.h)
+    let lowH = ceilToStep(h_range[0], step.h)
+    let highH = floorToStep(h_range[1], step.h)
     const lowL = ceilToStep(l_range[0], step.l)
     const highL = floorToStep(l_range[1], step.l)
 
@@ -19,8 +19,7 @@ export function generateAllColorFromTriangle(h_range = [0, 360], l_range = [0, 1
             const stepInTriangle = step.s * triangle_height / 100
 
             const L = l > 50 ? Math.floor(l) : Math.ceil(l)
-            dict[h][L] = []
-            const current = dict[h][L]
+            let current = []
             const y = l / 100
 
             for (let x = 0; x <= horizonalLength + 0.02; x += stepInTriangle) {
@@ -28,10 +27,11 @@ export function generateAllColorFromTriangle(h_range = [0, 360], l_range = [0, 1
                 if (!(s >= s_range[0] && s <= s_range[1])) continue
 
                 const S = Math.floor(s)
-
                 current.push(S)
                 array.push({ h, l: L, s: S })
             }
+
+            if (current.length > 0) dict[h][L] = current
         }
     }
 

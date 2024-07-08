@@ -80,7 +80,6 @@ export const HeartShape = withCommonProps(({ size, transform = '', ...props }) =
 })
 
 export const CrescentShape = withCommonProps(({ size, ...props }) => {
-    console.log('size :>> ', size);
     const center = size / 2;
 
     const subtractCenterX = size * 0.3
