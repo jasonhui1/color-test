@@ -80,19 +80,22 @@ export const HeartShape = withCommonProps(({ size, transform = '', ...props }) =
 })
 
 export const CrescentShape = withCommonProps(({ size, ...props }) => {
+    console.log('size :>> ', size);
     const center = size / 2;
 
-    const subtractCenterX = center * 0.6
+    const subtractCenterX = size * 0.3
     const subtractR = size / 3
+
+    const maskUrl = `crescent-mask-${size}`
 
     return <>
         <defs>
-            <mask id="crescent-mask">
-                <rect width="600" height="250" fill="white" />
+            <mask id={maskUrl}>
+                <rect width={size} height={size} fill="white" />
                 <circle cx={subtractCenterX} cy={center} r={subtractR} fill="black" />
             </mask>
         </defs>
-        <circle cx={center} cy={center} r={center} {...props} mask="url(#crescent-mask)" />
+        <circle cx={center} cy={center} r={center} {...props} mask={`url(#${maskUrl})`} />
     </>;
 })
 
