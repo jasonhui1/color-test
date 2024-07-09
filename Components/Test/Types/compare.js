@@ -20,6 +20,8 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     const [targetColor, setTargetColor] = useState(defaultHLS)
     const [pattern, setPattern] = useState('PolkaDots')
     const [shape, setShape] = useState('Star')
+    const [patternRotation, setPatternRotation] = useState(0)
+    const [shapeRotation, setShapeRotation] = useState(0)
 
     const [currentTestNum, setCurrentTestNum] = useState(0)
     const [testHistory, setTestHistory] = useState([])
@@ -41,7 +43,11 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     const setup = () => {
         setColors();
         setPattern(getRandomValue(patterns))
+        setPatternRotation(getRandomIntStep(-45, 45, 45))
+
+
         setShape(getRandomValue(shapes))
+        setShapeRotation(getRandomIntStep(-45, 45, 45))
         setCurrentTestNum(currentTestNum + 1)
     }
 
@@ -120,13 +126,17 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
                     <div>
                         <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
                         <div className="flex h-[300] gap-5">
-                            <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} width={300} />
-                            {checkedResult && <PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} width={300}/>}
+                            <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} width={300} patternRotation={patternRotation} shapeRotation={shapeRotation} />
+                            <div className={(checkedResult || practicing) ? "opacity-100" : " opacity-0"}>
+                                {<PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} width={300} patternRotation={patternRotation} shapeRotation={shapeRotation} />}
+                            </div>
+
                         </div>
                         {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
                     </div>
-                    {<DisplayContrasts pattern={pattern} shape={shape} refColor={refColor} selectedColor={selectedColor} setSelectedColor={setSelectedColor}
-                        h_range={hRange} s_range={sRange} l_range={[lRange[0], refColor.l]} currentTestNum={currentTestNum + currentRetryingNum} />}
+                    {<DisplayContrasts pattern={pattern} shape={shape} patternRotation={patternRotation} shapeRotation={shapeRotation} refColor={refColor}
+                        selectedColor={selectedColor} setSelectedColor={setSelectedColor}
+                        h_range={hRange} s_range={sRange} l_range={[lRange[0], refColor.l]} resetVariable={currentTestNum + currentRetryingNum} />}
                 </div>
             </div>
             {testEnded && <Evaluation history={testHistory} mode={mode} difficulty={difficulty} />}

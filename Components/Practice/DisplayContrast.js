@@ -7,14 +7,14 @@ import PatternRenderer from "../General/Patterns_and_Shape/PatternRenderer"
 import { DisplayColorComponent } from "./DisplayGeneral"
 
 
-const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, selectedColor, setSelectedColor, h_range, s_range, l_range, currentTestNum = -1 }) => {
+const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, selectedColor, setSelectedColor, h_range, s_range, l_range, resetVariable = -1, ...props }) => {
     const cellWidth = 60
 
     const renderCell = useCallback((color, key) => (
         <div key={key} onClick={() => setSelectedColor(color)} className="cursor-pointer">
             <PatternRenderer
                 width={cellWidth} patternWidth={25} patternHeight={25} pattern={pattern} shape={shape}
-                refColor={refColor} targetColor={color}
+                refColor={refColor} targetColor={color} {...props}
             />
         </div>
     ), [setSelectedColor, shape, pattern, refColor]);
@@ -22,7 +22,7 @@ const DisplayContrasts = ({ shape = 'Star', pattern = 'PolkaDots', refColor, sel
     return (
         <DisplayColorComponent renderCell={renderCell} selectedColor={selectedColor} setSelectedColor={setSelectedColor}
             h_range={h_range} s_range={s_range} l_range={l_range}
-            currentTestNum={currentTestNum} cellWidth={cellWidth} />
+            resetVariable={resetVariable} cellWidth={cellWidth} />
 
     );
 };

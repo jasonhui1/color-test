@@ -2,105 +2,157 @@ import ShapeRenderer from "./ShapeRenderer.";
 import { hlsToId, hlsToString } from "../../../Utils/color_util";
 
 const createPatternComponent = (patternName, renderPattern) => {
-    return ({ width, color1, color2, rotation = 0, shape = 'Star', patternWidth = 40, patternHeight = 40, scale, ...props }) => {
-        const hsl1 = hlsToString(color1);
-        const hsl2 = hlsToString(color2);
-        const id = `${patternName}-${hlsToId(color1)}-${hlsToId(color2)}-${width}`;
+    return ({ width, patternWidth = 40, patternHeight = 40, ...props }) => {
+        // const hsl1 = hlsToString(color1);
+        // const hsl2 = hlsToString(color2);
+        // const id = `${patternName}-${hlsToId(color1)}-${hlsToId(color2)}-${width}`;
 
         return (
-            <PatternContainer id={id} width={width} height={width} rotation={rotation} shape={shape} patternWidth={patternWidth} patternHeight={patternHeight} scale={scale}>
-                {renderPattern({ width: patternWidth, hsl1, hsl2, ...props })}
+            <PatternContainer name={patternName} width={width} height={width} patternWidth={patternWidth} patternHeight={patternHeight} {...props}>
+                {renderPattern({ width: patternWidth, ...props })}
             </PatternContainer>
         );
     };
 }
 
-const PatternContainer = ({ children, id, width, height, patternWidth, patternHeight, rotation = 0, scale = 1, viewBox = '0 0 100% 100%', shape = 'Star' }) => {
+// const PatternDefinitions = ({ shape, pattern, width, height, patternWidth, patternHeight }) => {
+
+//     const idSuffix = `-${width}`;
+//     const patternId = `${pattern}${idSuffix}`;
+//     const shapeMaskId = `${shape}shapeMask${idSuffix}`;
+//     const patternMaskId = `${pattern}patternMask${idSuffix}`;
+//     const combinedMaskId = `combinedMask${idSuffix}`;
+//     return (
+//         <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={viewBox}>
+//             <defs>
+//                 <pattern id={patternId} patternUnits="userSpaceOnUse" width={patternWidth} height={patternHeight} patternTransform={`translate(${patternWidth / 4}, ${patternHeight / 4}) rotate(${patternRotation}) scale(${patternScale})`}>
+//                     {children}
+//                 </pattern>
+
+//                 <mask id={shapeMaskId}>
+//                     <ShapeRenderer size={width} shape={shape} fill={'white'} />
+//                 </mask>
+
+//                 <mask id={patternMaskId}>
+//                     <rect width={width} height={height} fill={`url(#${patternId})`} />
+//                 </mask>
+
+
+//                 <mask id={combinedMaskId}>
+//                     <rect width={width} height={height} fill="white" mask={`url(#${shapeMaskId})`} />
+//                     <rect width={width} height={height} fill="black" mask={`url(#${patternMaskId})`} />
+//                 </mask>
+//             </defs>
+//         </svg>
+//     )
+// }
+
+const PatternContainer = ({ children, color1, color2, name, width, height, patternWidth, patternHeight, patternRotation = 0, patternScale = 1, viewBox = '0 0 100% 100%', shape = 'Star', shapeRotation = 0 }) => {
+    const hsl1 = hlsToString(color1);
+    const hsl2 = hlsToString(color2);
+
+    const idSuffix = `-${width}`;
+    const patternId = `${name}${idSuffix}`;
+    const shapeMaskId = `${shape}shapeMask${idSuffix}`;
+    const patternMaskId = `${name}patternMask${idSuffix}`;
+    const combinedMaskId = `combinedMask${idSuffix}`;
+
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={viewBox}>
             <defs>
-                <pattern id={id} patternUnits="userSpaceOnUse" width={patternWidth} height={patternHeight} patternTransform={`translate(${patternWidth / 4}, ${patternHeight / 4}) rotate(${rotation}) scale(${scale})`}>
+                <pattern id={patternId} patternUnits="userSpaceOnUse" width={patternWidth} height={patternHeight} patternTransform={`translate(${patternWidth / 4}, ${patternHeight / 4}) rotate(${patternRotation}) scale(${patternScale})`}>
                     {children}
                 </pattern>
+
+                <mask id={shapeMaskId}>
+                    <ShapeRenderer size={width} shape={shape} fill={'white'} />
+                </mask>
+
+                <mask id={patternMaskId}>
+                    <rect width={width} height={height} fill={`url(#${patternId})`} />
+                </mask>
+
+
+                <mask id={combinedMaskId}>
+                    <rect width={width} height={height} fill="white" mask={`url(#${shapeMaskId})`} />
+                    <rect width={width} height={height} fill="black" mask={`url(#${patternMaskId})`} />
+                </mask>
             </defs>
-            <ShapeRenderer size={width} fill={`url(#${id})`} shape={shape} />
+
+            <g transform={`rotate(${shapeRotation})`} transform-origin={'center'}>
+                <rect width={width} height={height} fill={hsl2} mask={`url(#${shapeMaskId})`} />
+                <rect width={width} height={height} fill={hsl1} mask={`url(#${combinedMaskId})`} />
+            </g>
         </svg>
     )
 }
 
-export const CheckerboardPattern = createPatternComponent('checkboard', ({ width, hsl1, hsl2 }) => {
+export const CheckerboardPattern = createPatternComponent('checkboard', ({ width }) => {
     const center = width / 2
-
     return (
         <>
-            <rect width={width} height={width} fill={hsl1} />
-            <rect width={center} height={center} fill={hsl2} />
-            <rect width={center} height={center} x={center} y={center} fill={hsl2} />
+            <rect width={center} height={center} fill='white' />
+            <rect width={center} height={center} x={center} y={center} fill='white' />
         </>
     )
 })
 
-export const CheckerboardPatternv2 = createPatternComponent('checkboard', ({ width, hsl1, hsl2 }) => {
+export const CheckerboardPatternv2 = createPatternComponent('checkboardv2', ({ width }) => {
     width *= 1.5
     const center = width / 2
 
     return (
         <>
-            <rect width={width} height={width} fill={hsl1} />
-            <rect width={center} height={center} fill={hsl2} />
-            <rect width={center} height={center} x={center} y={center} fill={hsl2} />
+            <rect width={center} height={center} fill='white' />
+            <rect width={center} height={center} x={center} y={center} fill='white' />
         </>
     )
 })
 
-export const StripePattern = createPatternComponent('stripes', ({ width, hsl1, hsl2 }) => {
+export const StripePattern = createPatternComponent('stripes', ({ width }) => {
     const center = width / 2
 
     return (
         <>
-            <rect width={center} height={width} fill={hsl1} />
-            <rect x={center} width={center} height={width} fill={hsl2} />
+            <rect x={center} width={center} height={width} fill='white' />
         </>
     )
 })
 
-export const PolkaDotsPattern = createPatternComponent('polkaDots', ({ width, hsl1, hsl2, dotRadiusRatio = 3 }) => {
+export const PolkaDotsPattern = createPatternComponent('polkaDots', ({ width, dotRadiusRatio = 3 }) => {
     const radius = width / 2;
     const dotRadius = radius / dotRadiusRatio;
     return (
         <>
-            <rect width={width} height={width} fill={hsl1} />
-            <circle cx={radius} cy={radius} r={dotRadius} fill={hsl2} />
+            <circle cx={radius} cy={radius} r={dotRadius} fill='white' />
         </>
     );
 });
 
-export const PlusPattern = createPatternComponent('plus', ({ width, hsl1, hsl2 }) => (
+export const PlusPattern = createPatternComponent('plus', ({ width }) => (
     <>
-        <rect x='0' y='0' width='100%' height='100%' fill={hsl1} />
-        <path d='M3.25 10h13.5M10 3.25v13.5' strokeLinecap='square' strokeWidth='3' stroke={hsl2} fill={hsl2} />
+        <path d='M3.25 10h13.5M10 3.25v13.5' strokeLinecap='square' strokeWidth='3' stroke={'white'} fill={'white'} />
     </>
 ));
 
-export const CircuitBoardPattern = createPatternComponent('circuitBoard', ({ width, hsl1, hsl2, lineWidth = 1, dotRadius = 3 }) => {
-    const hslLine = hsl2
-    const hslDot = hsl2
+export const CircuitBoardPattern = createPatternComponent('circuitBoard', ({ width, lineWidth = 1, dotRadius = 3 }) => {
+    // const hslLine = hsl2
+    // const hslDot = hsl2
 
     return (
         <>
-            <rect width='100%' height='100%' fill={hsl1} />
-            <path d={`M0 0 H${width} M0 ${width / 2} H${width} M${width / 2} 0 V${width}`} stroke={hslLine} strokeWidth={lineWidth} fill="none" />
-            <circle cx={width / 2} cy={width / 2} r={dotRadius} fill={hslDot} />
-            <circle cx="0" cy="0" r={dotRadius} fill={hslDot} />
-            <circle cx={width} cy="0" r={dotRadius} fill={hslDot} />
-            <circle cx="0" cy={width} r={dotRadius} fill={hslDot} />
-            <circle cx={width} cy={width} r={dotRadius} fill={hslDot} />
+            <path d={`M0 0 H${width} M0 ${width / 2} H${width} M${width / 2} 0 V${width}`} stroke={'white'} strokeWidth={lineWidth} fill="none" />
+            <circle cx={width / 2} cy={width / 2} r={dotRadius} fill={'white'} />
+            <circle cx="0" cy="0" r={dotRadius} fill={'white'} />
+            <circle cx={width} cy="0" r={dotRadius} fill={'white'} />
+            <circle cx="0" cy={width} r={dotRadius} fill={'white'} />
+            <circle cx={width} cy={width} r={dotRadius} fill={'white'} />
         </>
     )
 })
 
 // = Checkboard (rotate 45)
-// export const CrosshatchPattern = ({ color1, color2, lineWidth = 2, width = 30, rotation = 0 }) => {
+// export const CrosshatchPattern = ({color1, color2, lineWidth = 2, width = 30, rotation = 0}) => {
 //     const hsl1 = hlsToString(color1)
 //     const hsl2 = hlsToString(color2)
 //     const id = 'crosshatch'
@@ -113,19 +165,18 @@ export const CircuitBoardPattern = createPatternComponent('circuitBoard', ({ wid
 //     )
 // }
 
-export const TartanPlaidPattern = createPatternComponent('tartanPlaid', ({ width = 40, hsl1, hsl2, centerWidth = 8 }) => {
+export const TartanPlaidPattern = createPatternComponent('tartanPlaid', ({ width = 40, centerWidth = 8 }) => {
     return (
         <>
-            <rect width={width} height={width} fill={hsl1} />
-            <rect width={width} height={centerWidth} fill={hsl2} y="0" opacity="0.6" />
-            <rect width={width} height={centerWidth} fill={hsl2} y={width - centerWidth} opacity="0.6" />
-            <rect width={centerWidth} height={width} fill={hsl2} x="0" opacity="0.6" />
-            <rect width={centerWidth} height={width} fill={hsl2} x={width - centerWidth} opacity="0.6" />
+            <rect width={width} height={centerWidth} y="0" opacity="0.6" fill={'white'} />
+            <rect width={width} height={centerWidth} y={width - centerWidth} opacity="0.6" fill={'white'} />
+            <rect width={centerWidth} height={width} x="0" opacity="0.6" fill={'white'} />
+            <rect width={centerWidth} height={width} x={width - centerWidth} opacity="0.6" fill={'white'} />
         </>
     )
 })
 
-export const SpeedLinesPattern = createPatternComponent('speedLines', ({ width = 20, hsl1, hsl2, lineWidths = [0.5, 2, 5] }) => {
+export const SpeedLinesPattern = createPatternComponent('speedLines', ({ width = 20, lineWidths = [0.5, 2, 5] }) => {
     let [width1, width2, width3] = lineWidths.map(w => w)
 
     const pos2 = width1 + width2
@@ -134,10 +185,9 @@ export const SpeedLinesPattern = createPatternComponent('speedLines', ({ width =
 
     return (
         <>
-            <rect width='100%' height='100%' fill={hsl1} />
-            <line x1="0" y1="0" x2={totalWidth} y2={totalWidth} stroke={hsl2} strokeWidth={width1} />
-            <line x1={pos2} y1="0" x2={pos2 + totalWidth} y2={totalWidth} stroke={hsl2} strokeWidth={width2} />
-            <line x1={pos3} y1="0" x2={totalWidth + pos3} y2={totalWidth} stroke={hsl2} strokeWidth={width3} />
+            <line x1="0" y1="0" x2={totalWidth} y2={totalWidth} stroke={'white'} strokeWidth={width1} />
+            <line x1={pos2} y1="0" x2={pos2 + totalWidth} y2={totalWidth} stroke={'white'} strokeWidth={width2} />
+            <line x1={pos3} y1="0" x2={totalWidth + pos3} y2={totalWidth} stroke={'white'} strokeWidth={width3} />
         </>
     )
 })

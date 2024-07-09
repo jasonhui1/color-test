@@ -131,7 +131,6 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
 }
 
 const getApproximateColor = (targetColor, selectedColor, step, testMethod) => {
-
     let color = selectedColor;
 
     if (testMethod === 'h_only') {
@@ -139,7 +138,6 @@ const getApproximateColor = (targetColor, selectedColor, step, testMethod) => {
     }
     else if (testMethod === 'l_only') {
         // Target -> shift lightness , assume s is correct, need to recalculate s from selected l
-        console.log('selectedColor :>> ', selectedColor);
         const { x: tx, y: ty } = getPositionFromSV(targetColor.s, targetColor.l)
         const offset = -(selectedColor.l - targetColor.l) / 100
         let { s, v: l } = getSVFromPosition(tx, ty + offset)
