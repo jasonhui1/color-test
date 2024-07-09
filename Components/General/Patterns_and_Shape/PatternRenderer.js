@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import {
     CheckerboardPattern,
     StripePattern,
@@ -7,10 +6,10 @@ import {
     CircuitBoardPattern,
     TartanPlaidPattern,
     SpeedLinesPattern,
-    CheckerboardPatternv2
-} from './patterns'; // Assuming this is the file where we defined our pattern components
+    CheckerboardPatternv2,
+} from './patterns';
 
-const patternComponents = {
+export const patternComponents = {
     Checkerboard: CheckerboardPattern,
     Checkerboardv2: CheckerboardPatternv2,
     Stripe: StripePattern,
@@ -21,31 +20,18 @@ const patternComponents = {
     SpeedLines: SpeedLinesPattern,
 };
 
-export const patterns = ['Plus', 'PolkaDots', 'Checkerboard', 'Stripe', 'Circuit board', 'Speed lines', 'Checkerboardv2', "SpeedLines"]
 
-const PatternRenderer = memo(({ width = 150, refColor, targetColor,
-    shape = 'Star', shapeRotation = 45,
-    pattern = 'PolkaDots', patternWidth = -1, patternHeight = -1, patternRotation = 45, patternScale = -1,
-}) => {
-    //Scale automatially if not set
-    patternWidth = patternWidth > 0 ? patternWidth : width / 10
-    patternHeight = patternHeight > 0 ? patternHeight : patternWidth
-    patternScale = patternScale > 0 ? patternScale : Math.max(width / 150, 1)
+export const patterns = ['Plus', 'PolkaDots', 'Checkerboard', 'Stripe', 'CircuitBoard', 'SpeedLines', 'Checkerboardv2']
 
-    const PatternComponent = patternComponents[pattern] || PolkaDotsPattern;
+
+const PatternRenderer = ({ pattern, id, width = 60, height = null, rotation, scale, ...props }) => {
+    if (!height) height = width
+    const PatternComponent = patternComponents[pattern] || patternComponents['PolkaDots'];
     return (
-        <PatternComponent
-            width={width}
-            color1={refColor}
-            color2={targetColor}
-            shape={shape}
-            shapeRotation={shapeRotation}
-            patternRotation={patternRotation}
-            patternWidth={patternWidth}
-            patternHeight={patternHeight}
-            patternScale={patternScale}
-        />
-    );
-})
+        <pattern id={id} patternUnits="userSpaceOnUse" width={width} height={height} patternTransform={`translate(${width / 4}, ${height / 4}) rotate(${rotation}) scale(${scale})`}>
+            <PatternComponent width={width} {...props} />
+        </pattern>
+    )
+}
 
 export default PatternRenderer

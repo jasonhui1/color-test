@@ -10,7 +10,6 @@ const shapePathComponents = {
 
 };
 
-export const patterns = ['Plus', 'PolkaDpots', 'Checkerboard', 'Stripe', 'Circuit board', 'Speed lines', 'Checkerboardv2']
 export const shapes = ['Star',  'Triangle', 'Cross', 'Heart', 'Cross', 'Crescent']
 
 const ShapeRenderer = ({ shape = 'Star', size, fill, ...props }) => {

@@ -9,9 +9,11 @@ import TestBottom from "../TestBottom";
 import { ResultDisplay } from "../../Evaluation/ResultDisplay";
 import Evaluation from "../../Evaluation/Evaluation";
 import { addHistorySB } from "../../../Storage/test_history_supabase";
-import PatternRenderer, { patterns } from "../../General/Patterns_and_Shape/PatternRenderer";
 import { shapes } from "../../General/Patterns_and_Shape/ShapeRenderer.";
 import DisplayContrasts from "../../Practice/DisplayContrast";
+import { SVGDefsProvider } from "../../General/Patterns_and_Shape/SVGDefContext";
+import SVGRenderer from "../../General/Patterns_and_Shape/SVGRenderer";
+import { patterns } from "../../General/Patterns_and_Shape/PatternRenderer";
 
 
 const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted, setSelectedColor }) => {
@@ -125,13 +127,7 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
                     {/* {checkedResult && <p>{checkSortResult().toString()}</p>} */}
                     <div>
                         <TestDisplay refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} showGuess={practicing || checkedResult} showTarget={checkedResult} />
-                        <div className="flex h-[300] gap-5">
-                            <PatternRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} width={300} patternRotation={patternRotation} shapeRotation={shapeRotation} />
-                            <div className={(checkedResult || practicing) ? "opacity-100" : " opacity-0"}>
-                                {<PatternRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} width={300} patternRotation={patternRotation} shapeRotation={shapeRotation} />}
-                            </div>
-
-                        </div>
+                        <SVGDisplay show={(checkedResult || practicing)} refColor={refColor} targetColor={targetColor} selectedColor={selectedColor} pattern={pattern} patternRotation={patternRotation} shape={shape} shapeRotation={shapeRotation} />
                         {checkedResult && <ResultDisplay targetColor={targetColor} selectedColor={selectedColor} />}
                     </div>
                     {<DisplayContrasts pattern={pattern} shape={shape} patternRotation={patternRotation} shapeRotation={shapeRotation} refColor={refColor}
@@ -179,6 +175,19 @@ const TestDisplay = ({ refColor, targetColor, selectedColor, showGuess = false, 
                 }
 
             </div>
+        </div>
+    )
+}
+
+const SVGDisplay = ({ refColor, targetColor, selectedColor, show = false, pattern, shape, patternRotation, shapeRotation }) => {
+    return (
+        <div className="flex h-[300] gap-5">
+            <SVGDefsProvider>
+                <SVGRenderer refColor={refColor} targetColor={targetColor} pattern={pattern} shape={shape} width={300} patternRotation={patternRotation} shapeRotation={shapeRotation} />
+                <div className={show ? "opacity-100" : " opacity-0"}>
+                    {<SVGRenderer refColor={refColor} targetColor={selectedColor} pattern={pattern} shape={shape} width={300} patternRotation={patternRotation} shapeRotation={shapeRotation} />}
+                </div>
+            </SVGDefsProvider>
         </div>
     )
 }
