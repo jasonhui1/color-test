@@ -1,21 +1,18 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ColorPicker } from '../Components/Color Picker/ColorPicker';
 import ColorTest from '../Components/Test/test';
 import CheckBox from '../Components/General/CheckBox';
 import { SettingProvider, useSettings } from '../Contexts/setting';
 import GoogleLogin from '../Components/General/GoogleLogin';
-import supabase from '../Storage/supabase_client';
-import DisplayColorRange from '../Components/Practice/DisplayColorRange';
-import DisplayContrasts from '../Components/Practice/DisplayContrast';
-
+import { useUserId } from '../Hooks/useUserId';
 
 const ColorTrainingTool = () => {
     const [selectedColor, setSelectedColor] = useState({ h: 30, s: 100, l: 50 });
-
+    const { userId } = useUserId();
     return (
         <div>
             <div className='flex flex-col justify-center items-center '>
-                {!supabase && <div className='flex justify-start w-full p-3'>
+                {<div className='flex justify-start w-full p-3'>
 
                     <GoogleLogin />
                 </div>}

@@ -1,4 +1,4 @@
-import supabase from "../../Storage/supabase_client";
+import supabase from "../../lib/supabase/setup";
 
 async function handleSignInWithGoogle(response) {
     const { data, error } = await supabase.auth.signInWithIdToken({

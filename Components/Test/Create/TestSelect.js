@@ -3,18 +3,21 @@ import { SelectBox } from '../../General/SelectBox';
 import { allDifficulties, all_modes, all_testNum, all_test_methods } from '../Parameters/parameters';
 import TestCreate from './TestCreate';
 import { useSettings } from '../../../Contexts/setting';
-import { addTestSB } from '../../../Storage/test_parameters_sb';
-import { useFetchTests } from '../../../Storage/useFetch';
+import { useFetchTests } from '../../../Storage/hooks/useFetchTest';
+import { useUserId } from '../../../Hooks/useUserId';
+import { createTest } from '../../../lib/supabase/testParams';
+import { useCreateTests } from '../../../Storage/hooks/useCreateTest';
 
-const TestSelect = ({ setHRange, setSRange, setLRange, testId, setTestId }) => {
+const TestSelect = ({ setHRange, setSRange, setLRange, testSelected, setTestId }) => {
 
     //Create New Test
     //Select from existing tests
     const [creatingTest, setCreatingTest] = useState(false);
-    const createdTests = useFetchTests()
+    const { userId } = useUserId();
+    const { createdTests } = useFetchTests(userId)
+    const { createTest: createTestDB, loading, error } = useCreateTests()
 
     const { difficulty, setDifficulty, mode, setMode, testNum, setTestNum, testMethod, setTestMethod } = useSettings();
-    const [loading, setLoading] = useState(false);
 
     const updatePara = (test) => {
         setTestId(test.id)
@@ -31,47 +34,37 @@ const TestSelect = ({ setHRange, setSRange, setLRange, testId, setTestId }) => {
     }
 
     const createTest = async (hRange, lRange, sRange, name) => {
-        try {
-            setLoading(true);
-
-            const id = await addTestSB(hRange, lRange, sRange, name);
-            updatePara({ id, hRange, sRange, lRange });
-            setCreatingTest(false);
-        } catch (error) {
-            console.error("Failed to create test", error);
-        } finally {
-            setLoading(false);
-        }
+        const id = await createTestDB({ hRange, lRange, sRange, name });
+        updatePara({ id, hRange, sRange, lRange });
+        setCreatingTest(false);
     }
 
     // const editName = (newName) => {
     //     const 
-
     // }
 
-    const testSelected = testId !== '0'
-    const inInitial = !creatingTest && !testSelected
+    const inSelect = !creatingTest && !testSelected
     // const name = testSelected ? createdTests.find(test => test.id === testId).name : 'N/A'
 
     return (
         <div className="mt-6">
             <h3 className="text-3xl font-bold mb-6 text-blue-600 text-center">Color Test</h3>
-            <div className='flex gap-4 flex-col'>
-                {testSelected &&
+            {inSelect &&
+                <div>
+                    <TestsDisplay tests={createdTests} onSelect={onSelectTest} />
+                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => setCreatingTest(true)}>Create New Test </button>
+
+                </div>
+            }
+
+            {testSelected &&
+                <div className='flex gap-4 flex-col'>
                     <>
                         <SelectBox current={difficulty} onChange={setDifficulty} options={allDifficulties} label={'Difficulty'} />
                         <SelectBox current={mode} onChange={setMode} options={all_modes} label={'Mode'} />
                         <SelectBox current={testNum} onChange={setTestNum} options={all_testNum} label={'TestNum'} />
                         <SelectBox current={testMethod} onChange={setTestMethod} options={all_test_methods} label={'TestNum'} />
                     </>
-                }
-            </div>
-
-            {inInitial &&
-                <div>
-                    <TestsDisplay tests={createdTests} onSelect={onSelectTest} />
-                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => setCreatingTest(true)}>Create New Test </button>
-
                 </div>
             }
 
@@ -81,6 +74,7 @@ const TestSelect = ({ setHRange, setSRange, setLRange, testId, setTestId }) => {
 };
 
 const TestsDisplay = ({ tests, onSelect }) => {
+    console.log('tests :>> ', tests);
     return (
         <ul>
             {tests?.map((test, index) =>

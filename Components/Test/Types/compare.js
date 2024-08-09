@@ -1,19 +1,19 @@
 
 import { useEffect, useState } from "react"
 import { calculateHLSDifference, generateId, getRandomIntStep, getRandomValue, stepInDifficulty } from "../../../Utils/utils";
-import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect, hlsToString } from "../../../Utils/color_util";
+import { defaultHLS, defaultLS, generateRandomColorAdvanced, checkIfCorrect, hlsToString } from "../../../Utils/color_util";
 import ColorSwatch from "../../Color Picker/ColorSwatch";
 import { TriangularColorPickerDisplayHistory } from "../../Color Picker/ColorPicker";
 import { useSettings } from "../../../Contexts/setting";
 import TestBottom from "../TestBottom";
 import { ResultDisplay } from "../../Evaluation/ResultDisplay";
 import Evaluation from "../../Evaluation/Evaluation";
-import { addHistorySB } from "../../../Storage/test_history_supabase";
 import { shapes } from "../../General/Patterns_and_Shape/ShapeRenderer.";
 import DisplayContrasts from "../../Practice/DisplayContrast";
 import { SVGDefsProvider } from "../../General/Patterns_and_Shape/SVGDefContext";
 import SVGRenderer from "../../General/Patterns_and_Shape/SVGRenderer";
 import { patterns } from "../../General/Patterns_and_Shape/PatternRenderer";
+import { useAddHistory } from "../../../Storage/hooks/useAddHistory";
 
 
 const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId, setTestStarted, setSelectedColor }) => {
@@ -34,6 +34,8 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
     const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
 
     const { mode, difficulty, testNum, saveToHistory, practicing, testMethod } = useSettings()
+    const { addHistory: addHistoryDB } = useAddHistory();
+
 
     // Guessing Bright/Dark
     const [chosenDirection, setChosenDirection] = useState('L')
@@ -103,12 +105,12 @@ const CompareTest = ({ hRange, sRange, lRange, selectedColor, length = 2, testId
         if (checkedResult) return
         setCheckedResult(true)
 
-        const correct = getIsCorrect(targetColor, selectedColor, mode, difficulty)
+        const correct = checkIfCorrect(targetColor, selectedColor, mode, difficulty)
         const ellapsedTime = Date.now() - startTime
         const newHistory = [...testHistory, { refColor, targetColor, selectedColor, pattern, shape, isRetry: retrying, correct, time: ellapsedTime }];
         setTestHistory(newHistory)
 
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor, correct, time: ellapsedTime, testMethod });
+        if (saveToHistory) addHistoryDB({ testId, targetColor, selectedColor, mode, difficulty: difficulty, refColor, correct, time: ellapsedTime, testMethod });
     };
     const incorrectHistory = testHistory.filter(({ correct, isRetry }) => !correct && !isRetry)
     const retryEnded = currentRetryingNum >= incorrectHistory.length && checkedResult

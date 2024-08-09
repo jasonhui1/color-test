@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import ColorSwatch, { ColorGradient } from "../../Color Picker/ColorSwatch";
-import { defaultHLS, defaultLS, generateRandomColorAdvanced, getIsCorrect } from "../../../Utils/color_util";
-import { stepInDifficulty } from "../../../Utils/utils";
+import ColorSwatch from "../../Color Picker/ColorSwatch";
+import { defaultHLS, defaultLS, generateRandomColorAdvanced, checkIfCorrect } from "../../../Utils/color_util";
+import { roundToStep, stepInDifficulty } from "../../../Utils/utils";
 import { useSettings } from "../../../Contexts/setting";
 import { ResultDisplay, } from "../../Evaluation/ResultDisplay";
 import TestBottom from "../TestBottom";
 import Evaluation from "../../Evaluation/Evaluation";
-import { addHistorySB } from "../../../Storage/test_history_supabase";
 import DisplayColorRange from "../../Practice/DisplayColorRange";
 import { getPositionFromSV, getSVFromPosition } from "../../../Utils/calculation_util";
+import { useAddHistory } from "../../../Storage/hooks/useAddHistory";
 
 function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRange = [0, 100], testId, setTestStarted, setSelectedColor }) {
     const [targetColor, setTargetColor] = useState(defaultHLS)
@@ -21,6 +21,7 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
     const [currentRetryingNum, setCurrentRetryingNume] = useState(0);
 
     const { mode, difficulty, testNum, saveToHistory, practicing, step, testMethod } = useSettings()
+    const { addHistory: addHistoryDB } = useAddHistory();
 
     useEffect(() => {
         setup();
@@ -76,9 +77,9 @@ function SingleTest({ selectedColor, hRange = [0, 360], sRange = [0, 100], lRang
         if (checkedResult) return
         setCheckedResult(true)
         const color = getApproximateColor(targetColor, selectedColor, step, testMethod)
-        const correct = getIsCorrect(targetColor, color, mode, difficulty)
+        const correct = checkIfCorrect(targetColor, color, mode, difficulty)
         const ellapsedTime = Date.now() - startTime
-        if (saveToHistory) addHistorySB({ testId, targetColor, selectedColor: color, mode, difficulty: difficulty, correct, time: ellapsedTime, testMethod });
+        if (saveToHistory) addHistoryDB({ testId, targetColor, selectedColor: color, mode, difficulty: difficulty, correct, time: ellapsedTime, testMethod });
 
         setTestHistory(history => [...history, { targetColor, selectedColor: color, correct, isRetry: retrying, time: ellapsedTime }]);
     };
@@ -156,7 +157,8 @@ const getApproximateColor = (targetColor, selectedColor, step, testMethod) => {
         while (s > 100) {
             let increaseStep = i * step.l / 100
             increaseStep *= l > 50 ? 1 : -1
-            const { s: s_, v: l_ } = getSVFromPosition(x, y / 100 + increaseStep)
+            const y_ = roundToStep(y / 100 + increaseStep, step.l / 100)
+            const { s: s_, v: l_ } = getSVFromPosition(x, y_)
             s = s_
             l = l_
             i += 1
@@ -164,27 +166,24 @@ const getApproximateColor = (targetColor, selectedColor, step, testMethod) => {
 
         color = { ...targetColor, s, l }
     }
+    console.log('color :>> ', color);
 
     return color
 }
 
-const DisplaySelectedColor = ({ targetColor, selectedColor, }) => {
+// Display selected color, use assumed if not testing exact, i.e. only testing one (h/s/v)
+const DisplaySelectedColor = ({ targetColor, selectedColor, getApproximate = false }) => {
     const { testMethod, step } = useSettings()
 
-    let color = getApproximateColor(targetColor, selectedColor, step, testMethod);
-
-
-    // const { x } = getPositionFromSV(selectedColor.s, selectedColor.l)
-
-    // const l1 = x * Math.tan(Math.PI * 1 / 3 * x) * 100
-    // const l2 = 100 - l1
-
-    // console.log('l1,l2 :>> ', l1, l2);
+    let color = selectedColor;
+    if (!getApproximate) {
+        color = getApproximateColor(targetColor, selectedColor, step, testMethod);
+    }
 
     // const showSwatch = true
     const showSwatch = testMethod === 'exact' || testMethod === 'h_only'
     // const showGradient = !showSwatch
-    // console.log('selectedColor :>> ', selectedColor);
+    console.log('selectedColor :>> ', selectedColor);
 
     return (
         <div >

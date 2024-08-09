@@ -5,7 +5,7 @@ import { useSettings } from '../../Contexts/setting';
 import SingleTest from './Types/single';
 import { BackButton } from './TestBottom';
 import TestParameterDisplay from './Parameters/TestParameterDisplay';
-import {  Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import TestSelect from './Create/TestSelect';
 
 
@@ -18,6 +18,7 @@ const ColorTest = ({ selectedColor, setSelectedColor }) => {
     // do later
     const [testId, setTestId] = useState('0');
     const [testStarted, setTestStarted] = useState(false);
+
     const testSelected = testId !== '0';
     const confirming = testSelected && !testStarted;
 
@@ -28,7 +29,7 @@ const ColorTest = ({ selectedColor, setSelectedColor }) => {
                 {!testStarted &&
                     <TestSelect
                         setHRange={setHRange} setSRange={setSRange} setLRange={setLRange}
-                        testId={testId} setTestId={setTestId}
+                        testSelected={testSelected} setTestId={setTestId}
                     />
                 }
 

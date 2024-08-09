@@ -89,7 +89,7 @@ export const hlsToString = (hsl) => `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
 export const hlsToId = (hsl) => [hsl.h, hsl.s, hsl.l].join('');
 
 
-export const getIsCorrect = (targetColor, selectedColor, mode, difficulty, testMethod = 'exact') => {
+export const checkIfCorrect = (targetColor, selectedColor, mode, difficulty, testMethod = 'exact') => {
     const diff = getDifferences(targetColor, selectedColor)
     const accuracy = getAccuracy(targetColor, diff, difficulty)
 

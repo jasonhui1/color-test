@@ -30,27 +30,29 @@ export const SVGDefsProvider = ({ children }) => {
         if (!height) height = width
 
         console.log('pattern, shape, width :>> ', pattern, shape, width);
-
-        const element = (<>
-            <PatternRenderer id={patternId} pattern={pattern} width={patternWidth} height={patternHeight} rotation={patternRotation} scale={patternScale} />
+        const Pattern = (<PatternRenderer id={patternId} pattern={pattern} width={patternWidth} height={patternHeight} rotation={patternRotation} scale={patternScale} />)
+        const ShapeMask = (
             <mask id={shapeMaskId}>
                 <ShapeRenderer size={width} shape={shape} fill={'white'} />
             </mask>
+        )
 
+        const PatternMask = (
             <mask id={patternMaskId}>
                 <rect width={width} height={height} fill={`url(#${patternId})`} />
             </mask>
+        )
 
-
+        const CombineMask = (
             <mask id={combinedMaskId}>
                 <rect width={width} height={height} fill="white" mask={`url(#${shapeMaskId})`} />
                 <rect width={width} height={height} fill="black" mask={`url(#${patternMaskId})`} />
             </mask>
+        )
 
-        </>)
+        defsRef.current[id] = true;
 
-        defsRef.current[id] = element;
-        setDefs(prevDefs => ({ ...prevDefs, [id]: element }));
+        setDefs(prevDefs => ({ ...prevDefs, [patternId]: Pattern, [shapeMaskId]: ShapeMask, [patternMaskId]: PatternMask, [combinedMaskId]: CombineMask }));
     }, []);
 
 
